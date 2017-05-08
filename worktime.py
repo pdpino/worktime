@@ -14,12 +14,19 @@ from basic import *
 
 
 # Next TODOs:
-# TODO: Opcion edit, para cambiar nombres, info, o cualquier cosa de un Job
-# TODO: Opcion stop all
-# TODO: Opcion para exportar a csv # IDEA: hacer analisis del trabajo
-# TODO: Opcion para eliminar entradas (instancias)
-    # de manera interactiva es mas facil? se puede usar input_option()
+# TODO: pasar a callbacks (en vez de ifs)
 
+# Nuevas opciones:
+    # TODO: Opcion para exportar a csv # IDEA: hacer analisis del trabajo
+    # TODO: Opcion para eliminar entradas (instancias)
+        # de manera interactiva es mas facil? se puede usar input_option()
+    # TODO: Opcion para ingresar jobs con un csv
+        # ademas, mantener los jobs en un csv, y asi poder editar su info basica de manera facil
+        # ej: edito en csv, luego work actualize, listo
+    # TODO: Opcion 'delete' en tags, delete specific tags
+    # IDEA: opcion para que te avise dps de cierto rato
+        # ejemplo: quiero trabajar 1 hora, termina en 1 hora
+        # QUESTION: no hay alarma en pc, como hacerlo?
 
 class Entry():
     def __init__(self, t, obs=""):
@@ -92,16 +99,27 @@ class Entry():
     def pstr(self):
         """Pretty string"""
         if self.obs != "":
-            obs = "\n\t{}".format(self.obs)
+            obs = "\n\t\t{}".format(self.obs)
         else:
             obs = self.obs
 
         if self.finished:
-            horas = "{} to {} -- total: {:.1f}s -- pause: {:.1f}s -- effective: {:.1f}s".format(self.hi, self.hf, self.total_time, self.pause_time, self.effective_time)
+            horas = "{} to {} -- total: {} -- pause: {} -- effective: {}".format(self.hi, self.hf, sec2hr(self.total_time), sec2hr(self.pause_time), sec2hr(self.effective_time))
         else:
             horas = "{}-present".format(self.hi)
 
         return "{}/{}/{} -- {} {}".format(self.year, self.month, self.day, horas, obs)
+
+    def time_running(self, t):
+        if t is None:
+            return "unknown"
+        return sec2hr(seconds(t)-self._ti)
+
+    def time_paused(self, t):
+        if t is None:
+            return "unknown"
+        return sec2hr(seconds(t)-self._pi)
+
 
 class Job():
     def __init__(self, name, longname, info, tags):
@@ -120,6 +138,7 @@ class Job():
         self.is_running = False
         self.is_paused = False # solo valido si is_running=True, indica si esta en pause
 
+    """ Basic operations methods (start/stop/pause)"""
     def start(self, t, obs=""):
         if self.is_running:
             perror("Work '{}' is already running".format(self.name))
@@ -144,18 +163,28 @@ class Job():
             self._action("paused")
             self.is_paused = True
 
-    def stop(self, t):
+    def stop(self, t, ign_error=False, discard=False):
+        """ Stop a running job"""
         if not self.is_running:
-            perror("Work '{}' is not running".format(self.name))
-
+            if ign_error:
+                return
+            else:
+                perror("Work '{}' is not running".format(self.name))
 
         self._entry.stop(t)
-        self.entries.append(self._entry)
-        self._entry = None
+        if not discard:
+            self.entries.append(self._entry)
+        self._entry = None # REVIEW: free()
 
         self._action("stopped")
         self.is_running = False
         self.is_paused = False
+
+
+
+    """ Printing methods"""
+    def _action(self, action):
+        print("{} {}".format(self.name, action))
 
     def all_entries(self):
         """ Return concat string of all entries"""
@@ -167,33 +196,39 @@ class Job():
             e += "\t" + self._entry.pstr()
         return e
 
-    def pprint(self, t=None):
+    def get_status(self, t):
+        if self.is_running:
+            if self.is_paused:
+                status = "paused: {}".format(self._entry.time_paused(t))
+            else:
+                status = "running: {}".format(self._entry.time_running(t))
+        else:
+            status = "stopped"
+
+        return status
+
+    def pprint(self, t=None, print_entries=False):
         """ Pretty print for a job"""
         lname = self.longname or "-"
         info = self.info or "-"
 
-        if self.is_running:
-            status = "running"
-            # calcular cuanto tiempo lleva # TODO
-        else:
-            status = "stopped"
+        status = self.get_status(t)
 
         w = """{}
-        long name: {}
-        info: {}
-        tags: {}
-        status: {}""".format(self.name, lname, info, self.tags, status)
+        long name:  {}
+        info:       {}
+        tags:       {}
+        status:     {}
+        total runs: {}""".format(self.name, lname, info, self.tags, status, len(self.entries))
 
-        if len(self.entries) > 0:
+        if print_entries and len(self.entries) > 0:
             w += "\n"
             w += self.all_entries()
 
         print(w)
-        # return w
 
-    def _action(self, action):
-        print("{} {}".format(self.name, action))
 
+    """Edit methods"""
     def add_tags(self, t):
         self.tags += t
 
@@ -255,6 +290,8 @@ def create_parser():
                         help="Stop a currently running work")
     parser_stop.add_argument('name', default=None, type=str,
                         help="Name of the work to stop")
+    parser_stop.add_argument('-d', '--discard', action="store_true",
+                        help="Discard this run")
 
     # Pause
     parser_pause = subparser.add_parser('pause',
@@ -309,6 +346,8 @@ def create_parser():
                         help="Show existing works")
     parser_show.add_argument('-n', '--name', default=None, type=str,
                         help="Name to lookup")
+    parser_show.add_argument('-e', '--entries', action="store_true",
+                        help="Show the entries (may be a lot)")
 
     return parser
 
@@ -363,7 +402,6 @@ if __name__ == "__main__":
         perror("Can't load dict", exception=e)
 
 
-    # TODO: pasar a callbacks (en vez de ifs)
 
     if args.option == "start":
         # tomar key del trabajo
@@ -375,19 +413,27 @@ if __name__ == "__main__":
         #     perror("Can't start the work '{}'".format(key), exception=e)
 
     elif args.option == "stop":
-        # tomar key del trabajo
-        key = validate_workname(args.name, d)
-        try:
-            d[key].stop(t)
-        except Exception as e:
-            perror("Can't stop the work '{}'".format(key), exception=e)
+
+        # HACK
+        if args.name == "all":
+            for k in d:
+                d[k].stop(t, ign_error=True)
+        else:
+            # tomar key del trabajo
+            key = validate_workname(args.name, d)
+            try:
+                d[key].stop(t, discard=args.discard)
+            except Exception as e:
+                perror("Can't stop the work '{}'".format(key), exception=e)
 
     elif args.option == "pause":
         # tomar key del trabajo
         key = validate_workname(args.name, d)
 
         if args.wait:
-            pass
+            d[key].pause(t)
+            input("Press enter to unpause the job ")
+            d[key].pause(datetime.now())
         else:
             d[key].pause(t)
 
@@ -412,26 +458,38 @@ if __name__ == "__main__":
         # tomar key del trabajo
         key = validate_workname(args.name, d)
 
-        # parser_edit.add_argument('name', default=None, type=str,
-        #                     help="Name or alias of the work to edit")
-        # parser_edit.add_argument('--new-name', default="", type=str,
-        #                     help="New name")
-        # parser_edit.add_argument('-l', '--longname', default="", type=str,
-        #                     help="New long name")
-        # parser_edit.add_argument('-i', '--info', default="", type=str,
-        #                     help="New info about the work")
-        # parser_edit.add_argument('--info-mode', choices=['add', 'replace', 'drop'], default='add', type=str,
-        #                     help="Mode to edit the info. Drop means setting info as void")
-        # parser_edit.add_argument('-t', '--tags', nargs='*',
-        #                     help="New tags of the work")
-        # parser_edit.add_argument('--tags-mode', choices=['add', 'replace', 'drop'], default='add', type=str,
-        #                     help="Mode to edit the tags.")
+        job = d[key]
 
-        print(args)
+        # Cambiar nombre
+        if not args.new_name is None:
+            # cambiar key:
+            d[args.new_name] = d.pop(key)
+            job = d[args.new_name]
 
-        # if args.name
+            # cambiar nombre interno:
+            job.change_name(args.new_name)
 
+        # Cambiar long name
+        if not args.longname is None:
+            job.change_longname(args.longname)
 
+        # Cambiar info
+        if not args.info is None:
+            if args.info_mode == "add":
+                job.add_info(args.info)
+            elif args.info_mode == "replace":
+                job.replace_info(args.info)
+            elif args.info_mode == "drop":
+                job.drop_info()
+
+        # Cambiar tags
+        if not args.tags is None:
+            if args.tags_mode == "add":
+                job.add_tags(args.tags)
+            elif args.tags_mode == "replace":
+                job.replace_tags(args.tags)
+            elif args.tags_mode == "drop":
+                job.drop_tags()
 
     elif args.option == "delete":
         # tomar key del trabajo
@@ -444,6 +502,10 @@ if __name__ == "__main__":
             perror("The work '{}' does not exists".format(key))
 
     elif args.option == "show":
+        if len(d) == 0:
+            print("No jobs to show")
+            # return
+
         def match_regex(k, m):
             """ Return true if k matches with m using regex"""
             if search(m, k) is None:
@@ -464,7 +526,7 @@ if __name__ == "__main__":
 
         for k in d:
             if match(k, name):
-                d[k].pprint()
+                d[k].pprint(t, print_entries=args.entries)
 
     # Guardar de vuelta diccionario
     dump(d, fname_dict)

@@ -10,5 +10,9 @@ $ ln -s dir/to/worktime.py work
 ```
 * Then run work by doing
 ```
-$ work
+$ work option
 ```
+
+## Others
+* The job's names will always be in lowercase.
+* There can't be two jobs with the same name.

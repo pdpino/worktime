@@ -70,7 +70,7 @@ def hour(t):
     return t.strftime('%H:%M')
 
 def seconds(t):
-    """Return the seconds between the 01/01/2017 and the time t"""
+    """Return the seconds between the 01/01/2017 and the datetime t"""
     return (t - datetime(2017,1,1)).total_seconds()
 
 def sec2hr(t):

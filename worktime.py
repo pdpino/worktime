@@ -16,17 +16,34 @@ from basic import *
 # Next TODOs:
 # TODO: pasar a callbacks (en vez de ifs)
 
-# Nuevas opciones:
+#### Nuevas opciones:
+# csv
     # TODO: Opcion para exportar a csv # IDEA: hacer analisis del trabajo
-    # TODO: Opcion para eliminar entradas (instancias)
-        # de manera interactiva es mas facil? se puede usar input_option()
     # TODO: Opcion para ingresar jobs con un csv
         # ademas, mantener los jobs en un csv, y asi poder editar su info basica de manera facil
         # ej: edito en csv, luego work actualize, listo
+# delete
+    # TODO: Opcion para eliminar entradas (instancias)
+        # de manera interactiva es mas facil? se puede usar input_option()
     # TODO: Opcion 'delete' en tags, delete specific tags
+# show
+    # TODO: agregar opcion en show, mostrar los que estan corriendo
+    # TODO: en show opcion mostrar solo nombres
+    # TODO: busqueda avanzada en show
+# start
+    # TODO: agregar opcion wait-for-me en start (con ingresar pause o stop) # con no-wait
+# general
+    # TODO: agregar opciones de configuracion predeterminada (archivo que guarde opciones)
+# create
+    # TODO: agregar opcion interactiva para create
+    # TODO: agregar timestamp de creacion a jobs?
+
+# IDEAS:
+    # IDEA: opcion para hacer drop de una current run (por si se me olvido pararla)
+        # IDEA: opcion de estimar cuanto trabaje en vdd, poder cambiarlo a mano
     # IDEA: opcion para que te avise dps de cierto rato
         # ejemplo: quiero trabajar 1 hora, termina en 1 hora
-        # QUESTION: no hay alarma en pc, como hacerlo?
+        # QUESTION: no hay alarma en pc (en terminal), como hacerlo?
 
 class Entry():
     def __init__(self, t, obs=""):
@@ -110,12 +127,23 @@ class Entry():
 
         return "{}/{}/{} -- {} {}".format(self.year, self.month, self.day, horas, obs)
 
-    def time_running(self, t):
+    def ctime_running(self, t):
+        """ Current time running
+        Get the total time for a running entry"""
         if t is None:
             return "unknown"
         return sec2hr(seconds(t)-self._ti)
 
-    def time_paused(self, t):
+    def ctime_effective(self, t):
+        """ Current time effective.
+        Get the effective time for a running entry"""
+        if t is None:
+            return "unknown"
+        return sec2hr(seconds(t)-self._ti-self.pause_time)
+
+    def ctime_paused(self, t):
+        """ Current time paused
+        Get the pause time for a running entry"""
         if t is None:
             return "unknown"
         return sec2hr(seconds(t)-self._pi)
@@ -163,7 +191,7 @@ class Job():
             self._action("paused")
             self.is_paused = True
 
-    def stop(self, t, ign_error=False, discard=False):
+    def stop(self, t, discard=False, print_time=True, ign_error=False):
         """ Stop a running job"""
         if not self.is_running:
             if ign_error:
@@ -172,6 +200,9 @@ class Job():
                 perror("Work '{}' is not running".format(self.name))
 
         self._entry.stop(t)
+        ttime = self._entry.total_time # total time
+        etime = self._entry.effective_time # effective time
+        ptime = self._entry.pause_time # pause time
         if not discard:
             self.entries.append(self._entry)
         self._entry = None # REVIEW: free()
@@ -179,6 +210,12 @@ class Job():
         self._action("stopped")
         self.is_running = False
         self.is_paused = False
+
+        if print_time:
+            print("\t Runtime: total: {}, effective: {}, pause: {}".format(
+                            sec2hr(ttime),
+                            sec2hr(etime),
+                            sec2hr(ptime)))
 
 
 
@@ -199,9 +236,11 @@ class Job():
     def get_status(self, t):
         if self.is_running:
             if self.is_paused:
-                status = "paused: {}".format(self._entry.time_paused(t))
+                status = "paused ({} in pause)".format(self._entry.ctime_paused(t))
             else:
-                status = "running: {}".format(self._entry.time_running(t))
+                status = "running (total: {}, effective: {})".format(
+                            self._entry.ctime_running(t),
+                            self._entry.ctime_effective(t))
         else:
             status = "stopped"
 
@@ -257,7 +296,8 @@ class Job():
 
 root_path = sys.path[0] + "/"
 files_folder = "files/"
-files_dict = "jobs.dat"
+fname_jobs_dict = "jobs.dat"
+fname_jobs_dict_backup = "jobs_backup.dat"
 
 def assert_folder():
     """ Ensures the existence of the needed folders"""
@@ -269,7 +309,10 @@ def assert_folder():
             perror("Can't assert folder: {}".format(folder), exception=e)
 
 def get_fname_dict():
-    return root_path + files_folder + files_dict
+    return root_path + files_folder + fname_jobs_dict
+
+def get_fname_backup():
+    return root_path + files_folder + fname_jobs_dict_backup
 
 def create_parser():
     parser = argparse.ArgumentParser(description='Worktime', usage='%(prog)s [options]')
@@ -292,6 +335,9 @@ def create_parser():
                         help="Name of the work to stop")
     parser_stop.add_argument('-d', '--discard', action="store_true",
                         help="Discard this run")
+    parser_stop.add_argument('-q', '--quiet', action="store_true",
+                        help="Don't print the time when stopped")
+
 
     # Pause
     parser_pause = subparser.add_parser('pause',
@@ -348,6 +394,11 @@ def create_parser():
                         help="Name to lookup")
     parser_show.add_argument('-e', '--entries', action="store_true",
                         help="Show the entries (may be a lot)")
+
+    # Bakcup
+    parser_backup = subparser.add_parser('backup',
+                        help="Backup existing works")
+
 
     return parser
 
@@ -418,11 +469,13 @@ if __name__ == "__main__":
         if args.name == "all":
             for k in d:
                 d[k].stop(t, ign_error=True)
+            # return
+
         else:
             # tomar key del trabajo
             key = validate_workname(args.name, d)
             try:
-                d[key].stop(t, discard=args.discard)
+                d[key].stop(t, discard=args.discard, print_time=(not args.quiet))
             except Exception as e:
                 perror("Can't stop the work '{}'".format(key), exception=e)
 
@@ -527,6 +580,11 @@ if __name__ == "__main__":
         for k in d:
             if match(k, name):
                 d[k].pprint(t, print_entries=args.entries)
+
+    elif args.option == "backup":
+        # Nombre de archivo
+        fname_backup = get_fname_backup()
+        dump(d, fname_backup)
 
     # Guardar de vuelta diccionario
     dump(d, fname_dict)

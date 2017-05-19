@@ -14,6 +14,7 @@ from basic import *
 
 
 # Next TODOs:
+# TODO: arreglar lo de interpreters, que funcione en todos los computadores
 # TODO: pasar a callbacks (en vez de ifs)
 # TODO: dejar carpeta bin en worktime, agregar eso a PATH (se puede dejar un script que lo haga por uno, "work-init")
 	# y ahi dejar work git y worktime

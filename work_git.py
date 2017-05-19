@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Push or pull the worktime git repository """
 
 import subprocess

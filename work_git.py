@@ -34,20 +34,18 @@ args = parser.parse_args()
 
 
 
+# directorio de este proyecto
 root_path = sys.path[0] + "/"
+
 cmd = "cd {}; pwd;".format(root_path)
 
 if args.action == "push":
-#	run("git add .")
-#	run("git commit -m '{}'".format(args.msg))
-#	run("git push")
-
 	cmd += " git add .;"
 	cmd += " git commit -m '{}';".format(args.msg)
-	cmd += " git push;"
-	run(cmd)
-	
+	cmd += " git push;"	
 elif args.action == "pull":
-	run("git pull")
+	cmd += " git pull;"
+
+run(cmd)
 
 

@@ -14,6 +14,7 @@ from basic import *
 
 
 # Next TODOs:
+# FIXME: cada vez que se accede a jobs.dat se cambia el archivo, hay que volver a hacer push. Cambiar por un json?
 # TODO: arreglar lo de interpreters, que funcione en todos los computadores
 # TODO: pasar a callbacks (en vez de ifs)
 # TODO: dejar carpeta bin en worktime, agregar eso a PATH (se puede dejar un script que lo haga por uno, "work-init")
@@ -455,7 +456,7 @@ if __name__ == "__main__":
     except Exception as e:
         perror("Can't load dict", exception=e)
 
-
+    save_after = True
 
     if args.option == "start":
         # tomar key del trabajo
@@ -584,10 +585,16 @@ if __name__ == "__main__":
             if match(k, name):
                 d[k].pprint(t, print_entries=args.entries)
 
+        save_after = False
+
+
     elif args.option == "backup":
         # Nombre de archivo
         fname_backup = get_fname_backup()
         dump(d, fname_backup)
+        save_after = False
 
-    # Guardar de vuelta diccionario
-    dump(d, fname_dict)
+
+    if save_after:
+        # Guardar de vuelta diccionario
+        dump(d, fname_dict)

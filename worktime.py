@@ -477,10 +477,8 @@ if __name__ == "__main__":
     # Abrir diccionario
     try:
         d = load(fname_dict)
-        # print("Dict loaded") # REVIEW: use logging
     except FileNotFoundError:
         d = dict()
-        # print("Dict created") # REVIEW: use logging
     except Exception as e:
         perror("Can't load dict", exception=e)
 

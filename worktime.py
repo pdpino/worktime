@@ -152,7 +152,6 @@ class Entry():
             return "unknown"
         return sec2hr(seconds(t)-self._pi)
 
-
 class Job():
     def __init__(self, name, longname, info, tags):
         self.name = name
@@ -203,27 +202,47 @@ class Job():
             else:
                 perror("Work '{}' is not running".format(self.name))
 
+
+
         self._entry.stop(t)
         ttime = self._entry.total_time # total time
         etime = self._entry.effective_time # effective time
         ptime = self._entry.pause_time # pause time
+
+        # Preguntar si esta seguro que quiere descartar
+        if discard and etime > 30*60: # etime > 30min
+            if not input_y_n(question="You've been working more than half an hour. Are you sure you want to discard it"):
+                discard = False
+
+        # Añadir entrada
         if not discard:
             self.entries.append(self._entry)
         self._entry = None # REVIEW: free()
 
-        self._action("stopped")
+        # Reportar accion al user
+        action = "stopped"
+        if discard:
+            action += ", entry discarded"
+        self._action(action)
+
+        # Change
         self.is_running = False
         self.is_paused = False
 
-        if print_time:
-            print("\t Runtime: total: {}, effective: {}, pause: {}".format(
-                            sec2hr(ttime),
-                            sec2hr(etime),
-                            sec2hr(ptime)))
+        if print_time and not discard:
+            self._print_times(ttime, etime, ptime)
 
-
+    def delete(self):
+        self._action("deleted")
 
     """ Printing methods"""
+    def _print_times(ttime, etime, ptime):
+        """Print in screen the given times"""
+        print("\t Runtime: total: {}, effective: {}, pause: {}".format(
+                        sec2hr(ttime),
+                        sec2hr(etime),
+                        sec2hr(ptime)))
+
     def _action(self, action):
         print("{} {}".format(self.name, action))
 
@@ -554,6 +573,7 @@ if __name__ == "__main__":
 
         if key in d:
             if args.y or input_y_n(question="Are you sure you want to drop '{}'".format(key)):
+                d[key].delete()
                 del d[key]
         else:
             perror("The work '{}' does not exists".format(key))

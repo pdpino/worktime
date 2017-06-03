@@ -58,7 +58,7 @@ def input_any(default, message):
     return w
 
 def input_y_n(default="y", question="Desea ..."):
-    return input_any(default, question + "? (y|n)").lower() == "y"
+    return input_any(default, "{}? (y|n)".format(question)).lower() == "y"
 
 ## Time
 def date(t):

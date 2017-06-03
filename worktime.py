@@ -236,7 +236,7 @@ class Job():
         self._action("deleted")
 
     """ Printing methods"""
-    def _print_times(ttime, etime, ptime):
+    def _print_times(self, ttime, etime, ptime):
         """Print in screen the given times"""
         print("\t Runtime: total: {}, effective: {}, pause: {}".format(
                         sec2hr(ttime),

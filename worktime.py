@@ -413,7 +413,7 @@ def create_parser():
     # Show
     parser_show = subparser.add_parser('show',
                         help="Show existing works")
-    parser_show.add_argument('-n', '--name', default=None, type=str,
+    parser_show.add_argument('name', nargs='?', type=str,
                         help="Name to lookup")
     parser_show.add_argument('-e', '--entries', action="store_true",
                         help="Show the entries (may be a lot)")

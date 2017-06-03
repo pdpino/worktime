@@ -14,8 +14,6 @@ from basic import *
 
 
 # Next TODOs:
-# FIXME: cada vez que se accede a jobs.dat se cambia el archivo, hay que volver a hacer push. Cambiar por un json?
-# TODO: arreglar lo de interpreters, que funcione en todos los computadores
 # TODO: pasar a callbacks (en vez de ifs)
 # TODO: dejar carpeta bin en worktime, agregar eso a PATH (se puede dejar un script que lo haga por uno, "work-init")
 	# y ahi dejar work git y worktime

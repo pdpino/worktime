@@ -52,7 +52,8 @@ from basic import *
 class Entry():
     def __init__(self, t, obs=""):
         """Constructor """
-        self.obs = obs
+        self.obs = ""
+        self.add_obs(obs)
 
         # Fecha de inicio
         fecha = date(t)
@@ -152,6 +153,13 @@ class Entry():
             return "unknown"
         return sec2hr(seconds(t)-self._pi)
 
+    def add_obs(self, obs):
+        """ Add observation for an entry"""
+        if not obs is None:
+            if len(self.obs) > 0:
+                self.obs += ". "
+            self.obs += str(obs)
+
 class Job():
     def __init__(self, name, longname, info, tags):
         self.name = name
@@ -194,7 +202,7 @@ class Job():
             self._action("paused")
             self.is_paused = True
 
-    def stop(self, t, discard=False, print_time=True, ign_error=False):
+    def stop(self, t, discard=False, print_time=True, ign_error=False, obs=None):
         """ Stop a running job"""
         if not self.is_running:
             if ign_error:
@@ -203,7 +211,7 @@ class Job():
                 perror("Work '{}' is not running".format(self.name))
 
 
-
+        self._entry.add_obs(obs)
         self._entry.stop(t)
         ttime = self._entry.total_time # total time
         etime = self._entry.effective_time # effective time
@@ -360,7 +368,8 @@ def create_parser():
                         help="Discard this run")
     parser_stop.add_argument('-q', '--quiet', action="store_true",
                         help="Don't print the time when stopped")
-
+    parser_stop.add_argument('-i', '--info', default=None, type=str,
+                        help="Info about this run of the job")
 
     # Pause
     parser_pause = subparser.add_parser('pause',
@@ -491,14 +500,14 @@ if __name__ == "__main__":
         # HACK
         if args.name == "all":
             for k in d:
-                d[k].stop(t, ign_error=True)
+                d[k].stop(t, ign_error=True, obs=args.info)
             # return
 
         else:
             # tomar key del trabajo
             key = validate_workname(args.name, d)
             try:
-                d[key].stop(t, discard=args.discard, print_time=(not args.quiet))
+                d[key].stop(t, discard=args.discard, print_time=(not args.quiet), obs=args.info)
             except Exception as e:
                 perror("Can't stop the work '{}'".format(key), exception=e)
 
@@ -572,7 +581,7 @@ if __name__ == "__main__":
         key = validate_workname(args.name)
 
         if key in d:
-            if args.y or input_y_n(question="Are you sure you want to drop '{}'".format(key)):
+            if args.y or input_y_n(default="n", question="Are you sure you want to drop '{}'".format(key)):
                 d[key].delete()
                 del d[key]
         else:

@@ -587,13 +587,13 @@ if __name__ == "__main__":
 
         save_after = False
 
-
     elif args.option == "backup":
         # Nombre de archivo
         fname_backup = get_fname_backup()
         dump(d, fname_backup)
         save_after = False
 
+        print("Jobs backed up")
 
     if save_after:
         # Guardar de vuelta diccionario

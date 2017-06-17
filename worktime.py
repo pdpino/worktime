@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ WorkTime
 
 Measure the time that you work on something, by calling start and stop functions

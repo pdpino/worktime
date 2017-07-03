@@ -28,9 +28,6 @@ from basic import *
     # TODO: Opcion para eliminar entradas (instancias)
         # de manera interactiva es mas facil? se puede usar input_option()
     # TODO: Opcion 'delete' en tags, delete specific tags
-# show
-    # TODO: en show opcion mostrar solo nombres
-    # TODO: busqueda avanzada en show
 # start
     # TODO: agregar opcion wait-for-me en start (con ingresar pause o stop) # con no-wait
 # general
@@ -40,6 +37,7 @@ from basic import *
     # TODO: agregar timestamp de creacion a jobs?
 
 # IDEAS:
+    # IDEA: en show busqueda avanzada
     # IDEA: opcion para hacer drop de una current run (por si se me olvido pararla)
         # IDEA: opcion de estimar cuanto trabaje en vdd, poder cambiarlo a mano
     # IDEA: opcion para que te avise dps de cierto rato
@@ -254,7 +252,7 @@ class Job():
         print("{} {}".format(self.name, action))
 
     def all_entries(self):
-        """ Return concat string of all entries"""
+        """Concatenated string of all entries."""
         e = ""
         for s in self.entries:
             e += "\t" + s.pstr() + "\n"
@@ -276,23 +274,34 @@ class Job():
 
         return status
 
-    def pprint(self, t=None, print_entries=False):
-        """ Pretty print for a job"""
+    def pprint(self, t=None, name_only=False, show_entries=False):
+        """Pretty print for a job."""
+
+        # Fix Nones
         lname = self.longname or "-"
         info = self.info or "-"
 
+        # Status string
         status = self.get_status(t)
 
-        w = """{}
-        long name:  {}
-        info:       {}
-        tags:       {}
-        status:     {}
-        total runs: {}""".format(self.name, lname, info, self.tags, status, len(self.entries))
+        # String to print
+        if name_only:
+            w = "{}".format(self.name)
+        else:
+            w = """{}
+            long name:  {}
+            info:       {}
+            tags:       {}
+            status:     {}
+            total runs: {}""".format(self.name, lname, info, self.tags, status, len(self.entries))
 
-        if print_entries and len(self.entries) > 0:
-            w += "\n"
-            w += self.all_entries()
+        if show_entries:
+            w += "\n\tEntries: "
+            if len(self.entries) > 0:
+                w += "\n"
+                w += self.all_entries()
+            else:
+                w += "None\n"
 
         print(w)
 
@@ -326,8 +335,8 @@ class Job():
 
 
     """Expose methods"""
-    def is_running(self):
-        return self.is_running
+    # def is_running(self):
+    #     return self.is_running
 
 root_path = sys.path[0] + "/"
 files_folder = "files/"
@@ -397,52 +406,39 @@ def create_parser():
                         help="List of tags of the work")
 
     # edit
-    parser_edit = subparser.add_parser('edit',
-                        help="Edit an existing work")
+    parser_edit = subparser.add_parser('edit', help="Edit an existing work")
     parser_edit.add_argument('name', default=None, type=str,
                         help="Name or alias of the work to edit")
-    parser_edit.add_argument('--new-name', default=None, type=str,
-                        help="New name")
-    parser_edit.add_argument('-l', '--longname', default=None, type=str,
-                        help="New long name")
+    parser_edit.add_argument('--new-name', default=None, type=str, help="New name")
+    parser_edit.add_argument('-l', '--longname', default=None, type=str, help="New long name")
     parser_edit.add_argument('-i', '--info', default=None, type=str,
                         help="New info about the work")
     parser_edit.add_argument('--info-mode', choices=['add', 'replace', 'drop'], default='add', type=str,
                         help="Mode to edit the info. Drop means setting info as void")
-    parser_edit.add_argument('-t', '--tags', nargs='+',
-                        help="New tags of the work")
+    parser_edit.add_argument('-t', '--tags', nargs='+',help="New tags of the work")
     parser_edit.add_argument('--tags-mode', choices=['add', 'replace', 'drop'], default='add', type=str,
                         help="Mode to edit the tags.")
 
 
     # Delete
-    parser_delete = subparser.add_parser('delete',
-                        help="Delete an existing work")
-    parser_delete.add_argument('name', default=None, type=str,
-                        help="Name of the work to delete")
-    parser_delete.add_argument('-y', action="store_true",
-                        help="Skip confirmation")
+    parser_delete = subparser.add_parser('delete', help="Delete an existing work")
+    parser_delete.add_argument('name', default=None, type=str, help="Name of the work to delete")
+    parser_delete.add_argument('-y', action="store_true", help="Skip confirmation")
 
     # Show
-    parser_show = subparser.add_parser('show',
-                        help="Show existing works")
-
+    parser_show = subparser.add_parser('show', help="Show existing works")
     parser_show_filter = parser_show.add_argument_group(title="Filter options", description=None)
-    parser_show_filter.add_argument('name', nargs='?', type=str,
-                        help="Name to lookup")
-    parser_show_filter.add_argument('-r', '--running', action="store_true",
-                        help="Show only the running jobs")
-
+    parser_show_filter.add_argument('name', nargs='?', type=str, help="Name to lookup")
+    parser_show_filter.add_argument('-r', '--running', action="store_true", help="Show only the running jobs")
 
     parser_show_opts = parser_show.add_argument_group(title="Show options", description=None)
-    parser_show_opts.add_argument('-e', '--entries', action="store_true",
-                        help="Show the entries (may be a lot)")
+    parser_show_opts.add_argument('-n', '--names', action="store_true", help="Show only the names of the jobs")
+    parser_show_opts.add_argument('-e', '--entries', action="store_true", help="Show the entries (may be a lot)")
 
 
 
-    # Bakcup
-    parser_backup = subparser.add_parser('backup',
-                        help="Backup existing works")
+    # Backup
+    parser_backup = subparser.add_parser('backup', help="Backup existing works")
 
 
     return parser
@@ -634,7 +630,7 @@ if __name__ == "__main__":
         shown = 0
         for k in d:
             if match(k, name) and filter_running(k):
-                d[k].pprint(t, print_entries=args.entries)
+                d[k].pprint(t, name_only=args.names, show_entries=args.entries)
                 shown += 1
 
         if shown == 0:

@@ -29,7 +29,6 @@ from basic import *
         # de manera interactiva es mas facil? se puede usar input_option()
     # TODO: Opcion 'delete' en tags, delete specific tags
 # show
-    # TODO: agregar opcion en show, mostrar los que estan corriendo
     # TODO: en show opcion mostrar solo nombres
     # TODO: busqueda avanzada en show
 # start
@@ -159,6 +158,8 @@ class Entry():
             self.obs += str(obs)
 
 class Job():
+    """Job"""
+
     def __init__(self, name, longname, info, tags):
         self.name = name
         self.longname = longname
@@ -175,7 +176,7 @@ class Job():
         self.is_running = False
         self.is_paused = False # solo valido si is_running=True, indica si esta en pause
 
-    """ Basic operations methods (start/stop/pause)"""
+    """Basic operations methods (start/stop/pause)"""
     def start(self, t, obs=""):
         if self.is_running:
             perror("Work '{}' is already running".format(self.name))
@@ -241,7 +242,7 @@ class Job():
     def delete(self):
         self._action("deleted")
 
-    """ Printing methods"""
+    """Printing methods"""
     def _print_times(self, ttime, etime, ptime):
         """Print in screen the given times"""
         print("\t Runtime: total: {}, effective: {}, pause: {}".format(
@@ -323,19 +324,24 @@ class Job():
     def change_name(self, n):
         self.name = n
 
+
+    """Expose methods"""
+    def is_running(self):
+        return self.is_running
+
 root_path = sys.path[0] + "/"
 files_folder = "files/"
 fname_jobs_dict = "jobs.dat"
 fname_jobs_dict_backup = "jobs_backup.dat"
 
-def assert_folder():
-    """ Ensures the existence of the needed folders"""
+def assure_folder():
+    """Assure the existence of the needed folders."""
     folder = root_path + files_folder
     if not os.path.exists(folder):
         try:
             os.mkdir(folder)
         except:
-            perror("Can't assert folder: {}".format(folder), exception=e)
+            perror("Can't assure folder: {}".format(folder), exception=e)
 
 def get_fname_dict():
     return root_path + files_folder + fname_jobs_dict
@@ -390,7 +396,7 @@ def create_parser():
     parser_create.add_argument('-t', '--tags', nargs='+',
                         help="List of tags of the work")
 
-    # Create
+    # edit
     parser_edit = subparser.add_parser('edit',
                         help="Edit an existing work")
     parser_edit.add_argument('name', default=None, type=str,
@@ -420,10 +426,19 @@ def create_parser():
     # Show
     parser_show = subparser.add_parser('show',
                         help="Show existing works")
-    parser_show.add_argument('name', nargs='?', type=str,
+
+    parser_show_filter = parser_show.add_argument_group(title="Filter options", description=None)
+    parser_show_filter.add_argument('name', nargs='?', type=str,
                         help="Name to lookup")
-    parser_show.add_argument('-e', '--entries', action="store_true",
+    parser_show_filter.add_argument('-r', '--running', action="store_true",
+                        help="Show only the running jobs")
+
+
+    parser_show_opts = parser_show.add_argument_group(title="Show options", description=None)
+    parser_show_opts.add_argument('-e', '--entries', action="store_true",
                         help="Show the entries (may be a lot)")
+
+
 
     # Bakcup
     parser_backup = subparser.add_parser('backup',
@@ -466,7 +481,7 @@ if __name__ == "__main__":
         usage_error("No option selected. See --help")
 
     # Asegurarse de que existan carpetas
-    assert_folder()
+    assure_folder()
 
     # Nombre de archivo
     fname_dict = get_fname_dict()
@@ -585,18 +600,23 @@ if __name__ == "__main__":
 
     elif args.option == "show":
         if len(d) == 0:
-            print("No jobs to show")
+            pass
             # return
 
         def match_regex(k, m):
-            """ Return true if k matches with m using regex"""
-            if search(m, k) is None:
-                return False
-            else:
-                return True
+            """Boolean matching k with m, using regex."""
+            return not search(m, k) is None
+            # if search(m, k) is None:
+            #     return False
+            # else:
+            #     return True
 
-        def dont_match(k, m):
-            """ Return true always, i.e don't match"""
+        def is_running(k):
+            """Boolean, job is running."""
+            return d[k].is_running
+
+        def dont_match(dummy1=None, dummy2=None):
+            """Return true always, i.e don't match."""
             return True
 
         name = validate_workname(args.name)
@@ -606,9 +626,19 @@ if __name__ == "__main__":
         else: # No hay nombre de input
             match = dont_match
 
+        if args.running:
+            filter_running = is_running
+        else:
+            filter_running = dont_match
+
+        shown = 0
         for k in d:
-            if match(k, name):
+            if match(k, name) and filter_running(k):
                 d[k].pprint(t, print_entries=args.entries)
+                shown += 1
+
+        if shown == 0:
+            print("No jobs to show")
 
         save_after = False
 
@@ -620,6 +650,9 @@ if __name__ == "__main__":
 
         print("Jobs backed up")
 
+
+
+
+    # Guardar de vuelta diccionario
     if save_after:
-        # Guardar de vuelta diccionario
         dump(d, fname_dict)

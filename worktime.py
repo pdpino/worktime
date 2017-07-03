@@ -464,6 +464,11 @@ def create_parser():
     parser_show_opts.add_argument('-n', '--names', action="store_true", help="Show only the names of the jobs")
     parser_show_opts.add_argument('-e', '--entries', action="store_true", help="Show the entries (may be a lot)")
 
+    ## FUTURE: use as callback
+    # def foo():
+    #     print("args function")
+    # parser_show.set_defaults(func=foo)
+    # args.func() # calling the callback, func must be defined in each subparser
 
 
     # Backup
@@ -631,10 +636,6 @@ if __name__ == "__main__":
         def match_regex(k, m):
             """Boolean matching k with m, using regex."""
             return not search(m, k) is None
-            # if search(m, k) is None:
-            #     return False
-            # else:
-            #     return True
 
         def is_running(k):
             """Boolean, job is running."""
@@ -674,8 +675,6 @@ if __name__ == "__main__":
         save_after = False
 
         print("Jobs backed up")
-
-
 
 
     # Guardar de vuelta diccionario

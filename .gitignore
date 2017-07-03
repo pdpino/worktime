@@ -1,5 +1,8 @@
 # pyc files
 *.pyc
 
-# Data files # in the meantime I use two pcs
+# Debug file
+debug*
+
+# Data files # in the meantime save dats files in repo, to pass to other pc
 #*.dat

@@ -11,13 +11,15 @@ from datetime import datetime
 from re import search
 # from timeit import default_timer as time
 from basic import *
+import json
 
 
 ##### Next TODOs:
+# TODO: pasar jobs a json
+# TODO: separar en capas, backend (class + basic)
 # TODO: pasar a callbacks (en vez de ifs)
 # TODO: dejar carpeta bin en worktime, agregar eso a PATH (se puede dejar un script que lo haga por uno, "work-init")
 	# y ahi dejar work git y worktime
-# TODO: pasar jobs a json
 # TODO: agregar catch ctrl c (ver SignalCatcher, muse project)
 
 ## Formato json
@@ -183,7 +185,11 @@ class Entry():
 class Job():
     """Job"""
 
-    def __init__(self, name, longname, info, tags):
+    def __init__(self):
+        self._is_created = False
+
+
+    def create(self, name, longname, info, tags):
         self.name = name
         self.longname = longname
         self.info = info
@@ -198,6 +204,9 @@ class Job():
         self._entry = None # current entry
         self.is_running = False
         self.is_paused = False # solo valido si is_running=True, indica si esta en pause
+
+
+        self._is_created = True
 
     """Basic operations methods (start/stop/pause)"""
     def start(self, t, obs=""):
@@ -244,7 +253,7 @@ class Job():
             if not input_y_n(question="You've been working more than half an hour. Are you sure you want to discard it"):
                 discard = False
 
-        # Añadir entrada
+        # Anadir entrada
         if not discard:
             self.entries.append(self._entry)
         self._entry = None # REVIEW: free()
@@ -305,6 +314,8 @@ class Job():
 
     def pprint(self, t=None, name_only=False, show_entries=False):
         """Pretty print for a job."""
+        # REVIEW: para que el parametro 't'?
+
 
         # Fix Nones
         lname = self.longname or "-"
@@ -363,9 +374,21 @@ class Job():
         self.name = n
 
 
-    """Expose methods"""
-    # def is_running(self):
-    #     return self.is_running
+
+    """JSON"""
+    def toJSON(self):
+        fname = "prueba.json"
+        f = open(fname, "w")
+        json.dump(self, f, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        f.close()
+
+def from_json():
+    fname = "prueba.json"
+    f = open(fname, "r")
+    a = json.load(f)
+    f.close()
+
+    return a
 
 root_path = sys.path[0] + "/"
 files_folder = "files/"
@@ -577,7 +600,8 @@ if __name__ == "__main__":
 
         # Crearlo
         if do_create:
-            j = Job(key, args.longname, args.info, args.tags)
+            j = Job()
+            j.create(key, args.longname, args.info, args.tags)
             d[key] = j
 
     elif args.option == "edit":

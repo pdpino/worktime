@@ -12,6 +12,7 @@ from re import search
 # from timeit import default_timer as time
 from basic import *
 import json
+import collections
 
 
 ##### Next TODOs:
@@ -21,11 +22,14 @@ import json
 # TODO: dejar carpeta bin en worktime, agregar eso a PATH (se puede dejar un script que lo haga por uno, "work-init")
 	# y ahi dejar work git y worktime
 # TODO: agregar catch ctrl c (ver SignalCatcher, muse project)
+# TODO: ordenar keys en json
 
 ## Formato json
+
     # TODO: opcion de archivar trabajos, depende de formato en json
     # TODO: opciones para importar, depende de formato en json
 
+# TODO: set a state in an entry 'used', delete unused variables and close it (cant run the methods) # Use finished attribute
 
 # IDEA: usar un archivo config, poder configurar carpeta donde se guardan jobs
 # IDEA: agregar aliases de bash (al hacer work start) "start", "stop", etc; llamada por consola es mas rapida
@@ -65,8 +69,12 @@ import json
 
 class Entry():
     """Entry of a job, i.e. instance"""
-    def __init__(self, t, obs=""):
-        """Constructor """
+    def __init__(self):
+        """Constructor."""
+        self._is_created = False
+
+    def start(self, t, obs=""):
+        """Create a new entry."""
         self.obs = ""
         self.add_obs(obs)
 
@@ -96,6 +104,7 @@ class Entry():
         # Booleans
         self.finished = False
         self.is_paused = False
+        self._is_created = True
 
     def stop(self, t):
         """ Stop working"""
@@ -142,6 +151,9 @@ class Entry():
 
     def pstr(self):
         """Pretty string"""
+        if not self._is_created:
+            return ""
+
         if self.obs != "":
             obs = "\n\t\t{}".format(self.obs)
         else:
@@ -182,14 +194,36 @@ class Entry():
                 self.obs += ". "
             self.obs += str(obs)
 
+
+    """JSON"""
+    def from_json(self, d):
+        """Load the entry from a dict (loaded from json)"""
+        # REVIEW: Check keys???
+
+        if not d is None:
+            self.__dict__ = d
+
+    """Update"""
+    def update(self):
+        """Update the objects, given a change in the structure."""
+
+        # Change n_pausas by n_pauses
+        self.n_pauses = self.n_pausas
+        del self.__dict__["n_pausas"] # HACK
+
+        self._is_created = True
+
+
 class Job():
     """Job"""
 
     def __init__(self):
         self._is_created = False
 
-
     def create(self, name, longname, info, tags):
+        """Create a Job from"""
+        # TODO: delete existing things, if any? Check if already done
+
         self.name = name
         self.longname = longname
         self.info = info
@@ -205,7 +239,7 @@ class Job():
         self.is_running = False
         self.is_paused = False # solo valido si is_running=True, indica si esta en pause
 
-
+        # Validates the rest of attributes
         self._is_created = True
 
     """Basic operations methods (start/stop/pause)"""
@@ -214,7 +248,8 @@ class Job():
             perror("Work '{}' is already running".format(self.name))
 
         # Crear entrada de lista
-        self._entry = Entry(t, obs)
+        self._entry = Entry()
+        self._entry.start(t, obs)
 
         self._action("started")
         self.is_running = True
@@ -290,7 +325,7 @@ class Job():
         print(w)
 
     def all_entries(self):
-        """Concatenated string of all entries."""
+        """Concatenate string of all entries."""
         e = ""
         for s in self.entries:
             e += "\t" + s.pstr() + "\n"
@@ -300,6 +335,9 @@ class Job():
         return e
 
     def get_status(self, t):
+        if not self._is_created:
+            return "job not created"
+
         if self.is_running:
             if self.is_paused:
                 status = "paused ({} in pause)".format(self._entry.ctime_paused(t))
@@ -316,6 +354,9 @@ class Job():
         """Pretty print for a job."""
         # REVIEW: para que el parametro 't'?
 
+        if not self._is_created:
+            print("The job is empty")
+            return
 
         # Fix Nones
         lname = self.longname or "-"
@@ -376,19 +417,50 @@ class Job():
 
 
     """JSON"""
-    def toJSON(self):
+    def to_json(self):
         fname = "prueba.json"
         f = open(fname, "w")
-        json.dump(self, f, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        json.dump(self, f, default=lambda o: o.__dict__, sort_keys=False, indent=4)
         f.close()
 
-def from_json():
-    fname = "prueba.json"
-    f = open(fname, "r")
-    a = json.load(f)
-    f.close()
+    def from_json(self, fname):
+        f = open(fname, "r")
+        a = json.load(f)
+        f.close()
 
-    return a
+        self.__dict__ = a
+
+        # Load current entry
+        if "_entry" in a:
+            _entry = Entry()
+            _entry.from_json(a["_entry"])
+            self._entry = _entry
+        else:
+            self._entry = None
+
+        # Load all entries
+        entries = []
+        for i in range(len(a["entries"])):
+            e = Entry()
+            e.from_json(a["entries"][i])
+            entries.append(e)
+
+        self.entries = entries
+
+
+
+    """Update"""
+    def update(self):
+        """Update the objects, given a change in the structure."""
+
+        # Added when passing to json files
+        self._is_created = True
+
+        # Update entries
+        for e in self.entries:
+            e.update()
+
+
 
 root_path = sys.path[0] + "/"
 files_folder = "files/"
@@ -497,6 +569,9 @@ def create_parser():
     # Backup
     parser_backup = subparser.add_parser('backup', help="Backup existing works")
 
+
+    # Update # load existing version of Job objects, update to newer
+    parser_update = subparser.add_parser('update', help="Update existing Job objects")
 
     return parser
 
@@ -700,7 +775,18 @@ if __name__ == "__main__":
 
         print("Jobs backed up")
 
+    elif args.option == "update":
+        for k in list(d):
+            d[k].update()
 
     # Guardar de vuelta diccionario
     if save_after:
         dump(d, fname_dict)
+
+        # key = "prueba"
+        # d[key].to_json()
+        # d[key].pprint(show_entries=True)
+        #
+        # a = Job()
+        # a.from_json("prueba.json")
+        # a.pprint(show_entries=True)

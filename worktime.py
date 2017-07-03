@@ -19,8 +19,12 @@ from basic import *
 	# y ahi dejar work git y worktime
 # TODO: pasar jobs a json
 # TODO: agregar catch ctrl c (ver SignalCatcher, muse project)
-# TODO: opcion de archivar trabajos, depende de formato en json
-# TODO: opciones para importar, depende de formato en json
+
+## Formato json
+    # TODO: opcion de archivar trabajos, depende de formato en json
+    # TODO: opciones para importar, depende de formato en json
+
+
 # IDEA: usar un archivo config, poder configurar carpeta donde se guardan jobs
 # IDEA: agregar aliases de bash (al hacer work start) "start", "stop", etc; llamada por consola es mas rapida
     # usar archivo bash_work aparte, agregar linea de "$ source .bash_work" en bash_aliases
@@ -58,6 +62,7 @@ from basic import *
 
 
 class Entry():
+    """Entry of a job, i.e. instance"""
     def __init__(self, t, obs=""):
         """Constructor """
         self.obs = ""
@@ -108,7 +113,10 @@ class Entry():
         self.finished = True
 
     def pause(self, t):
-        """ Toggle pause/unpause the entry"""
+        """Toggle pause/unpause the entry.
+
+        If pausing, return number of pauses made
+        else, return time paused"""
         if self.finished:
             perror("Can't pause a finished entry")
 
@@ -119,12 +127,16 @@ class Entry():
             self.pause_time += p_time # sumar pause time al total de la entry
 
             self.is_paused = False
+
+            return p_time
         else:
             # poner en pausa
             self._pi = seconds(t) # pausa init
             self.n_pausas += 1
 
             self.is_paused = True
+
+            return self.n_pausas
 
     def pstr(self):
         """Pretty string"""
@@ -204,9 +216,9 @@ class Job():
             perror("Work '{}' is not running".format(self.name))
 
         # Toggle pause
-        self._entry.pause(t)
+        r = self._entry.pause(t)
         if self.is_paused: # sacar de pausa
-            self._action("unpaused")
+            self._action("unpaused", additional="Paused time: {}".format(sec2hr(r)))
             self.is_paused = False
         else: # poner en pausa
             self._action("paused")
@@ -261,8 +273,12 @@ class Job():
                         sec2hr(etime),
                         sec2hr(ptime)))
 
-    def _action(self, action):
-        print("{} {}".format(self.name, action))
+    def _action(self, action, additional=None):
+        """Print to stdout an action."""
+        w = "{} {}".format(self.name, action)
+        if not additional is None:
+            w += " -- {}".format(additional)
+        print(w)
 
     def all_entries(self):
         """Concatenated string of all entries."""

@@ -414,7 +414,7 @@ def create_parser():
                         help="Info about this run of the job")
 
     # Pause
-    parser_pause = subparser.add_parser('pause',
+    parser_pause = subparser.add_parser('pause', aliases=['unpause'],
                         help="Pause or unpause a running work. Useful when stopping for a short time")
     parser_pause.add_argument('name', default=None, type=str,
                         help="Name of the work to pause/unpause")

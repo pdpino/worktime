@@ -1,15 +1,18 @@
 # TODOs and Wishlist
 
 ## TODOs
-### Version 2 implementation
-* Further testing of json and layers implementation
+### Version 2.1
 * Json files
-  + ordenar keys en json, para que sea mas human-readable
-  + borrar attributes unused in json, for instance in closed entries
+  + ordenar keys en json, para que sea mas human-readable y para que archivos solo cambien cuando el contenido de vdd cambie
+  + delete (don't save) attributes unused in json, for instance in closed entries
 
-### main
+### Main layer
 * Catch ctrl-c (ver `SignalCatcher` en muse project)
 * Pasar options (start, stop, etc) a callbacks (en vez de ifs)
+
+### Application layer
+* use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
+* use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
 
 ### Folder structure
 * change worktime.py name by main.py (update links)
@@ -50,7 +53,7 @@
 * busqueda avanzada
 
 #### start
-* agregar opcion wait-for-me en start (con ingresar pause o stop) # con no-wait
+* agregar opcion wait-for-me en start (con ingresar pause o stop). ademas de un no-wait
 
 #### stop
 * agregar cuando hice stop tarde, opcion para poner hora de vdd en que pare

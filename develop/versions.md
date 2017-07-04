@@ -7,10 +7,8 @@
 
 ## Version 2
 ### 2.0: JSON
-* Change pickle by json when storing jobs.
-
+* Change pickle by json when storing jobs.  
 Each job has a json file stored, which holds all the attributes of the object.
-
-* Add `update` tool, used to update saved jobs from earlier versions.
-
+* Add `update` tool, used to update saved jobs from earlier versions.  
 Developer note: edit the `udpate()` methods in `Job` and `Entry` classes to update older attributes from the objects.
+* Separate the code in layers: `main` (front-end) and `application` (back-end). Also create the `basic` module.

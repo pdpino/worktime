@@ -23,21 +23,22 @@
 
 
 ## Wishlist
-### general
-* opcion de archivar trabajos
-* opciones para importar
+
+### New options
+* Archive jobs
+* Import jobs
+* opcion para que te avise dps de cierto rato
+  + ejemplo: quiero trabajar 1 hora, termina en 1 hora
+  + no hay alarma en pc (en terminal), como hacerlo?
+
+
+### General
 * usar un archivo config, poder configurar carpeta donde se guardan jobs
 * agregar aliases de bash (al hacer work start) "start", "stop", etc; llamada por consola es mas rapida
   + usar archivo bash_work aparte, agregar linea de "$ source .bash_work" en bash_aliases
   + usar archivo json para guardar aliases, reescribir bash_work cada vez
 * connect readline to console, to use tab-completion
 * add taskbar icon
-* agregar opciones de configuracion predeterminada (archivo que guarde opciones)
-* opcion para hacer drop de una current run (por si se me olvido pararla)
-  + opcion de estimar cuanto trabaje en vdd, poder cambiarlo a mano
-* opcion para que te avise dps de cierto rato
-  + ejemplo: quiero trabajar 1 hora, termina en 1 hora
-  + no hay alarma en pc (en terminal), como hacerlo?
 
 ### csv
 * Opcion para exportar a csv # para hacer analisis # QUESTION: nuevo proyecto work-analyzer?
@@ -45,20 +46,21 @@
   + ademas, mantener los jobs en un csv, y asi poder editar su info basica de manera facil
   + ej: edito en csv, luego work actualize, listo
 
-### show
+
+### Improve current tools
+#### show
 * busqueda avanzada
 
-### start
+#### start
 * agregar opcion wait-for-me en start (con ingresar pause o stop) # con no-wait
 
-### stop
+#### stop
 * agregar cuando hice stop tarde, opcion para poner hora de vdd en que pare
 
-
-### create
+#### create
 * agregar opcion interactiva para create
 * agregar timestamp de creacion a jobs?
 
-### delete
+#### delete
 * Opcion 'delete' en tags, delete specific tags
 * Opcion para eliminar entries. de manera interactiva es mas facil? se puede usar input_option()

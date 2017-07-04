@@ -506,16 +506,12 @@ def create_parser():
                         help="Optional observations")
 
     # Stop
-    parser_stop = subparser.add_parser('stop',
-                        help="Stop a currently running work")
-    parser_stop.add_argument('name', default=None, type=str,
-                        help="Name of the work to stop")
-    parser_stop.add_argument('-d', '--discard', action="store_true",
-                        help="Discard this run")
-    parser_stop.add_argument('-q', '--quiet', action="store_true",
-                        help="Don't print the time when stopped")
-    parser_stop.add_argument('-i', '--info', default=None, type=str,
-                        help="Info about this run of the job")
+    parser_stop = subparser.add_parser('stop', help="Stop a currently running work")
+    parser_stop.add_argument('name', default=None, type=str, help="Name of the work to stop")
+    parser_stop.add_argument('-a', '--all', action="store_true", help="Stop all the running jobs")
+    parser_stop.add_argument('-d', '--discard', action="store_true", help="Discard this run")
+    parser_stop.add_argument('-q', '--quiet', action="store_true", help="Don't print the time when stopped")
+    parser_stop.add_argument('-i', '--info', default=None, type=str, help="Info about this run of the job")
 
     # Pause
     parser_pause = subparser.add_parser('pause', aliases=['unpause'],
@@ -584,26 +580,26 @@ def create_parser():
 
     return parser
 
-def validate_workname(k, d=None):
-    """Validates the name of the work
-
-    If d is provided, assert that exists in the dict d. If isn't present in the dict exits.
-    If d isn't provided, just normalize the name
-
-    If exists return k, else exit.
-    """
-
-    # validar input
-    if k is None:
-        return None
-
-    # Normalize key
-    k = k.lower()
-
-    if not d is None:
-        if not k in d:
-            perror("Can't find the work '{}', maybe you haven't created?".format(k))
-    return k
+# def validate_workname(k, d=None):
+#     """Validates the name of the work
+#
+#     If d is provided, assert that exists in the dict d. If isn't present in the dict exits.
+#     If d isn't provided, just normalize the name
+#
+#     If exists return k, else exit.
+#     """
+#
+#     # validar input
+#     if k is None:
+#         return None
+#
+#     # Normalize key
+#     k = k.lower()
+#
+#     if not d is None:
+#         if not k in d:
+#             perror("Can't find the work '{}', maybe you haven't created?".format(k))
+#     return k
 
 def load_job(name):
     """Given a name, load a job"""
@@ -651,18 +647,16 @@ if __name__ == "__main__":
         j.start(t, args.info)
 
     elif args.option == "stop":
-
-        # # HACK
-        # if args.name == "all":
-        #     for k in d:
-        #         d[k].stop(t, ign_error=True, obs=args.info)
-        #     # return
-
-        try:
-            j = load_job(args.name)
-            j.stop(t, discard=args.discard, print_time=(not args.quiet), obs=args.info)
-        except Exception as e:
-            perror("Can't stop the work '{}'".format(args.name), exception=e)
+        if args.all:
+            for name in get_job_names():
+                j = load_job(name)
+                j.stop(t, ign_error=True)
+        else:
+            try:
+                j = load_job(args.name)
+                j.stop(t, discard=args.discard, print_time=(not args.quiet), obs=args.info)
+            except Exception as e:
+                perror("Can't stop the work '{}'".format(args.name), exception=e)
 
     elif args.option == "pause":
         # Load job

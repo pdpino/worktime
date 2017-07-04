@@ -2,7 +2,6 @@
 
 import sys
 from datetime import datetime, timedelta
-import pickle
 
 ## Error handle
 def perror(text, exit_code=1, force_continue=False, exception=None, **kwargs):
@@ -27,20 +26,6 @@ def usage_error(text, prefix=False):
     msje = "usage: " if prefix else ""
     print("{}{}".format(msje, text), file=sys.stderr)
     sys.exit(1) # REVIEW: use error codes
-
-## Files
-def dump(obj, fname):
-    """Dump an object using pickle"""
-    f = open(fname, "wb")
-    pickle.dump(obj, f)
-    f.close()
-
-def load(fname):
-    """Load an object using pickle"""
-    f = open(fname, "rb")
-    d = pickle.load(f)
-    f.close()
-    return d
 
 ## Input
 def input_any(default, message):
@@ -102,7 +87,23 @@ def sec2hr(t):
         pattern = patt_d + patt_hr + patt_min + patt_sec
         return pattern.format(d, h, m, s)
 
-# OTRAS
+
+## Files
+# def dump_bin(obj, fname):
+#     """Dump an object using pickle"""
+#     f = open(fname, "wb")
+#     pickle.dump(obj, f)
+#     f.close()
+#
+# def load_bin(fname):
+#     """Load an object using pickle"""
+#     f = open(fname, "rb")
+#     d = pickle.load(f)
+#     f.close()
+#     return d
+
+
+## OTRAS
 # def input_fname(default, para="guardar/cargar ...", msje="Ingrese filename para"):
 #     """Prompt the user to input a filename """
 #

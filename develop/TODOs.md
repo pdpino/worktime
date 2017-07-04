@@ -17,8 +17,8 @@
 ## Wishlist
 * usar un archivo config, poder configurar carpeta donde se guardan jobs
 * agregar aliases de bash (al hacer work start) "start", "stop", etc; llamada por consola es mas rapida
-    # usar archivo bash_work aparte, agregar linea de "$ source .bash_work" en bash_aliases
-    # usar archivo json para guardar aliases, reescribir bash_work cada vez
+  + usar archivo bash_work aparte, agregar linea de "$ source .bash_work" en bash_aliases
+  + usar archivo json para guardar aliases, reescribir bash_work cada vez
 * connect readline to console, to use tab-completion
 * add taskbar icon
 

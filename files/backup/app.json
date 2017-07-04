@@ -1,0 +1,17 @@
+{
+    "_is_created": true,
+    "tags": [
+        "personal",
+        "android",
+        "app"
+    ],
+    "name": "app",
+    "is_paused": false,
+    "longname": "build an android app",
+    "is_running": false,
+    "info": "Build your first android app",
+    "_entry": {
+        "_is_created": false
+    },
+    "entries": []
+}

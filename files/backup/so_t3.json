@@ -1,0 +1,90 @@
+{
+    "_is_created": true,
+    "tags": [
+        "universidad",
+        "so",
+        "iic"
+    ],
+    "name": "so_t3",
+    "is_paused": false,
+    "longname": "Sistemas operativos, tarea 3",
+    "is_running": false,
+    "info": "fecha entrega 21/may",
+    "_entry": {
+        "_is_created": false
+    },
+    "entries": [
+        {
+            "_is_created": true,
+            "n_pauses": 1,
+            "_pi": 11653503.67049,
+            "day": "15",
+            "_tf": 11656876.646659,
+            "finished": true,
+            "_ti": 11653493.17851,
+            "month": "05",
+            "pause_time": 56.50376399978995,
+            "total_time": 3383.468148998916,
+            "hf": "22:01",
+            "effective_time": 3326.964384999126,
+            "is_paused": false,
+            "obs": "",
+            "hi": "21:04",
+            "year": "2017"
+        },
+        {
+            "_is_created": true,
+            "n_pauses": 4,
+            "_pi": 12159424.10517,
+            "day": "21",
+            "_tf": 12166173.14309,
+            "finished": true,
+            "_ti": 12148414.346117,
+            "month": "05",
+            "pause_time": 1101.3588030021638,
+            "total_time": 17758.796973001212,
+            "hf": "19:29",
+            "effective_time": 16657.438169999048,
+            "is_paused": false,
+            "obs": "",
+            "hi": "14:33",
+            "year": "2017"
+        },
+        {
+            "_is_created": true,
+            "n_pauses": 5,
+            "_pi": 12184198.328072,
+            "day": "21",
+            "_tf": 12185010.790362,
+            "finished": true,
+            "_ti": 12167516.124408,
+            "month": "05",
+            "pause_time": 2499.591912999749,
+            "total_time": 17494.665954001248,
+            "hf": "00:43",
+            "effective_time": 14995.074041001499,
+            "is_paused": false,
+            "obs": "",
+            "hi": "19:51",
+            "year": "2017"
+        },
+        {
+            "_is_created": true,
+            "n_pauses": 0,
+            "_pi": 0,
+            "day": "22",
+            "_tf": 12222804.320489,
+            "finished": true,
+            "_ti": 12218878.418173,
+            "month": "05",
+            "pause_time": 0,
+            "total_time": 3925.9023160003126,
+            "hf": "11:13",
+            "effective_time": 3925.9023160003126,
+            "is_paused": false,
+            "obs": "",
+            "hi": "10:07",
+            "year": "2017"
+        }
+    ]
+}

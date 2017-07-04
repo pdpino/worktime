@@ -640,28 +640,28 @@ if __name__ == "__main__":
     # Asegurarse de que existan carpetas
     assure_folder()
 
-    save_after = True
-
     if args.option == "start":
         j = load_job(args.name)
         j.start(t, args.info)
+        j.to_json()
 
     elif args.option == "stop":
         if args.all:
             for name in get_job_names():
                 j = load_job(name)
                 j.stop(t, ign_error=True)
+                j.to_json()
         else:
             try:
                 j = load_job(args.name)
                 j.stop(t, discard=args.discard, print_time=(not args.quiet), obs=args.info)
+                j.to_json()
             except Exception as e:
                 perror("Can't stop the work '{}'".format(args.name), exception=e)
 
     elif args.option == "pause":
         # Load job
         j = load_job(args.name)
-
 
         if args.wait:
             j.pause(t)
@@ -670,16 +670,14 @@ if __name__ == "__main__":
         else:
             j.pause(t)
 
-    elif args.option == "create":
-        do_create = True # bool si crearlo o no
-        if job_exists(args.name):
-            # Si es que ya existe work, preguntar al user
-            do_create = input_y_n(question="A previous work called '{}' exists. Do you want to override it".format(args.name))
+        j.to_json()
 
-        # Crearlo
-        if do_create:
+    elif args.option == "create":
+        if not job_exists(args.name)
+                or input_y_n(question="A previous work called '{}' exists. Do you want to override it".format(args.name)):
             j = Job()
             j.create(args.name, args.longname, args.info, args.tags)
+            j.to_json()
 
     elif args.option == "edit":
         # Load job
@@ -711,6 +709,8 @@ if __name__ == "__main__":
             elif args.tags_mode == "drop":
                 j.drop_tags()
 
+        j.to_json()
+
     elif args.option == "delete":
         if job_exists(args.name):
             if args.y or input_y_n(default="n", question="Are you sure you want to drop '{}'".format(args.name)):
@@ -720,8 +720,6 @@ if __name__ == "__main__":
                 os.remove("files/{}.json".format(args.name))
         else:
             perror("The work '{}' does not exists".format(args.name))
-
-        save_after = False
 
     elif args.option == "show":
         def match_regex(k, m):
@@ -758,8 +756,6 @@ if __name__ == "__main__":
         if shown == 0:
             print("No jobs to show")
 
-        save_after = False
-
     elif args.option == "backup":
         names = get_job_names()
 
@@ -767,9 +763,7 @@ if __name__ == "__main__":
             j = load_job(name)
             j.to_json(backup=True)
 
-
         print("Jobs backed up")
-        save_after = False
 
 
     elif args.option == "update":
@@ -786,11 +780,3 @@ if __name__ == "__main__":
         # for name in get_job_names():
         #     j = load_job(name)
         #     j.update()
-
-        save_after = False
-
-
-    # Guardar de vuelta diccionario
-    if save_after:
-        # dump(d, fname_dict)
-        j.to_json()

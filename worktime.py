@@ -152,37 +152,27 @@ if __name__ == "__main__":
 
         # Cambiar nombre
         if not args.new_name is None:
+            # j.change_name(args.new_name)
             basic.perror("Change name isnt implemented")
 
         # Cambiar long name
         if not args.longname is None:
             j.change_longname(args.longname)
 
-        # Cambiar info # REVIEW: metodo en Job que se encargue
+        # Cambiar info
         if not args.info is None:
-            if args.info_mode == "add":
-                j.add_info(args.info)
-            elif args.info_mode == "replace":
-                j.replace_info(args.info)
-            elif args.info_mode == "drop":
-                j.drop_info()
+            j.edit_info(args.info, args.info_mode)
 
         # Cambiar tags
         if not args.tags is None:
-            if args.tags_mode == "add":
-                j.add_tags(args.tags)
-            elif args.tags_mode == "replace":
-                j.replace_tags(args.tags)
-            elif args.tags_mode == "drop":
-                j.drop_tags()
+            j.edit_tags(args.tags, args.tags_mode)
 
         app.save_job(j)
 
     elif args.option == "delete":
         if app.job_exists(args.name):
-            if args.y or basic.input_y_n(default="n", question="Are you sure you want to drop '{}'".format(args.name)):
-                j = app.load_job(args.name)
-                j.delete()
+            if args.y or basic.input_y_n(question="Are you sure you want to drop '{}'".format(args.name),
+                                        default="n"):
                 app.delete_job(args.name)
         else:
             basic.perror("The work '{}' does not exists".format(args.name))

@@ -2,12 +2,10 @@
 
 ## TODOs
 ### Version 2 implementation
-* Further testing of json and layers implementation. Move `FileHandler` to engine module?
-* Check REVIEW tags in code.
-
-#### Json files
-* ordenar keys en json, para que sea mas human-readable
-* borrar attributes unused in json, for instance in closed entries
+* Further testing of json and layers implementation
+* Json files
+  + ordenar keys en json, para que sea mas human-readable
+  + borrar attributes unused in json, for instance in closed entries
 
 ### main
 * Catch ctrl-c (ver `SignalCatcher` en muse project)
@@ -18,7 +16,7 @@
 * dejar carpeta bin en worktime, agregar eso a PATH o usar link (se puede dejar un script que lo haga por uno, "work-init"). Considerar work-git y worktime
 
 ### Other
-
+* None
 
 
 

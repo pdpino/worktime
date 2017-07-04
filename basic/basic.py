@@ -42,8 +42,10 @@ def input_any(default, message):
     print("")
     return w
 
-def input_y_n(default="y", question="Desea ..."):
-    return input_any(default, "{}? (y|n)".format(question)).lower() == "y"
+def input_y_n(question="Do you want to...", default="y"):
+    """Input a yes or no answer."""
+    answer = input_any(default, "{}? (y|n)".format(question)).lower()
+    return answer == "y" or answer == "yes"
 
 ## Time
 def date(t):

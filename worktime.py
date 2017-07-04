@@ -12,57 +12,6 @@ import basic
 import application
 
 
-##### Next TODOs:
-# TODO: probar que json y capas funcionen
-    # pasar FileHandler a engine?
-
-# TODO: pasar a callbacks (en vez de ifs)
-# TODO: dejar carpeta bin en worktime, agregar eso a PATH (se puede dejar un script que lo haga por uno, "work-init")
-	# y ahi dejar work git y worktime
-# TODO: agregar catch ctrl c (ver SignalCatcher, muse project)
-# TODO: ordenar keys en json
-
-## Formato json
-    # TODO: opcion de archivar trabajos, depende de formato en json
-    # TODO: opciones para importar, depende de formato en json
-
-# TODO: set a state in an entry 'used', delete unused variables and close it (cant run the methods) # Use finished attribute
-
-# IDEA: usar un archivo config, poder configurar carpeta donde se guardan jobs
-# IDEA: agregar aliases de bash (al hacer work start) "start", "stop", etc; llamada por consola es mas rapida
-    # usar archivo bash_work aparte, agregar linea de "$ source .bash_work" en bash_aliases
-    # usar archivo json para guardar aliases, reescribir bash_work cada vez
-# IDEA: conectar readline a consola, poder usar tab para completar
-# IDEA: taskbar
-
-#### Nuevas opciones:
-# csv
-    # IDEA: Opcion para exportar a csv # para hacer analisis # QUESTION: nuevo proyecto work-analyzer?
-    # IDEA: Opcion para ingresar jobs con un csv
-        # ademas, mantener los jobs en un csv, y asi poder editar su info basica de manera facil
-        # ej: edito en csv, luego work actualize, listo
-# delete
-    # IDEA: Opcion 'delete' en tags, delete specific tags
-    # IDEA: Opcion para eliminar entradas (instancias)
-        # de manera interactiva es mas facil? se puede usar input_option()
-# show
-    # IDEA: busqueda avanzada
-# stop
-    # TODO: agregar cuando hice stop tarde, opcion para poner hora de vdd en que pare
-# start
-    # IDEA: agregar opcion wait-for-me en start (con ingresar pause o stop) # con no-wait
-# general
-    # IDEA: agregar opciones de configuracion predeterminada (archivo que guarde opciones)
-    # IDEA: opcion para hacer drop de una current run (por si se me olvido pararla)
-        # IDEA: opcion de estimar cuanto trabaje en vdd, poder cambiarlo a mano
-    # IDEA: opcion para que te avise dps de cierto rato
-        # ejemplo: quiero trabajar 1 hora, termina en 1 hora
-        # QUESTION: no hay alarma en pc (en terminal), como hacerlo?
-# create
-    # IDEA: agregar opcion interactiva para create
-    # IDEA: agregar timestamp de creacion a jobs?
-
-
 def create_parser():
     parser = argparse.ArgumentParser(description='Worktime', usage='%(prog)s [options]')
 

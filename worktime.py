@@ -606,10 +606,10 @@ def validate_workname(k, d=None):
     return k
 
 def load_job(name):
+    """Given a name, load a job"""
     a = Job()
     a.from_json(name)
     return a
-    #a.pprint(show_entries=True)
 
 def get_job_names():
     """Get all the existing job names."""
@@ -644,27 +644,9 @@ if __name__ == "__main__":
     # Asegurarse de que existan carpetas
     assure_folder()
 
-    # Nombre de archivo
-    # fname_dict = get_fname_dict()
-
-
-    # Abrir diccionario
-    # try:
-    #     # d = load(fname_dict)
-    #     pass
-    # except FileNotFoundError:
-    #     # d = dict()
-    #     pass
-    # except Exception as e:
-    #     perror("Can't load dict", exception=e)
-
     save_after = True
 
     if args.option == "start":
-        # tomar key del trabajo
-        # key = validate_workname(args.name, d)
-        # d[key].start(t, args.info)
-
         j = load_job(args.name)
         j.start(t, args.info)
 
@@ -676,33 +658,17 @@ if __name__ == "__main__":
         #         d[k].stop(t, ign_error=True, obs=args.info)
         #     # return
 
-        # else:
-            # tomar key del trabajo
-            # key = validate_workname(args.name, d)
-            # try:
-            #     d[key].stop(t, discard=args.discard, print_time=(not args.quiet), obs=args.info)
-            # except Exception as e:
-            #     perror("Can't stop the work '{}'".format(key), exception=e)
-
         try:
             j = load_job(args.name)
             j.stop(t, discard=args.discard, print_time=(not args.quiet), obs=args.info)
         except Exception as e:
             perror("Can't stop the work '{}'".format(args.name), exception=e)
 
-
     elif args.option == "pause":
-        # tomar key del trabajo
-        # key = validate_workname(args.name, d)
-        #
-        # if args.wait:
-        #     d[key].pause(t)
-        #     input("Press enter to unpause the job ")
-        #     d[key].pause(datetime.now())
-        # else:
-        #     d[key].pause(t)
-
+        # Load job
         j = load_job(args.name)
+
+
         if args.wait:
             j.pause(t)
             input("Press enter to unpause the job ")
@@ -710,25 +676,7 @@ if __name__ == "__main__":
         else:
             j.pause(t)
 
-
     elif args.option == "create":
-        # # tomar key del trabajo
-        # key = validate_workname(args.name)
-        #
-        # do_create = True # bool si crearlo o no
-        # if key in d:
-        #     # Si es que ya existe work, preguntar al user
-        #     if input_y_n(question="A previous work called '{}' exists. Do you want to override it".format(key)):
-        #         del d[key]
-        #     else:
-        #         do_create = False
-        #
-        # # Crearlo
-        # if do_create:
-        #     j = Job()
-        #     j.create(key, args.longname, args.info, args.tags)
-        #     d[key] = j
-
         do_create = True # bool si crearlo o no
         if job_exists(args.name):
             # Si es que ya existe work, preguntar al user
@@ -740,43 +688,7 @@ if __name__ == "__main__":
             j.create(args.name, args.longname, args.info, args.tags)
 
     elif args.option == "edit":
-        # # tomar key del trabajo
-        # key = validate_workname(args.name, d)
-        #
-        # job = d[key]
-        #
-        # # Cambiar nombre
-        # if not args.new_name is None:
-        #     # cambiar key:
-        #     d[args.new_name] = d.pop(key)
-        #     job = d[args.new_name]
-        #
-        #     # cambiar nombre interno:
-        #     job.change_name(args.new_name)
-        #
-        # # Cambiar long name
-        # if not args.longname is None:
-        #     job.change_longname(args.longname)
-        #
-        # # Cambiar info
-        # if not args.info is None:
-        #     if args.info_mode == "add":
-        #         job.add_info(args.info)
-        #     elif args.info_mode == "replace":
-        #         job.replace_info(args.info)
-        #     elif args.info_mode == "drop":
-        #         job.drop_info()
-        #
-        # # Cambiar tags
-        # if not args.tags is None:
-        #     if args.tags_mode == "add":
-        #         job.add_tags(args.tags)
-        #     elif args.tags_mode == "replace":
-        #         job.replace_tags(args.tags)
-        #     elif args.tags_mode == "drop":
-        #         job.drop_tags()
-
-
+        # Load job
         j = load_job(args.name)
 
         # Cambiar nombre
@@ -806,16 +718,6 @@ if __name__ == "__main__":
                 j.drop_tags()
 
     elif args.option == "delete":
-        # # tomar key del trabajo
-        # key = validate_workname(args.name)
-        #
-        # if key in d:
-        #     if args.y or input_y_n(default="n", question="Are you sure you want to drop '{}'".format(key)):
-        #         d[key].delete()
-        #         del d[key]
-        # else:
-        #     perror("The work '{}' does not exists".format(key))
-
         if job_exists(args.name):
             if args.y or input_y_n(default="n", question="Are you sure you want to drop '{}'".format(args.name)):
                 j = load_job(args.name)
@@ -828,45 +730,6 @@ if __name__ == "__main__":
         save_after = False
 
     elif args.option == "show":
-        # if len(d) == 0:
-        #     pass
-        #     # return
-        #
-        # def match_regex(k, m):
-        #     """Boolean matching k with m, using regex."""
-        #     return not search(m, k) is None
-        #
-        # def is_running(k):
-        #     """Boolean, job is running."""
-        #     return d[k].is_running
-        #
-        # def dont_match(dummy1=None, dummy2=None):
-        #     """Return true always, i.e don't match."""
-        #     return True
-        #
-        # name = validate_workname(args.name)
-        #
-        # if not args.name is None: # Hay nombre de input
-        #     match = match_regex
-        # else: # No hay nombre de input
-        #     match = dont_match
-        #
-        # if args.running:
-        #     filter_running = is_running
-        # else:
-        #     filter_running = dont_match
-        #
-        # shown = 0
-        # for k in d:
-        #     if match(k, name) and filter_running(k):
-        #         d[k].pprint(t, name_only=args.names, show_entries=args.entries)
-        #         shown += 1
-        #
-        # if shown == 0:
-        #     print("No jobs to show")
-        #
-        # save_after = False
-
         def match_regex(k, m):
             """Boolean matching k with m, using regex."""
             return not search(m, k) is None
@@ -904,14 +767,6 @@ if __name__ == "__main__":
         save_after = False
 
     elif args.option == "backup":
-        # # Nombre de archivo
-        # fname_backup = get_fname_backup()
-        # dump(d, fname_backup)
-        # save_after = False
-        #
-        # print("Jobs backed up")
-
-
         names = get_job_names()
 
         for name in names:

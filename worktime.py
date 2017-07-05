@@ -15,6 +15,7 @@ def create_parser():
 
     # Subparsers
     subparser = parser.add_subparsers(dest='option')
+    subparser.required = True
 
     # Start
     parser_start = subparser.add_parser('start', help="Start to work on something")
@@ -97,10 +98,6 @@ if __name__ == "__main__":
     # Parsear argumentos
     parser = create_parser()
     args = parser.parse_args()
-
-    if args.option == None:
-        # REVIEW: parser no puede hacer esto automaticamente? (required=True, o algo asi)
-        basic.usage_error("No option selected. See --help")
 
     if args.option == "start":
         app.start_job(args.name, args.info)

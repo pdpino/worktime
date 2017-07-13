@@ -40,6 +40,7 @@
   + usar archivo json para guardar aliases, reescribir bash_work cada vez
 * connect readline to console, to use tab-completion
 * add taskbar icon
+* add keyboard shortcuts, to the aliases, e.g. 'ctrl+alt+1' == work pause, 'ctrl+alt+2' work stop, etc.
 
 ### csv
 * Opcion para exportar a csv # para hacer analisis # QUESTION: nuevo proyecto work-analyzer?

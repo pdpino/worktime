@@ -98,7 +98,7 @@ def create_parser():
 
 if __name__ == "__main__":
     # Create application object
-    app = backend.Engine(sys.path[0])
+    app = backend.Application(sys.path[0])
 
     # Parsear argumentos
     parser = create_parser()

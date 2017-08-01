@@ -5,6 +5,8 @@
 * Change names:
   + module `application/` to `backend/`
   + `data.py` to `fs.py` (filesystem)
+  + delete `engine.py`: `application.py` has `Engine` class; `jobs.py` has `Job` and `Entry`
+  + Rename class `Engine` to `Application`
 
 ### 2.1: Order JSON
 * Give a specific order and delete unused attributes in json files.

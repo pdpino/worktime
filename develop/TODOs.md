@@ -5,12 +5,6 @@
 * Finish `tests.txt` file
 
 ### Version 2.2
-* Change names:
-  + `application.py` has `Engine` class
-  + `jobs.py` has `Job` and `Entry`
-
-* Make `Application` class
-* Change `Engine` rename to `ConsoleApplication`, which inherits from `Application`
 * Change `backup` option: copy files instead of load and save with json
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
 * use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
@@ -35,12 +29,11 @@
   + base function that receives start and end date.
 
 ### Other
+* Make a `Application` class, which holds the basic methods to access the application. Make `ConsoleApplication`, which inherits from `Application` and prints the corresponding things too stdout.
 * Change `FileHandler`: use the one in lexicon-expander
-* Check optimizations in `Engine` (`Application`), like loading all files at once, or listing differently, etc.
+* Check optimizations in `Application`, like loading all files at once, or listing differently, etc.
 * Change obs attribute in Entry: from string to list.
 * Review: instead of saving the entries as json, save them as csv (the format allows it). The basic info of the job may still be json, also the current entry?
-* Observation: `Engine` module prints to stdout in some options. If an interface is added (in the future), the layers should be separated (one does the action, the other shows it to the user)
-
 
 
 ## Wishlist

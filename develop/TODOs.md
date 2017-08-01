@@ -8,7 +8,7 @@
 * Change names:
   + `application.py` has `Engine` class
   + `jobs.py` has `Job` and `Entry`
-  + `data.py` to `fs.py` (filesystem)
+
 * Make `Application` class
 * Change `Engine` rename to `ConsoleApplication`, which inherits from `Application`
 * Change `backup` option: copy files instead of load and save with json
@@ -35,6 +35,7 @@
   + base function that receives start and end date.
 
 ### Other
+* Change `FileHandler`: use the one in lexicon-expander
 * Check optimizations in `Engine` (`Application`), like loading all files at once, or listing differently, etc.
 * Change obs attribute in Entry: from string to list.
 * Review: instead of saving the entries as json, save them as csv (the format allows it). The basic info of the job may still be json, also the current entry?

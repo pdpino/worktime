@@ -1,4 +1,4 @@
-"""Module that handles the interaction with the files"""
+"""Module that handles the interaction with the files."""
 import os
 import basic
 

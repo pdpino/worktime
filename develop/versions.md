@@ -4,7 +4,7 @@
 ### 2.2: ...
 * Change names:
   + module `application/` to `backend/`
-
+  + `data.py` to `fs.py` (filesystem)
 
 ### 2.1: Order JSON
 * Give a specific order and delete unused attributes in json files.

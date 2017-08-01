@@ -24,7 +24,8 @@
 * Start designing
 
 ### Other
-* Change in backup: don't load and save, directly copy the files
+* Change obs attribute in Entry: from string to list.
+* Review: instead of saving the entries as json, save them as csv (the format allows it). The basic info of the job may still be json, also the current entry?
 * Observation: `Engine` module prints to stdout in some options. If an interface is added (in the future), the layers should be separated (one does the action, the other shows it to the user)
 
 
@@ -40,6 +41,7 @@
 
 
 ### General
+* Opcion para sincronizar con google drive (asi despues poder usar celular)
 * usar un archivo config, poder configurar carpeta donde se guardan jobs
 * agregar aliases de bash (al hacer work start) "start", "stop", etc; llamada por consola es mas rapida
   + usar archivo bash_work aparte, agregar linea de "$ source .bash_work" en bash_aliases

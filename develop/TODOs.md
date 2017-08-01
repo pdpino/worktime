@@ -6,7 +6,6 @@
 
 ### Version 2.2
 * Change names:
-  + module `application/` to `backend/`
   + `application.py` has `Engine` class
   + `jobs.py` has `Job` and `Entry`
   + `data.py` to `fs.py` (filesystem)

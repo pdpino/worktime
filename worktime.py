@@ -10,7 +10,7 @@ __version__ = "2.1"
 import sys
 import argparse
 import basic
-import application
+import backend
 
 def create_parser():
     parser = argparse.ArgumentParser(prog=__program__, usage='%(prog)s [options]',
@@ -98,7 +98,7 @@ def create_parser():
 
 if __name__ == "__main__":
     # Create application object
-    app = application.Engine(sys.path[0])
+    app = backend.Engine(sys.path[0])
 
     # Parsear argumentos
     parser = create_parser()

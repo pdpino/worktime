@@ -1,25 +1,35 @@
 # TODOs and Wishlist
 
 ## TODOs
-### Version 2.1
+### Version 2.1 # Further testing, then deploying
 * Json files
   + ordenar keys en json, para que sea mas human-readable y para que archivos solo cambien cuando el contenido de vdd cambie
   + delete (don't save) attributes unused in json, for instance in closed entries
+
+### Version 2.1.1
+* change `n_pausas` by `n_pauses`
+* reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)
+
+
+### Version 2.1.2
+* use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
+* use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
+
 
 ### Main layer
 * Catch ctrl-c (ver `SignalCatcher` en muse project)
 * Pasar options (start, stop, etc) a callbacks (en vez de ifs)
 
-### Application layer
-* use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
-* use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
 
 ### Folder structure
 * change worktime.py name by main.py (update links)
 * dejar carpeta bin en worktime, agregar eso a PATH o usar link (se puede dejar un script que lo haga por uno, "work-init"). Considerar work-git y worktime
 
+### work-analyzer
+* Start designing script
+
 ### Other
-* None
+* Observation: `Engine` module prints to stdout in some options. If an interface is added (in the future), the layers should be separated (one does the action, the other shows it to the user)
 
 
 
@@ -40,10 +50,10 @@
   + usar archivo json para guardar aliases, reescribir bash_work cada vez
 * connect readline to console, to use tab-completion
 * add taskbar icon
-* add keyboard shortcuts, to the aliases, e.g. 'ctrl+alt+1' == work pause, 'ctrl+alt+2' work stop, etc.
+* add keyboard shortcuts, to the aliases, e.g. 'ctrl+alt+1' == work pause, 'ctrl+alt+2' == work stop, etc.
 
 ### csv
-* Opcion para exportar a csv # para hacer analisis # QUESTION: nuevo proyecto work-analyzer?
+* Opcion para exportar a csv (para hacer analisis).
 * Opcion para ingresar jobs con un csv
   + ademas, mantener los jobs en un csv, y asi poder editar su info basica de manera facil
   + ej: edito en csv, luego work actualize, listo
@@ -52,9 +62,6 @@
 ### Improve current tools
 #### show
 * busqueda avanzada
-
-#### start
-* agregar opcion wait-for-me en start (con ingresar pause o stop). ademas de un no-wait
 
 #### stop
 * agregar cuando hice stop tarde, opcion para poner hora de vdd en que pare

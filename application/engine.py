@@ -1,21 +1,62 @@
 """Module to manage jobs"""
 import json
 from datetime import datetime
+from collections import OrderedDict
 from re import search
 import basic
 import application.data as data
 
+def get_dict(obj):
+    """Return the dict to dump as json.
+
+    Each class that is dumped should have a method: get_keys(),
+    which return a list of the attributes to dump in order.
+    If the class doesn't have a method, all the attributes will be dumped in any order"""
+    # REVIEW: move this method to basic ???
+
+    try:
+        # Try get keys of the class
+        # keyorder = type(obj).get_keys()
+        keyorder = obj.get_keys()
+
+        # Obtain subset of keys
+        d = {k:obj.__dict__[k] for k in keyorder} # SAFE: if k in obj.__dict__}
+
+        # Return ordered dict
+        return OrderedDict(sorted(d.items(), key=lambda i:keyorder.index(i[0])))
+    except AttributeError:
+        basic.perror("Class {} does not have a get_keys() method".format(type(obj)), force_continue=True)
+        return obj.__dict__
+
 
 class Entry():
     """Entry of a job, i.e. instance"""
+
+    """Basic methods."""
     def __init__(self):
         """Constructor."""
         self._is_created = False
+
+    def _create(self):
+        """Set is_created bool, validates the attributes."""
+        self._is_created = True
+
+    def _close(self):
+        """Finish an entry."""
+        self.finished = True
+
+        # function to round 2 decimals
+        round_decs = lambda x: float("{0:.2f}".format(x))
+
+        self.total_time = round_decs(self.total_time)
+        self.effective_time = round_decs(self.effective_time)
+        self.pause_time = round_decs(self.pause_time)
 
     def from_json(self, d):
         """Load the entry from a dict (loaded from json)"""
         if not d is None:
             self.__dict__ = d
+            self._create()
 
     def update(self):
         """Update the objects, given a change in the structure."""
@@ -23,6 +64,25 @@ class Entry():
         ### ADD HERE YOUR UPDATES ###
         pass
 
+    def get_keys(self):
+        """Return the keys of the attributes to save to json."""
+        if self.finished:
+            return ["obs", "finished",
+                    "date",
+                    "hi", "hf",
+                    "n_pausas",
+                    "total_time", "effective_time", "pause_time"]
+        else:
+            return ["obs", "finished", "is_paused",
+                    "date",
+                    "hi",
+                    "n_pausas",
+                    "total_time", "effective_time", "pause_time",
+                    "_ti", "_pi"]
+
+
+
+    """Operations."""
     def start(self, t, obs=""):
         """Create a new entry."""
         self.obs = ""
@@ -30,17 +90,15 @@ class Entry():
 
         # Fecha de inicio
         fecha = basic.date(t)
-        self.year = fecha[0]
-        self.month = fecha[1]
-        self.day = fecha[2]
+        self.date = "{}/{}/{}".format(*fecha) #[0], fecha[1], fecha[2])
 
         # Tiempo inicio
         self.hi = basic.hour(t) # hora inicio: H:M
         self._ti = basic.seconds(t) # tiempo inicio: segundos
 
         # Tiempo fin
-        self.hf = 0
-        self._tf = 0
+        #self.hf = 0
+        #self._tf = 0
 
         # Tiempo pausa
         self._pi = 0 # inicio pausa
@@ -54,10 +112,12 @@ class Entry():
         # Booleans
         self.finished = False
         self.is_paused = False
-        self._is_created = True
+
+        # Validate
+        self._create()
 
     def stop(self, t):
-        """ Stop working"""
+        """Stop working."""
         if self.finished:
             basic.perror("Can't stop a finished entry")
 
@@ -66,12 +126,14 @@ class Entry():
             self.pause(t)
 
         self.hf = basic.hour(t) # hora termino
-        self._tf = basic.seconds(t) # segundos termino
+        tf = basic.seconds(t) # segundos termino
 
         # calcular tiempos
-        self.total_time = self._tf - self._ti
+        self.total_time = tf - self._ti
         self.effective_time = self.total_time - self.pause_time
-        self.finished = True
+
+        # Close the entry
+        self._close()
 
     def pause(self, t):
         """Toggle pause/unpause the entry.
@@ -99,6 +161,8 @@ class Entry():
 
             return self.n_pausas
 
+
+    """Get methods."""
     def pstr(self):
         """Pretty string"""
         if not self._is_created:
@@ -114,7 +178,7 @@ class Entry():
         else:
             horas = "{}-present".format(self.hi)
 
-        return "{}/{}/{} -- {} {}".format(self.year, self.month, self.day, horas, obs)
+        return "{} -- {} {}".format(self.date, horas, obs)
 
     def ctime_running(self, t):
         """ Current time running
@@ -138,7 +202,7 @@ class Entry():
         return basic.sec2hr(basic.seconds(t)-self._pi)
 
     def add_obs(self, obs):
-        """ Add observation for an entry"""
+        """Add observation for an entry."""
         if not obs is None:
             if len(self.obs) > 0:
                 self.obs += ". "
@@ -149,6 +213,10 @@ class Job():
 
     def __init__(self):
         self._is_created = False
+
+    def _create(self):
+        """Set is_created bool, validates the attributes."""
+        self._is_created = True
 
     def create(self, name, longname, info, tags):
         """Create a Job from"""
@@ -168,7 +236,14 @@ class Job():
         self.is_paused = False # solo valido si is_running=True, indica si esta en pause
 
         # Validates the rest of attributes
-        self._is_created = True
+        self._create()
+
+    def get_keys(self):
+        """Return the keys of the attributes to save to a json."""
+        return ["name", "longname", "info",
+                "tags",
+                "is_running", "is_paused",
+                "_entry", "entries"]
 
     def to_json(self, str_fname):
         """Dump the object to a json file."""
@@ -180,7 +255,7 @@ class Job():
 
         try:
             with open(fname, "w") as f:
-                json.dump(self, f, default=lambda o: o.__dict__, sort_keys=False, indent=4)
+                json.dump(self, f, default=get_dict, sort_keys=False, indent=4)
         except Exception as e:
             basic.perror("Can't dump '{}' to json".format(self.name), exception=e)
 
@@ -212,6 +287,8 @@ class Job():
             entries.append(e)
         self.entries = entries
 
+        self._create()
+
     def update(self):
         """Update the Job given a change in the structure."""
 
@@ -223,7 +300,7 @@ class Job():
 
 
 
-    """Basic operations methods"""
+    """Basic operations methods."""
     def start(self, t, obs=""):
         if self.is_running:
             basic.perror("Work '{}' is already running".format(self.name))
@@ -615,3 +692,4 @@ class Engine():
         for name in self._get_job_names():
             j = self._load_job(name)
             j.update()
+            self._save_job(j, backup=False)

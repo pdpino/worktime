@@ -90,21 +90,6 @@ def sec2hr(t):
         return pattern.format(d, h, m, s)
 
 
-## Files
-# def dump_bin(obj, fname):
-#     """Dump an object using pickle"""
-#     f = open(fname, "wb")
-#     pickle.dump(obj, f)
-#     f.close()
-#
-# def load_bin(fname):
-#     """Load an object using pickle"""
-#     f = open(fname, "rb")
-#     d = pickle.load(f)
-#     f.close()
-#     return d
-
-
 ## OTRAS
 # def input_fname(default, para="guardar/cargar ...", msje="Ingrese filename para"):
 #     """Prompt the user to input a filename """

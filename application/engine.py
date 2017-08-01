@@ -16,16 +16,17 @@ def get_dict(obj):
 
     try:
         # Try get keys of the class
-        # keyorder = type(obj).get_keys()
         keyorder = obj.get_keys()
 
-        # Obtain subset of keys
-        d = {k:obj.__dict__[k] for k in keyorder} # SAFE: if k in obj.__dict__}
+        if keyorder is None:
+            return None
 
-        # Return ordered dict
+        # Obtain subset of keys
+        d = {k:obj.__dict__[k] for k in keyorder if k in obj.__dict__}
+
         return OrderedDict(sorted(d.items(), key=lambda i:keyorder.index(i[0])))
-    except AttributeError:
-        basic.perror("Class {} does not have a get_keys() method".format(type(obj)), force_continue=True)
+    except AttributeError as e:
+        basic.perror("Can't get keys from {} object, {}".format(type(obj), obj.__dict__), exception=e, force_continue=True)
         return obj.__dict__
 
 
@@ -45,6 +46,8 @@ class Entry():
         """Finish an entry."""
         self.finished = True
 
+        # REVIEW: change name by _finish?
+
         # function to round 2 decimals
         round_decs = lambda x: float("{0:.2f}".format(x))
 
@@ -61,25 +64,26 @@ class Entry():
     def update(self):
         """Update the objects, given a change in the structure."""
 
-        ### ADD HERE YOUR UPDATES ###
-        pass
+        ### ADD HERE YOUR UPDATES TO ENTRIES ###
 
     def get_keys(self):
         """Return the keys of the attributes to save to json."""
+        if not self._is_created:
+            return None
+
         if self.finished:
             return ["obs", "finished",
                     "date",
                     "hi", "hf",
-                    "n_pausas",
+                    "n_pauses",
                     "total_time", "effective_time", "pause_time"]
         else:
             return ["obs", "finished", "is_paused",
                     "date",
                     "hi",
-                    "n_pausas",
+                    "n_pauses",
                     "total_time", "effective_time", "pause_time",
                     "_ti", "_pi"]
-
 
 
     """Operations."""
@@ -102,7 +106,7 @@ class Entry():
 
         # Tiempo pausa
         self._pi = 0 # inicio pausa
-        self.n_pausas = 0
+        self.n_pauses = 0
 
         # Contadores
         self.total_time = 0
@@ -155,11 +159,11 @@ class Entry():
         else:
             # poner en pausa
             self._pi = basic.seconds(t) # pausa init
-            self.n_pausas += 1
+            self.n_pauses += 1
 
             self.is_paused = True
 
-            return self.n_pausas
+            return self.n_pauses
 
 
     """Get methods."""
@@ -292,9 +296,10 @@ class Job():
     def update(self):
         """Update the Job given a change in the structure."""
 
-        ### ADD HERE YOUR UPDATES ###
+        ### ADD HERE YOUR UPDATES TO JOBS ###
 
         # Update entries
+        self._entry.update()
         for e in self.entries:
             e.update()
 

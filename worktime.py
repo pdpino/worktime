@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
-""" WorkTime
+"""Worktime
 
-Measure the time that you work on something, by calling start and stop functions
-"""
+Measure the time that you work on different subjects."""
+
+__author__ = "pdpino"
+__program__ = "Worktime"
+__version__ = "2.1"
 
 import sys
 import argparse
 import basic
 import application
 
-
 def create_parser():
-    parser = argparse.ArgumentParser(description='Worktime', usage='%(prog)s [options]')
+    parser = argparse.ArgumentParser(prog=__program__, usage='%(prog)s [options]',
+                    description="{}, author: {}, version: {}".format(__program__, __author__, __version__))
+
+    parser.add_argument('--version', action='version', version='%(prog)s {}'.format(__version__))
 
     # Subparsers
     subparser = parser.add_subparsers(dest='option')

@@ -1,19 +1,14 @@
 # TODOs and Wishlist
 
 ## TODOs
-### Version 2.1 # Further testing, then deploying
-* Json files
-  + ordenar keys en json, para que sea mas human-readable y para que archivos solo cambien cuando el contenido de vdd cambie
-  + delete (don't save) attributes unused in json, for instance in closed entries
 
-### Version 2.1.1
-* change `n_pausas` by `n_pauses`
-* reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)
+* Finish `tests.txt` file
 
-
-### Version 2.1.2
+### Version 2.2
+* change in backup, copy files instead of load and save with json
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
 * use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
+* reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)
 
 
 ### Main layer
@@ -25,10 +20,11 @@
 * change worktime.py name by main.py (update links)
 * dejar carpeta bin en worktime, agregar eso a PATH o usar link (se puede dejar un script que lo haga por uno, "work-init"). Considerar work-git y worktime
 
-### work-analyzer
-* Start designing script
+### Work-analyzer
+* Start designing
 
 ### Other
+* Change in backup: don't load and save, directly copy the files
 * Observation: `Engine` module prints to stdout in some options. If an interface is added (in the future), the layers should be separated (one does the action, the other shows it to the user)
 
 

@@ -5,11 +5,18 @@
 * Finish `tests.txt` file
 
 ### Version 2.2
-* change in backup, copy files instead of load and save with json
+* Change names:
+  + module `application/` to `backend/`
+  + `application.py` has `Engine` class
+  + `jobs.py` has `Job` and `Entry`
+  + `data.py` to `fs.py` (filesystem)
+* Make `Application` class
+* Change `Engine` rename to `ConsoleApplication`, which inherits from `Application`
+* Change `backup` option: copy files instead of load and save with json
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
 * use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
 * reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)
-
+* Evaluate move `to_json()` method from `Job` to `Application`.
 
 ### Main layer
 * Catch ctrl-c (ver `SignalCatcher` en muse project)
@@ -22,8 +29,14 @@
 
 ### Work-analyzer
 * Start designing
+* Ideas: Option to show
+  + amount of work in a day
+  + in a week
+  + filtering by job
+  + base function that receives start and end date.
 
 ### Other
+* Check optimizations in `Engine` (`Application`), like loading all files at once, or listing differently, etc.
 * Change obs attribute in Entry: from string to list.
 * Review: instead of saving the entries as json, save them as csv (the format allows it). The basic info of the job may still be json, also the current entry?
 * Observation: `Engine` module prints to stdout in some options. If an interface is added (in the future), the layers should be separated (one does the action, the other shows it to the user)
@@ -41,6 +54,7 @@
 
 
 ### General
+* Add categories. Could separate the json files in `files/`. Categories would be exclusive (one job has only one category), while tags could be inclusive (one job may have multiple tags with no restriction).
 * Opcion para sincronizar con google drive (asi despues poder usar celular)
 * usar un archivo config, poder configurar carpeta donde se guardan jobs
 * agregar aliases de bash (al hacer work start) "start", "stop", etc; llamada por consola es mas rapida
@@ -59,6 +73,7 @@
 
 ### Improve current tools
 #### show
+* option to show only the run status and its name. Review: change argparse by exclusive options (full, status, info, etc)
 * busqueda avanzada
 
 #### stop

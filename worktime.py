@@ -5,7 +5,7 @@ Measure the time that you work on different subjects."""
 
 __author__ = "pdpino"
 __program__ = "Worktime"
-__version__ = "2.1"
+__version__ = "2.2dev"
 
 import sys
 import argparse

@@ -7,6 +7,7 @@
   + `data.py` to `fs.py` (filesystem)
   + delete `engine.py`: `application.py` has `Engine` class; `jobs.py` has `Job` and `Entry`
   + Rename class `Engine` to `Application`
+* Change `backup` option: copy files instead of load and save with json
 
 ### 2.1: Order JSON
 * Give a specific order and delete unused attributes in json files.

@@ -1,6 +1,7 @@
 """Module that provides classes to handle the application."""
 from datetime import datetime
 from re import search
+import shutil
 import basic
 from backend import filesys as fs, jobs
 
@@ -34,9 +35,12 @@ class Application():
 
         return j
 
-    def _save_job(self, j, backup=False):
+    def _save_job(self, j):
         """Given a job, dump it to a json file."""
-        str_fname = self.fh.get_fname(backup=backup)
+        # Assure folder
+        self.fh.assure_folder()
+
+        str_fname = self.fh.get_fname(backup=False)
         j.to_json(str_fname)
 
     def _get_job_names(self):
@@ -183,8 +187,10 @@ class Application():
     def backup_jobs(self):
         """Backup existing jobs."""
         for name in self._get_job_names():
-            j = self._load_job(name)
-            self._save_job(j, backup=True)
+            fname_original = self.fh.get_fname(name, backup=False)
+            fname_backup = self.fh.get_fname(name, backup=True)
+            shutil.copyfile(fname_original, fname_backup) # HACK: move this to file handler
+
         print("Jobs backed up")
 
     def update(self):
@@ -192,4 +198,4 @@ class Application():
         for name in self._get_job_names():
             j = self._load_job(name)
             j.update()
-            self._save_job(j, backup=False)
+            self._save_job(j)

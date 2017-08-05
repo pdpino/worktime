@@ -5,11 +5,21 @@
 * Finish `tests.txt` file
 
 ### Version 2.2
-* Change `backup` option: copy files instead of load and save with json
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
 * use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
 * reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)
-* Evaluate move `to_json()` method from `Job` to `Application`.
+
+
+### Version 2.3: Structure changes
+* Upgrade `FileHandler`. Delete HACK in `Application`, copy files mustnt be done by app. 
+* `Application` handles saving jobs, not `Job`
+* Create module `fileformats`:
+  + provides a class `JSONFormat`, that saves json files given an object and a filename
+* Module `filesys` has `fileformats.py` and `filenames.py`, each handling separately. `Application` calls both separately
+
+### Version X: More structure changes
+* Create `Results` class, which holds the result of an action made. Create multiple classes that inherit from that one; example `ResultStart`, `ResultShow`, etc.
+* Create `ConsoleApplication`, which inherits from `Application`.
 
 ### Main layer
 * Catch ctrl-c (ver `SignalCatcher` en muse project)
@@ -39,6 +49,7 @@
 ## Wishlist
 
 ### New options
+* Option 'select', to mark a job as the used one and just do `work start`
 * Archive jobs
 * Import jobs
 * opcion para que te avise dps de cierto rato
@@ -47,6 +58,9 @@
 
 
 ### General
+* Review architecture: just one job can be running at the time?
+* Add subjobs, for example tts has lexicon-expander and lexicon-comparator (and more); in one course a subjob could be one particular homework; etc. Useful to timing an specific task inside a job.
+* Separate pauses in short, medium, long.
 * Add categories. Could separate the json files in `files/`. Categories would be exclusive (one job has only one category), while tags could be inclusive (one job may have multiple tags with no restriction).
 * Opcion para sincronizar con google drive (asi despues poder usar celular)
 * usar un archivo config, poder configurar carpeta donde se guardan jobs

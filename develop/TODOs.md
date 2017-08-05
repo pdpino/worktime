@@ -4,14 +4,17 @@
 
 * Finish `tests.txt` file
 
-### Version 2.2
+### Version 2.3:
+
+
+### Version 3: Status enums (not backwards compatible)
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
 * use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
 * reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)
 
 
-### Version 2.3: Structure changes
-* Upgrade `FileHandler`. Delete HACK in `Application`, copy files mustnt be done by app. 
+### Version X: Structure changes
+* Upgrade `FileHandler`. Delete HACK in `Application`, copy files mustnt be done by app.
 * `Application` handles saving jobs, not `Job`
 * Create module `fileformats`:
   + provides a class `JSONFormat`, that saves json files given an object and a filename

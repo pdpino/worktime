@@ -1,7 +1,7 @@
 # Version history of Worktime
 
 ## Version 2
-### 2.2: ...
+### 2.2: Minor fixes
 * Change names:
   + module `application/` to `backend/`
   + `data.py` to `fs.py` (filesystem)

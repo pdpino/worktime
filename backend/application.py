@@ -70,21 +70,6 @@ class Application():
         j.start(self.t, info)
         self._save_job(j)
 
-    def pause_job(self, name, wait=False):
-        """Option to pause a job."""
-        self._assert_time("pause a job")
-
-        j = self._load_job(name)
-        j.pause(self.t)
-
-        if wait: # Wait for input
-            input("Press enter to unpause the job ")
-            self._time_mark() # Take another mark
-            j.pause(self.t)
-
-        # Save to json
-        self._save_job(j)
-
     def _stop_job(self, name, **kwargs):
         """Stop a given job."""
         # REVIEW: receive job it self, not names?
@@ -101,6 +86,21 @@ class Application():
                 self._stop_job(n, ign_error=True)
         else:
             self._stop_job(name, discard=discard, print_time=(not quiet), obs=info)
+
+    def pause_job(self, name, wait=False):
+        """Option to pause a job."""
+        self._assert_time("pause a job")
+
+        j = self._load_job(name)
+        j.pause(self.t)
+
+        if wait: # Wait for input
+            input("Press enter to unpause the job ")
+            self._time_mark() # Take another mark
+            j.pause(self.t)
+
+        # Save to json
+        self._save_job(j)
 
     def create_job(self, name, lname, info, tags):
         """Option to create a job."""

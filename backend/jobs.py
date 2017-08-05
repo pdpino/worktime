@@ -315,19 +315,6 @@ class Job():
         self.is_running = True
         self.is_paused = False
 
-    def pause(self, t):
-        if not self.is_running:
-            basic.perror("Work '{}' is not running".format(self.name))
-
-        # Toggle pause
-        r = self._entry.pause(t)
-        if self.is_paused: # sacar de pausa
-            self._print_action("unpaused", additional="paused time: {}".format(basic.sec2hr(r)))
-            self.is_paused = False
-        else: # poner en pausa
-            self._print_action("paused")
-            self.is_paused = True
-
     def stop(self, t, discard=False, print_time=True, ign_error=False, obs=None):
         """ Stop a running job"""
         if not self.is_running:
@@ -365,6 +352,19 @@ class Job():
 
         if print_time and not discard:
             self._print_times(ttime, etime, ptime)
+
+    def pause(self, t):
+        if not self.is_running:
+            basic.perror("Work '{}' is not running".format(self.name))
+
+        # Toggle pause
+        r = self._entry.pause(t)
+        if self.is_paused: # sacar de pausa
+            self._print_action("unpaused", additional="paused time: {}".format(basic.sec2hr(r)))
+            self.is_paused = False
+        else: # poner en pausa
+            self._print_action("paused")
+            self.is_paused = True
 
     def delete(self):
         """Delete the job."""

@@ -2,7 +2,7 @@
 
 ## Version 2
 ### 2.3: Backend structures changes
-
+* Now `FileHandler` copy the files
 
 ### 2.2: Minor fixes
 * Change names:

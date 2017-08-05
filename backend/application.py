@@ -1,7 +1,6 @@
 """Module that provides classes to handle the application."""
 from datetime import datetime
 from re import search
-import shutil
 import basic
 from backend import filesys as fs, jobs
 
@@ -189,7 +188,7 @@ class Application():
         for name in self._get_job_names():
             fname_original = self.fh.get_fname(name, backup=False)
             fname_backup = self.fh.get_fname(name, backup=True)
-            shutil.copyfile(fname_original, fname_backup) # HACK: move this to file handler
+            self.fh.copy_file(fname_original, fname_backup)
 
         print("Jobs backed up")
 

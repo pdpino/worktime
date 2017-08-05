@@ -1,5 +1,6 @@
 """Module that handles the interaction with the files."""
 import os
+import shutil
 import basic
 
 class FileHandler:
@@ -61,3 +62,7 @@ class FileHandler:
         """Remove a file"""
         fname = self.get_fname(name, backup=False)
         os.remove(fname)
+
+    def copy_file(self, name1, name2):
+        """Copy a file from name1 to name2."""
+        shutil.copyfile(name1, name2)

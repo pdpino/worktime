@@ -307,6 +307,72 @@
             "total_time": 9255.64,
             "effective_time": 9188.24,
             "pause_time": 67.4
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/02",
+            "hi": "16:45",
+            "hf": "19:58",
+            "n_pauses": 7,
+            "total_time": 11606.37,
+            "effective_time": 9410.64,
+            "pause_time": 2195.73
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/02",
+            "hi": "23:11",
+            "hf": "23:54",
+            "n_pauses": 0,
+            "total_time": 2581.97,
+            "effective_time": 2581.97,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/03",
+            "hi": "18:42",
+            "hf": "20:38",
+            "n_pauses": 6,
+            "total_time": 6996.11,
+            "effective_time": 5956.31,
+            "pause_time": 1039.79
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/04",
+            "hi": "14:52",
+            "hf": "15:47",
+            "n_pauses": 1,
+            "total_time": 3266.57,
+            "effective_time": 3079.24,
+            "pause_time": 187.33
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/04",
+            "hi": "16:35",
+            "hf": "20:07",
+            "n_pauses": 12,
+            "total_time": 12700.11,
+            "effective_time": 10557.68,
+            "pause_time": 2142.43
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/04",
+            "hi": "20:49",
+            "hf": "00:27",
+            "n_pauses": 6,
+            "total_time": 13120.68,
+            "effective_time": 10080.55,
+            "pause_time": 3040.14
         }
     ]
 }

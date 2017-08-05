@@ -1,6 +1,9 @@
 # Version history of Worktime
 
 ## Version 2
+### 2.3: Backend structures changes
+
+
 ### 2.2: Minor fixes
 * Change names:
   + module `application/` to `backend/`

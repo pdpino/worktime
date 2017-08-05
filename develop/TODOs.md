@@ -4,8 +4,16 @@
 
 * Finish `tests.txt` file
 
-### Version 2.3:
+### Version 2.3: Backend structures changes
+* Upgrade `FileHandler`. Delete HACK in `Application`, copy files mustnt be done by app.
+* `Application` handles saving jobs, not `Job`
+* Create module `fileformats`:
+  + provides a class `JSONFormat`, that saves json files given an object and a filename
+* Module `filesys` has `fileformats.py` and `filenames.py`, each handling separately. `Application` calls both separately
 
+### Version 2.4: Application structure changes
+* Create `Results` class, which holds the result of an action made. Create multiple classes that inherit from that one; example `ResultStart`, `ResultShow`, etc.
+* Create `ConsoleApplication`, which inherits from `Application`.
 
 ### Version 3: Status enums (not backwards compatible)
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
@@ -13,16 +21,6 @@
 * reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)
 
 
-### Version X: Structure changes
-* Upgrade `FileHandler`. Delete HACK in `Application`, copy files mustnt be done by app.
-* `Application` handles saving jobs, not `Job`
-* Create module `fileformats`:
-  + provides a class `JSONFormat`, that saves json files given an object and a filename
-* Module `filesys` has `fileformats.py` and `filenames.py`, each handling separately. `Application` calls both separately
-
-### Version X: More structure changes
-* Create `Results` class, which holds the result of an action made. Create multiple classes that inherit from that one; example `ResultStart`, `ResultShow`, etc.
-* Create `ConsoleApplication`, which inherits from `Application`.
 
 ### Main layer
 * Catch ctrl-c (ver `SignalCatcher` en muse project)
@@ -30,8 +28,8 @@
 
 
 ### Folder structure
-* change worktime.py name by main.py (update links)
-* dejar carpeta bin en worktime, agregar eso a PATH o usar link (se puede dejar un script que lo haga por uno, "work-init"). Considerar work-git y worktime
+* change `worktime.py` name by `main.py` (update links)
+* dejar carpeta bin en worktime, agregar eso a PATH o usar link (se puede dejar un script que lo haga por uno, `work-init`). Considerar `work-git` y `worktime`
 
 ### Work-analyzer
 * Start designing

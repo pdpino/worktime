@@ -4,7 +4,7 @@
 
 * Finish `tests.txt` file
 
-### Version 2.3: Backend structures changes
+### Version 2.3: Backend structure changes
 * `Application` handles saving jobs, not `Job`
 * Create module `fileformats`:
   + provides a class `JSONFormat`, that saves json files given an object and a filename
@@ -14,9 +14,6 @@
 * Create `Results` class, which holds the result of an action made. Create multiple classes that inherit from that one; example `ResultStart`, `ResultShow`, etc.
 * Create `ConsoleApplication`, which inherits from `Application`.
 
-### Version 2.5: Changes in basic module
-* separate in different files
-* Delete `usage_error()`
 
 ### Version 3: Status enums (not backwards compatible)
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`

@@ -5,6 +5,7 @@
 * Now `FileHandler` copy the files
 * Separate `basic` in different files
 * Delete `basic.usage_error()`
+* If no option is selected (run just `work`), by default show running jobs (like `work show -r`).
 
 ### 2.2: Minor fixes
 * Change names:

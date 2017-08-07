@@ -395,6 +395,17 @@
             "total_time": 4003.31,
             "effective_time": 4003.31,
             "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/06",
+            "hi": "14:18",
+            "hf": "19:26",
+            "n_pauses": 5,
+            "total_time": 18471.22,
+            "effective_time": 12854.46,
+            "pause_time": 5616.76
         }
     ]
 }

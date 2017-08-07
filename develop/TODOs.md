@@ -5,7 +5,6 @@
 * Finish `tests.txt` file
 
 ### Version 2.3: Backend structure changes
-* `Application` handles saving jobs, not `Job`
 * Create module `fileformats`:
   + provides a class `JSONFormat`, that saves json files given an object and a filename
 * Module `filesys` has `fileformats.py` and `filenames.py`, each handling things separately. `Application` calls both separately
@@ -28,7 +27,8 @@
 
 
 ### Folder structure
-* change `worktime.py` name by `main.py` (update links)
+* Move `application.py` and `jobs.py` to an `application` folder?
+* change `worktime.py` name by `main.py`? (update links)
 * dejar carpeta bin en worktime, agregar eso a PATH o usar link (se puede dejar un script que lo haga por uno, `work-init`). Considerar `work-git` y `worktime`
 
 ### Work-analyzer
@@ -40,9 +40,8 @@
   + base function that receives start and end date.
 
 ### Other
-* Make a `Application` class, which holds the basic methods to access the application. Make `ConsoleApplication`, which inherits from `Application` and prints the corresponding things too stdout.
-* Change `FileHandler`: use the one in lexicon-expander
-* Check optimizations in `Application`, like loading all files at once, or listing differently, etc.
+* Change `basic.perror` by raise? Cases with `force_continue=True` use logging module?
+* Make `ConsoleApplication`, which inherits from `Application` and prints the corresponding things to stdout.
 * Change obs attribute in Entry: from string to list.
 * Review: instead of saving the entries as json, save them as csv (the format allows it). The basic info of the job may still be json, also the current entry?
 

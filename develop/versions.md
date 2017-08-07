@@ -2,10 +2,12 @@
 
 ## Version 2
 ### 2.3: Backend structure changes
-* Now `FileHandler` copy the files
-* Separate `basic` in different files
-* Delete `basic.usage_error()`
 * If no option is selected (run just `work`), by default show running jobs (like `work show -r`).
+* Backend changes:
+  + Now `FileHandler` copy the files
+  + Separate `basic` in different files
+  + Delete `basic.usage_error()` (it wasn't used)
+  + `Application` handles saving jobs, not `Job`
 
 ### 2.2: Minor fixes
 * Change names:
@@ -13,7 +15,7 @@
   + `data.py` to `fs.py` (filesystem)
   + delete `engine.py`: `application.py` has `Engine` class; `jobs.py` has `Job` and `Entry`
   + Rename class `Engine` to `Application`
-* Change `backup` option: copy files instead of load and save with json
+* Change `backup` option: copy files instead of load and save with json (this ensures a good backup, in case `save_job` and `load_job` have errors)
 
 ### 2.1: Order JSON
 * Give a specific order and delete unused attributes in json files.

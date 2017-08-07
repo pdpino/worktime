@@ -1,31 +1,5 @@
 """Module that provides classes to handle the jobs"""
-import json
-from collections import OrderedDict
 import basic
-
-def get_dict(obj):
-    """Return the dict to dump as json.
-
-    Each class that is dumped should have a method: get_keys(),
-    which return a list of the attributes to dump in order.
-    If the class doesn't have a method, all the attributes will be dumped in any order"""
-    # REVIEW: move this method to basic ???
-
-    try:
-        # Try get keys of the class
-        keyorder = obj.get_keys()
-
-        if keyorder is None:
-            return None
-
-        # Obtain subset of keys
-        d = {k:obj.__dict__[k] for k in keyorder if k in obj.__dict__}
-
-        return OrderedDict(sorted(d.items(), key=lambda i:keyorder.index(i[0])))
-    except AttributeError as e:
-        basic.perror("Can't get keys from {} object, {}".format(type(obj), obj.__dict__), exception=e, force_continue=True)
-        return obj.__dict__
-
 
 class Entry():
     """Entry of a job, i.e. instance"""
@@ -246,32 +220,24 @@ class Job():
                 "is_running", "is_paused",
                 "_entry", "entries"]
 
-    def to_json(self, str_fname):
-        """Dump the object to a json file."""
-        if not self._is_created:
-            basic.perror("Job can't be saved to json, isn't created")
+    def get_name(self):
+        """Return the name."""
+        # REVIEW: use properties?
+        return self.name
 
-        # Format filename
-        fname = str_fname.format(self.name)
+    def can_dump(self):
+        """Boolean indicating if the job can be dump to a file."""
+        return self._is_created
 
-        try:
-            with open(fname, "w") as f:
-                json.dump(self, f, default=get_dict, sort_keys=False, indent=4)
-        except Exception as e:
-            basic.perror("Can't dump '{}' to json".format(self.name), exception=e)
-
-    def from_json(self, fname):
-        """Create the job from a json file."""
+    def from_json(self, d):
+        """Create the job from a dict (readed from json)."""
         if self._is_created:
             basic.perror("Job can't be loaded from json, is already created")
-
-        # Load the json dict
-        with open(fname, "r") as f:
-            d = json.load(f)
 
         # Save the dict in the object
         self.__dict__ = d
 
+        # HACK: "_entry" and "entries" hardcoded
         # Load current entry
         if "_entry" in d:
             _entry = Entry()

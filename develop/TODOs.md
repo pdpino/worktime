@@ -2,17 +2,17 @@
 
 ## TODOs
 
+* Deprecate `work-git`, because of branches
 * Finish `tests.txt` file
 
-### Version 2.3: Backend structure changes
-* Create module `fileformats`:
-  + provides a class `JSONFormat`, that saves json files given an object and a filename
-* Module `filesys` has `fileformats.py` and `filenames.py`, each handling things separately. `Application` calls both separately
-* Remove hacks in application regarding files
-
 ### Version 2.4: Application structure changes
-* Create `Results` class, which holds the result of an action made. Create multiple classes that inherit from that one; example `ResultStart`, `ResultShow`, etc.
+* Create `Results` class, which holds the result of an action made
+  + Create multiple classes that inherit from that one; example `ResultStart`, `ResultShow`, etc.
+  + Each action in application returns a result, then the caller chooses what to do with it (e.g. print to stdout)
 * Create `ConsoleApplication`, which inherits from `Application`.
+
+### Version 2.5:
+* Create `filesys.AdminFileHandler` and `application.AdminData` to be able to load and save important data.
 
 
 ### Version 3: Status enums (not backwards compatible)
@@ -22,15 +22,19 @@
 
 
 
-### Main layer
+### Script layer
 * Catch ctrl-c (ver `SignalCatcher` en muse project)
 * Pasar options (start, stop, etc) a callbacks (en vez de ifs)
 
+### Filesys module
+* move `get_dict()` to be a static method?
+* move `JsonFileHandler` to basic?
+* Review whole architecture of this module, is the extension hardcoded somewhere? could there be another more basic class `FileHandler`? that receives the extension (if so, a `CsvFileHandler` could be easily created, which could be useful at some point)
 
 ### Folder structure
 * Move `application.py` and `jobs.py` to an `application` folder?
 * change `worktime.py` name by `main.py`? (update links)
-* dejar carpeta bin en worktime, agregar eso a PATH o usar link (se puede dejar un script que lo haga por uno, `work-init`). Considerar `work-git` y `worktime`
+* dejar carpeta `bin/` en worktime, agregar eso a PATH o usar link (se puede dejar un script que lo haga por uno, `work-init`). Considerar `work-git` y `worktime`
 
 ### Work-analyzer
 * Start designing
@@ -42,7 +46,6 @@
 
 ### Other
 * Change `basic.perror` by raise? Cases with `force_continue=True` use logging module?
-* Make `ConsoleApplication`, which inherits from `Application` and prints the corresponding things to stdout.
 * Change obs attribute in Entry: from string to list.
 * Review: instead of saving the entries as json, save them as csv (the format allows it). The basic info of the job may still be json, also the current entry?
 

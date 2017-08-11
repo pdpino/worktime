@@ -2,13 +2,15 @@
 
 ## Version 2
 ### 2.3: Backend structure changes
-Release date: X, 2017
-* If no option is selected (run just `work`), by default show running jobs (like `work show -r`).
+Release date: Aug 10, 2017
+* If no option is selected (run just `work`), by default show running jobs (is like calling `work show -r`).
 * Backend changes:
   + Now `FileHandler` copy the files
   + Separate `basic` in different files
   + Delete `basic.usage_error()` (it wasn't used)
   + `Application` handles saving jobs, not `Job`
+  + Rename `FileHandler` to `JsonFileHandler`, and created class `JobFileHandler` who inherits from the first one.
+  + `Application` delegates to `filesys.JobFileHandler` when saving jobs
 
 ### 2.2: Minor fixes
 Release date: Aug 5, 2017

@@ -45,7 +45,7 @@ class JsonFileHandler:
         self._str_files = self.files_folder + "{}.json"
         self._str_backup = self.files_folder + self._backup + "{}.json"
 
-    def assure_folder(self):
+    def _assure_folder(self):
         """Assure the existence of the needed folders."""
         folder = self.files_folder
         if not os.path.exists(folder):
@@ -54,9 +54,10 @@ class JsonFileHandler:
             except:
                 basic.perror("Can't create folder: {}".format(folder), exception=e)
 
-    def list_files(self, extension):
-        """List the files of a folder, given an extension."""
+    def _list_files(self):
+        """List the files of a folder."""
 
+        extension = ".json"
         folder = self.files_folder # folder to lookup
         names = []
         n = len(extension)
@@ -70,7 +71,7 @@ class JsonFileHandler:
 
         return names
 
-    def get_fname(self, name=None, backup=False):
+    def _get_fname(self, name=None, backup=False):
         """Given a name, return the filename for the json file."""
 
         if not backup:
@@ -83,14 +84,17 @@ class JsonFileHandler:
 
         return string
 
-    def remove_file(self, name):
+    def _remove_file(self, name):
         """Remove a file"""
-        fname = self.get_fname(name, backup=False)
+        fname = self._get_fname(name, backup=False)
         os.remove(fname)
 
-    def copy_file(self, name1, name2):
+    def _backup_file(self, name):
         """Copy a file from name1 to name2."""
-        shutil.copyfile(name1, name2)
+        fname_original = self._get_fname(name, backup=False)
+        fname_backup = self._get_fname(name, backup=True)
+
+        shutil.copyfile(fname_original, fname_backup)
 
 class JobFileHandler(JsonFileHandler):
     """Provides functionality to save files in json format."""
@@ -99,10 +103,10 @@ class JobFileHandler(JsonFileHandler):
         """Save a job to json."""
 
         # Assure folder
-        self.assure_folder()
+        self._assure_folder()
 
         # Get the filename
-        fname = self.get_fname(name, backup=False)
+        fname = self._get_fname(name, backup=False)
 
         # Try to save
         try:
@@ -114,10 +118,10 @@ class JobFileHandler(JsonFileHandler):
     def load_job(self, name):
         """Load a job from json."""
         # Assure folder
-        self.assure_folder()
+        self._assure_folder()
 
         # Get filename
-        fname = self.get_fname(name)
+        fname = self._get_fname(name)
 
         try:
             # Load the json dict
@@ -127,9 +131,15 @@ class JobFileHandler(JsonFileHandler):
             basic.perror("Can't find the job '{}', maybe you haven't created it?".format(name))
 
         return d
-        
+
     def backup_job(self, name):
         """Backup a job."""
-        fname_original = self.get_fname(name, backup=False)
-        fname_backup = self.get_fname(name, backup=True)
-        self.copy_file(fname_original, fname_backup)
+        self._backup_file(name)
+
+    def list_jobs(self):
+        """List the jobs."""
+        return self._list_files()
+
+    def remove_job(self, name):
+        """Remove a job."""
+        self._remove_file(name)

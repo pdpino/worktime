@@ -1,8 +1,8 @@
 """Module that provides classes to handle the application."""
 from datetime import datetime
 from re import search
-import basic
 from backend import filesys as fs, jobs
+import basic
 
 class Application():
     """Handle the application."""
@@ -10,7 +10,7 @@ class Application():
     def __init__(self, root_path):
         """Constructor."""
         # File Handler
-        self.fh = fs.JobFileHandler(root_path, "files")
+        self.fh = fs.JobFileHandler(root_path, "files") # HACK: "files" hardcoded
 
         # Current time
         self._time_mark()
@@ -44,7 +44,7 @@ class Application():
 
     def _get_job_names(self):
         """Get all the existing job names."""
-        return self.fh.list_files(".json") # HACK: extension hardcoded
+        return self.fh.list_jobs()
 
     def _job_exists(self, name):
         """Bool indicating if job exists"""
@@ -141,7 +141,7 @@ class Application():
             if force or basic.input_y_n(question=q, default="n"):
                 j = self._load_job(name)
                 j.delete()
-                self.fh.remove_file(name) # HACK: change by remove_job?
+                self.fh.remove_job(name)
         else:
             basic.perror("The work '{}' does not exists".format(name))
 

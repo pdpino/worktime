@@ -1,33 +1,8 @@
 """Module that provides classes to handle the application."""
 from datetime import datetime
-from collections import OrderedDict
 from re import search
-import json
 import basic
 from backend import filesys as fs, jobs
-
-def get_dict(obj):
-    """Return the dict to dump as json.
-
-    Each class that is dumped should have a method: get_keys(),
-    which return a list of the attributes to dump in order.
-    If the class doesn't have a method, all the attributes will be dumped in any order"""
-    # REVIEW: move this method to basic ???
-
-    try: # REVIEW: use if, instead of try/except
-        # Try get keys of the class
-        keyorder = obj.get_keys()
-
-        if keyorder is None:
-            return None
-
-        # Obtain subset of keys
-        d = {k:obj.__dict__[k] for k in keyorder if k in obj.__dict__}
-
-        return OrderedDict(sorted(d.items(), key=lambda i:keyorder.index(i[0])))
-    except AttributeError as e:
-        basic.perror("Can't get keys from {} object, {}".format(type(obj), obj.__dict__), exception=e, force_continue=True)
-        return obj.__dict__
 
 class Application():
     """Handle the application."""
@@ -35,7 +10,7 @@ class Application():
     def __init__(self, root_path):
         """Constructor."""
         # File Handler
-        self.fh = fs.FileHandler(root_path, "files")
+        self.fh = fs.JobFileHandler(root_path, "files")
 
         # Current time
         self._time_mark()
@@ -43,21 +18,11 @@ class Application():
     def _load_job(self, name):
         """Load a job given a name"""
 
-        # Assure folder
-        self.fh.assure_folder()
-
-        # Get filename
-        fname = self.fh.get_fname(name)
-
         # Create empty job
         j = jobs.Job()
 
-        try:
-            # Load the json dict
-            with open(fname, "r") as f:
-                d = json.load(f)
-        except FileNotFoundError:
-            basic.perror("Can't find the job '{}', maybe you haven't created it?".format(name))
+        # Load dict # FUTURE
+        d = self.fh.load_job(name)
 
         # Load it into an object
         j.from_json(d)
@@ -66,27 +31,20 @@ class Application():
 
     def _save_job(self, j):
         """Given a job, dump it to a json file."""
-        # Assure folder
-        self.fh.assure_folder()
 
         # Make sure it can be dump
         if not j.can_dump():
             basic.perror("Job can't be saved to json")
 
-        # Get the filename
-        fname = self.fh.get_fname(j.get_name(), backup=False)
+        # Get name
+        name = j.get_name()
 
-        # Try to save
-        try:
-            with open(fname, "w") as f:
-                json.dump(j, f, default=get_dict, sort_keys=False, indent=4)
-        except Exception as e:
-            basic.perror("Can't dump '{}' to json".format(fname), exception=e)
-
+        # Assure folder
+        self.fh.save_job(j, name)
 
     def _get_job_names(self):
         """Get all the existing job names."""
-        return self.fh.list_files(".json")
+        return self.fh.list_files(".json") # HACK: extension hardcoded
 
     def _job_exists(self, name):
         """Bool indicating if job exists"""
@@ -183,7 +141,7 @@ class Application():
             if force or basic.input_y_n(question=q, default="n"):
                 j = self._load_job(name)
                 j.delete()
-                self.fh.remove_file(name)
+                self.fh.remove_file(name) # HACK: change by remove_job?
         else:
             basic.perror("The work '{}' does not exists".format(name))
 
@@ -228,9 +186,7 @@ class Application():
     def backup_jobs(self):
         """Backup existing jobs."""
         for name in self._get_job_names():
-            fname_original = self.fh.get_fname(name, backup=False)
-            fname_backup = self.fh.get_fname(name, backup=True)
-            self.fh.copy_file(fname_original, fname_backup)
+            self.fh.backup_job(name)
 
         print("Jobs backed up")
 

@@ -8,6 +8,7 @@
 * Create module `fileformats`:
   + provides a class `JSONFormat`, that saves json files given an object and a filename
 * Module `filesys` has `fileformats.py` and `filenames.py`, each handling things separately. `Application` calls both separately
+* Remove hacks in application regarding files
 
 ### Version 2.4: Application structure changes
 * Create `Results` class, which holds the result of an action made. Create multiple classes that inherit from that one; example `ResultStart`, `ResultShow`, etc.

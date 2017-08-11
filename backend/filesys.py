@@ -1,10 +1,35 @@
 """Module that handles the interaction with the files."""
 import os
 import shutil
+from collections import OrderedDict
+import json
 import basic
 
-class FileHandler:
-    """Handle filenames"""
+def get_dict(obj):
+    """Return the dict to dump as json.
+
+    Each class that is dumped should have a method: get_keys(),
+    which return a list of the attributes to dump in order.
+    If the class doesn't have a method, all the attributes will be dumped in any order"""
+    # REVIEW: move this method to basic ???
+
+    try: # REVIEW: use if, instead of try/except
+        # Try get keys of the class
+        keyorder = obj.get_keys()
+
+        if keyorder is None:
+            return None
+
+        # Obtain subset of keys
+        d = {k:obj.__dict__[k] for k in keyorder if k in obj.__dict__}
+
+        return OrderedDict(sorted(d.items(), key=lambda i:keyorder.index(i[0])))
+    except AttributeError as e:
+        basic.perror("Can't get keys from {} object, {}".format(type(obj), obj.__dict__), exception=e, force_continue=True)
+        return obj.__dict__
+
+class JsonFileHandler:
+    """Provide basic functionality to handle files."""
 
     def __init__(self, root_path, files_path, backup_path="backup"):
         """Constructor."""
@@ -66,3 +91,43 @@ class FileHandler:
     def copy_file(self, name1, name2):
         """Copy a file from name1 to name2."""
         shutil.copyfile(name1, name2)
+
+class JobFileHandler(JsonFileHandler):
+    """Provides functionality to save files in json format."""
+
+    def save_job(self, j, name):
+        """Save a job to json."""
+
+        # Assure folder
+        self.assure_folder()
+
+        # Get the filename
+        fname = self.get_fname(name, backup=False)
+
+        # Try to save
+        try:
+            with open(fname, "w") as f:
+                json.dump(j, f, default=get_dict, sort_keys=False, indent=4)
+        except Exception as e:
+            basic.perror("Can't dump '{}' to json".format(fname), exception=e)
+
+    def load_job(self, name):
+        """Load a job from json."""
+        # Assure folder
+        self.assure_folder()
+
+        # Get filename
+        fname = self.get_fname(name)
+
+        try:
+            # Load the json dict
+            with open(fname, "r") as f:
+                d = json.load(f)
+        except FileNotFoundError:
+            basic.perror("Can't find the job '{}', maybe you haven't created it?".format(name))
+
+    def backup_job(self, name):
+        """Backup a job."""
+        fname_original = self.get_fname(name, backup=False)
+        fname_backup = self.get_fname(name, backup=True)
+        self.copy_file(fname_original, fname_backup)

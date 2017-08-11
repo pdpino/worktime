@@ -10,9 +10,21 @@
         "time",
         "work"
     ],
-    "is_running": false,
+    "is_running": true,
     "is_paused": false,
-    "_entry": null,
+    "_entry": {
+        "obs": "",
+        "finished": false,
+        "is_paused": false,
+        "date": "2017/08/10",
+        "hi": "21:01",
+        "n_pauses": 0,
+        "total_time": 0,
+        "effective_time": 0,
+        "pause_time": 0,
+        "_ti": 19170086.472165,
+        "_pi": 0
+    },
     "entries": [
         {
             "obs": "",
@@ -134,6 +146,17 @@
             "total_time": 322.2,
             "effective_time": 322.2,
             "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/10",
+            "hi": "19:31",
+            "hf": "19:40",
+            "n_pauses": 0,
+            "total_time": 489.85,
+            "effective_time": 489.85,
+            "pause_time": 0.0
         }
     ]
-  }
+}

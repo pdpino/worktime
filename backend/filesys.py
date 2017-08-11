@@ -126,6 +126,8 @@ class JobFileHandler(JsonFileHandler):
         except FileNotFoundError:
             basic.perror("Can't find the job '{}', maybe you haven't created it?".format(name))
 
+        return d
+        
     def backup_job(self, name):
         """Backup a job."""
         fname_original = self.get_fname(name, backup=False)

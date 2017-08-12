@@ -1,8 +1,25 @@
 """Module that provides classes to handle the application."""
 from datetime import datetime
 from re import search
-from backend import filesys as fs, jobs
+from backend import jobs, results as rs, filesys as fs
 import basic
+
+def print_action(name, action):
+    """Temporary function."""
+    print("'{}' {}".format(name, action))
+
+def print_error(name, status):
+    """Temporary function. Should pass to ConsoleApplication"""
+    if status == rs.ResultType.AlreadyRunning:
+        print_action(name, "is already running")
+    elif status == rs.ResultType.NotRunning:
+        print_action(name, "is not running")
+    elif status == rs.ResultType.AlreadyExist:
+        print_action(name, "already exist")
+    elif status == rs.ResultType.NotExist:
+        print_action(name, "doesn't exist")
+    else:
+        print_action(name, status)
 
 class Application():
     """Handle the application."""
@@ -61,57 +78,99 @@ class Application():
 
 
     """API methods"""
-    def close(self):
-        """Close the application."""
-        self.t = None
-
     def start_job(self, name, info):
         """Option to start a job."""
         self._assert_time("start a job")
 
         j = self._load_job(name)
-        j.start(self.t, info)
-        self._save_job(j)
+        result = j.start(self.t, info)
+        if result.is_ok():
+            print_action(name, "started")
+            self._save_job(j)
+        else:
+            print_error(name, result.status)
 
     def stop_job(self, name, info=None, stop_all=False, discard=False, quiet=True):
         """Option to stop a job."""
-        def _stop_job(name, **kwargs):
+
+        # Assert time
+        self._assert_time("stop a job")
+
+        def _stop_job(n, discard):
             """Stop a given job."""
             # REVIEW: receive job it self, not names?
-            self._assert_time("stop a job")
 
-            j = self._load_job(name)
-            j.stop(self.t, **kwargs)
-            self._save_job(j)
+            # Load job
+            j = self._load_job(n)
+
+            # Confirmation
+            if j.confirm_discard():
+                if not basic.input_y_n(question="Are you sure you want to discard an entry for '{}'".format(n)):
+                    discard = False
+
+            # Stop
+            result = j.stop(self.t, discard=discard, obs=info)
+
+            if result.is_ok():
+                self._save_job(j)
+                # Print action
+                action = "stopped"
+                if discard:
+                    action += ", entry discarded"
+                print_action(n, action)
+
+                # Print times
+                if not quiet:
+                    print("\t Runtime: total: {}, effective: {}, pause: {}".format(
+                                basic.sec2hr(result.total_time),
+                                basic.sec2hr(result.effective_time),
+                                basic.sec2hr(result.pause_time)))
+
+            else:
+                print_error(n, result.status)
 
         if stop_all:
-            for n in self._get_job_names():
-                _stop_job(n, ign_error=True)
+            for nn in self._get_job_names():
+                _stop_job(nn, discard)
         else:
-            _stop_job(name, discard=discard, print_time=(not quiet), obs=info)
+            _stop_job(name, discard)
 
     def pause_job(self, name, wait=False):
         """Option to pause a job."""
         self._assert_time("pause a job")
 
+        def _pause_job(j, t):
+            result = j.pause(t)
+            if result.is_ok():
+                if result.was_paused:
+                    print_action(name, "paused")
+                else:
+                    print_action(name, "unpaused -- paused time: {}".format(basic.sec2hr(result.pause_time)))
+            else:
+                print_error(name, result.status)
+
         j = self._load_job(name)
-        j.pause(self.t)
+        _pause_job(j, self.t)
 
         if wait: # Wait for input
             input("Press enter to unpause the job ")
             self._time_mark() # Take another mark
-            j.pause(self.t)
+            _pause_job(j, self.t)
+
 
         # Save to json
         self._save_job(j)
 
     def create_job(self, name, lname, info, tags):
         """Option to create a job."""
-        q = "A previous work called '{}' exists. Do you want to override it".format(name)
-        if not self._job_exists(name) or basic.input_y_n(question=q):
-            j = jobs.Job()
-            j.create(name, lname, info, tags)
-            self._save_job(j)
+        if self._job_exists(name):
+            q = "A previous work called '{}' exists. Do you want to override it".format(name)
+            if not basic.input_y_n(question=q):
+                return
+
+        j = jobs.Job()
+        j.create(name, lname, info, tags)
+        self._save_job(j)
 
     def edit_job(self, name, new_name=None, new_lname=None, new_info=None, info_mode=None, new_tags=None, tags_mode=None):
         """Option to edit a job."""
@@ -139,14 +198,14 @@ class Application():
     def delete_job(self, name, force=False):
         """Option to delete a job."""
 
-        if self._job_exists(name):
-            q = "Are you sure you want to drop '{}'".format(name)
-            if force or basic.input_y_n(question=q, default="n"):
-                j = self._load_job(name)
-                j.delete()
-                self.fh.remove_job(name)
-        else:
-            basic.perror("The work '{}' does not exists".format(name))
+        if not self._job_exists(name):
+            print_error(name, rs.ResultType.NotExist)
+            return
+
+        q = "Are you sure you want to drop '{}'".format(name)
+        if force or basic.input_y_n(question=q, default="n"):
+            j = self._load_job(name)
+            self.fh.remove_job(name)
 
     def show_jobs(self, name, run_only=False, name_only=False, show_entries=False):
         """Option to show jobs."""

@@ -2,13 +2,11 @@
 
 ## TODOs
 
+* Create `ResultWrapper`
 * Deprecate `work-git`, because of branches
 * Finish `tests.txt` file
 
 ### Version 2.4: Application structure changes
-* Create `Results` class, which holds the result of an action made
-  + Create multiple classes that inherit from that one; example `ResultStart`, `ResultShow`, etc.
-  + Each action in application returns a result, then the caller chooses what to do with it (e.g. print to stdout)
 * Create `ConsoleApplication`, which inherits from `Application`.
 
 ### Version 2.5:
@@ -86,6 +84,9 @@
 #### show
 * option to show only the run status and its name. Review: change argparse by exclusive options (full, status, info, etc)
 * busqueda avanzada
+
+#### pause
+* discard option
 
 #### stop
 * agregar cuando hice stop tarde, opcion para poner hora de vdd en que pare

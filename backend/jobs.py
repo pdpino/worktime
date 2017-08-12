@@ -1,4 +1,5 @@
 """Module that provides classes to handle the jobs"""
+from backend import results as rs
 import basic
 
 class Entry():
@@ -268,91 +269,74 @@ class Job():
 
 
 
+    def confirm_discard(self):
+        """Boolean indicating if a confirmation for discarding an entry when stopping should be done."""
+        # Valid input
+        if self.is_running and not self._entry is None:
+            etime = self._entry.effective_time
+            return etime > 30*60 # 30 minutes
+
+        return False
+
+
+
     """Basic operations methods."""
     def start(self, t, obs=""):
+        """Start an entry in a job."""
         if self.is_running:
-            basic.perror("Work '{}' is already running".format(self.name))
+            return rs.Result(rs.ResultType.AlreadyRunning)
 
         # Crear entrada de lista
         self._entry = Entry()
         self._entry.start(t, obs)
 
-        self._print_action("started")
         self.is_running = True
         self.is_paused = False
 
-    def stop(self, t, discard=False, print_time=True, ign_error=False, obs=None):
-        """ Stop a running job"""
-        if not self.is_running:
-            if ign_error:
-                return
-            else:
-                basic.perror("Work '{}' is not running".format(self.name))
+        return rs.Result()
 
+    def stop(self, t, discard=False, obs=None):
+        """Stop a running job."""
+        if not self.is_running:
+            return rs.StopResult(rs.ResultType.NotRunning)
 
         self._entry.add_obs(obs)
         self._entry.stop(t)
-        ttime = self._entry.total_time # total time
-        etime = self._entry.effective_time # effective time
-        ptime = self._entry.pause_time # pause time
+        ttime = self._entry.total_time
+        etime = self._entry.effective_time
+        ptime = self._entry.pause_time
 
-        # Preguntar si esta seguro que quiere descartar
-        if discard and etime > 30*60: # etime > 30min
-            if not basic.input_y_n(question="You've been working more than half an hour. Are you sure you want to discard it"):
-                discard = False
-
-        # Anadir entrada
+        # Save entry
         if not discard:
             self.entries.append(self._entry)
         self._entry = None
 
-        # Reportar accion al user
-        action = "stopped"
-        if discard:
-            action += ", entry discarded"
-        self._print_action(action)
-
-        # Change
+        # Change status
         self.is_running = False
         self.is_paused = False
 
-        if print_time and not discard:
-            self._print_times(ttime, etime, ptime)
+        return rs.StopResult(ttime=ttime, etime=etime, ptime=ptime)
 
     def pause(self, t):
+        """Toggle pause in a job."""
         if not self.is_running:
-            basic.perror("Work '{}' is not running".format(self.name))
+            return rs.PauseResult(rs.ResultType.NotRunning)
 
         # Toggle pause
-        r = self._entry.pause(t)
+        ptime = self._entry.pause(t)
         if self.is_paused: # sacar de pausa
-            self._print_action("unpaused", additional="paused time: {}".format(basic.sec2hr(r)))
             self.is_paused = False
+
+            was_paused = False # NOTE: this is used instead of self.is_paused because it will be deprecated soon
         else: # poner en pausa
-            self._print_action("paused")
             self.is_paused = True
 
-    def delete(self):
-        """Delete the job."""
-        self._print_action("deleted")
+            was_paused = True # NOTE: see note above
 
+        return rs.PauseResult(was_paused=was_paused, pause_time=ptime)
 
 
     """Printing methods"""
-    def _print_times(self, ttime, etime, ptime):
-        """Print in screen the given times"""
-        print("\t Runtime: total: {}, effective: {}, pause: {}".format(
-                        basic.sec2hr(ttime),
-                        basic.sec2hr(etime),
-                        basic.sec2hr(ptime)))
-
-    def _print_action(self, action, additional=None):
-        """Print to stdout an action."""
-        w = "{} {}".format(self.name, action)
-        if not additional is None:
-            w += " -- {}".format(additional)
-        print(w)
-
     def _str_entries(self):
         """Concatenate string of all entries."""
         # Initial string
@@ -441,7 +425,6 @@ class Job():
             self.info = i
         elif mode == "drop":
             self.info = ""
-            self._print_action("dropped info")
         else: # Mode not supported
             basic.perror("Edit info mode '{}' not supported".format(mode))
 
@@ -459,7 +442,6 @@ class Job():
             self.tags = t
         elif mode == "drop":
             self.tags = list()
-            self._print_action("dropped tags")
         else:
             basic.perror("Edit tags mode '{}' not supported".format(mode))
 

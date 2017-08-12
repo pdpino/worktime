@@ -108,12 +108,14 @@ class JobFileHandler(JsonFileHandler):
         # Get the filename
         fname = self._get_fname(name, backup=False)
 
+        # Save
+        with open(fname, "w") as f:
+            json.dump(j, f, default=get_dict, sort_keys=False, indent=4)
+
         # Try to save
-        try:
-            with open(fname, "w") as f:
-                json.dump(j, f, default=get_dict, sort_keys=False, indent=4)
-        except Exception as e:
-            basic.perror("Can't dump '{}' to json".format(fname), exception=e)
+        # try:
+        # except Exception as e:
+        #     basic.perror("Can't dump '{}' to json".format(fname), exception=e)
 
     def load_job(self, name):
         """Load a job from json."""

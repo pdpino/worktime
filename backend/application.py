@@ -73,22 +73,22 @@ class Application():
         j.start(self.t, info)
         self._save_job(j)
 
-    def _stop_job(self, name, **kwargs):
-        """Stop a given job."""
-        # REVIEW: receive job it self, not names?
-        self._assert_time("stop a job")
-
-        j = self._load_job(name)
-        j.stop(self.t, **kwargs)
-        self._save_job(j)
-
     def stop_job(self, name, info=None, stop_all=False, discard=False, quiet=True):
         """Option to stop a job."""
+        def _stop_job(name, **kwargs):
+            """Stop a given job."""
+            # REVIEW: receive job it self, not names?
+            self._assert_time("stop a job")
+
+            j = self._load_job(name)
+            j.stop(self.t, **kwargs)
+            self._save_job(j)
+
         if stop_all:
             for n in self._get_job_names():
-                self._stop_job(n, ign_error=True)
+                _stop_job(n, ign_error=True)
         else:
-            self._stop_job(name, discard=discard, print_time=(not quiet), obs=info)
+            _stop_job(name, discard=discard, print_time=(not quiet), obs=info)
 
     def pause_job(self, name, wait=False):
         """Option to pause a job."""
@@ -115,6 +115,9 @@ class Application():
 
     def edit_job(self, name, new_name=None, new_lname=None, new_info=None, info_mode=None, new_tags=None, tags_mode=None):
         """Option to edit a job."""
+
+        basic.perror("DEPRECATED: can't edit job")
+
         j = self._load_job(name)
 
         # Cambiar nombre

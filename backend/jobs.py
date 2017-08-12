@@ -421,7 +421,7 @@ class Job():
         print(w)
 
 
-    """Edit methods"""
+    """Edit methods""" # DEPRECATED
     def edit_info(self, i, mode):
         """Edit the Job info"""
         if i is None:

@@ -21,6 +21,54 @@ def print_error(name, status):
     else:
         print_action(name, status)
 
+def print_job(sjob, name_only=False, show_entries=False):
+    """Pretty print for a show job."""
+
+    def pstr(sentry):
+        """Pretty string for a show_entry"""
+        if sentry.obs != "":
+            obs = "\n\t\t{}".format(sentry.obs)
+        else:
+            obs = sentry.obs
+
+        ttime = basic.sec2hr(sentry.total_time)
+        etime = basic.sec2hr(sentry.effective_time)
+        ptime = basic.sec2hr(sentry.pause_time)
+
+        return "{} -- {} to {} -- total: {} -- effective: {} -- pause: {} {}".format(sentry.date,
+                    sentry.hour_init, sentry.hour_end,
+                    ttime, etime, ptime,
+                    obs)
+
+    # Get status string
+    status = sjob.status
+    if sjob.status == "paused": # HACK: "paused" and "running" hardcoded, use enum
+        status = "paused ({} in pause)".format(sjob.pause_time)
+    elif sjob.status == "running":
+        status = "running (total: {}, effective: {})".format(sjob.total_time, sjob.effective_time)
+
+    # String to print
+    if name_only:
+        w = "{}".format(sjob.name)
+    else:
+        w = """{}
+        long name:  {}
+        info:       {}
+        tags:       {}
+        status:     {}
+        total runs: {}""".format(sjob.name, sjob.longname, sjob.info, sjob.tags, status, sjob.total_runs)
+
+    if show_entries:
+        w += "\n\tEntries: "
+        if len(sjob.entries) > 0:
+            w += "\n"
+            for s in sjob.entries:
+                w += "\t{}\n".format(pstr(s))
+        else:
+            w += "None\n"
+
+    print(w)
+
 class Application():
     """Handle the application."""
 
@@ -38,7 +86,7 @@ class Application():
         # Create empty job
         j = jobs.Job()
 
-        # Load dict # FUTURE
+        # Load dict
         d = self.fh.load_job(name)
 
         # Load it into an object
@@ -235,15 +283,18 @@ class Application():
         else:
             filter_running = dont_match
 
-        shown = 0
+        results = rs.ShowResult()
         for n in names:
             j = self._load_job(n)
             if match(n, name) and filter_running(j):
-                j.pprint(self.t, name_only=name_only, show_entries=show_entries)
-                shown += 1
+                sjob = j.show(self.t)
+                results.add_job(sjob)
 
-        if shown == 0:
+        if results.no_jobs():
             print("No jobs to show")
+        else:
+            for r in results:
+                print_job(r, name_only, show_entries)
 
     def backup_jobs(self):
         """Backup existing jobs."""
@@ -258,3 +309,5 @@ class Application():
             j = self._load_job(name)
             j.update()
             self._save_job(j)
+
+        print("Jobs updated")

@@ -16,14 +16,14 @@
         "obs": "",
         "finished": false,
         "is_paused": false,
-        "date": "2017/08/05",
-        "hi": "16:42",
-        "n_pauses": 0,
+        "date": "2017/08/11",
+        "hi": "21:43",
+        "n_pauses": 3,
         "total_time": 0,
         "effective_time": 0,
-        "pause_time": 0,
-        "_ti": 18722578.901519,
-        "_pi": 0
+        "pause_time": 76.40137800201775,
+        "_ti": 19259010.699312,
+        "_pi": 19266991.275645
     },
     "entries": [
         {
@@ -124,6 +124,50 @@
             "total_time": 192.48,
             "effective_time": 192.48,
             "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/05",
+            "hi": "16:42",
+            "hf": "17:54",
+            "n_pauses": 0,
+            "total_time": 4303.94,
+            "effective_time": 4303.94,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/06",
+            "hi": "15:01",
+            "hf": "15:06",
+            "n_pauses": 0,
+            "total_time": 322.2,
+            "effective_time": 322.2,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/10",
+            "hi": "19:31",
+            "hf": "19:40",
+            "n_pauses": 0,
+            "total_time": 489.85,
+            "effective_time": 489.85,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/10",
+            "hi": "21:01",
+            "hf": "23:43",
+            "n_pauses": 1,
+            "total_time": 9752.87,
+            "effective_time": 2607.14,
+            "pause_time": 7145.73
         }
     ]
 }

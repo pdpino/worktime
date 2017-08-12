@@ -8,6 +8,7 @@ Release date: X, 2017
 * Create `Results` class, which holds the result of an action made
   + Create `StopResult`, `PauseResult`, `ShowResult`.
   + Now each action in `Job` returns a result, then the `Application` chooses what to do with it (e.g. print to stdout, print error, etc)
+* `Application` handles printing to stdout, not `jobs`
 
 ### 2.3: Backend structure changes
 Release date: Aug 10, 2017

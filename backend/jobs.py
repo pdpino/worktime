@@ -33,11 +33,6 @@ class Entry():
             self.__dict__ = d
             self._create()
 
-    def update(self):
-        """Update the objects, given a change in the structure."""
-
-        ### ADD HERE YOUR UPDATES TO ENTRIES ###
-
     def get_keys(self):
         """Return the keys of the attributes to save to json."""
         if not self._is_created:
@@ -56,6 +51,13 @@ class Entry():
                     "n_pauses",
                     "total_time", "effective_time", "pause_time",
                     "_ti", "_pi"]
+
+    def add_obs(self, obs):
+        """Add observation for an entry."""
+        if not obs is None:
+            if len(self.obs) > 0:
+                self.obs += ". "
+            self.obs += str(obs)
 
 
     """Operations."""
@@ -137,52 +139,44 @@ class Entry():
 
             return self.n_pauses
 
-
-    """Get methods."""
-    def pstr(self):
+    def show(self):
         """Pretty string"""
         if not self._is_created:
-            return ""
-
-        if self.obs != "":
-            obs = "\n\t\t{}".format(self.obs)
-        else:
-            obs = self.obs
+            basic.perror("Can't show entry not created")
 
         if self.finished:
-            horas = "{} to {} -- total: {} -- pause: {} -- effective: {}".format(self.hi, self.hf, basic.sec2hr(self.total_time), basic.sec2hr(self.pause_time), basic.sec2hr(self.effective_time))
+            hf = self.hf
         else:
-            horas = "{}-present".format(self.hi)
+            hf = "present"
 
-        return "{} -- {} {}".format(self.date, horas, obs)
+        return rs.ShowEntry(self.date, self.hi, hf, self.total_time, self.effective_time, self.pause_time, self.obs)
 
-    def ctime_running(self, t):
-        """ Current time running
-        Get the total time for a running entry"""
+    def update(self):
+        """Update the objects, given a change in the structure."""
+
+        ### ADD HERE YOUR UPDATES TO ENTRIES ###
+
+
+    """Current time methods."""
+    def get_total_time(self, t):
+        """Get the total time for a running entry."""
         if t is None:
             return "unknown"
         return basic.sec2hr(basic.seconds(t)-self._ti)
 
-    def ctime_effective(self, t):
+    def get_effective_time(self, t):
         """ Current time effective.
         Get the effective time for a running entry"""
         if t is None:
             return "unknown"
         return basic.sec2hr(basic.seconds(t)-self._ti-self.pause_time)
 
-    def ctime_paused(self, t):
+    def get_pause_time(self, t):
         """ Current time paused
         Get the pause time for a running entry"""
         if t is None:
             return "unknown"
         return basic.sec2hr(basic.seconds(t)-self._pi)
-
-    def add_obs(self, obs):
-        """Add observation for an entry."""
-        if not obs is None:
-            if len(self.obs) > 0:
-                self.obs += ". "
-            self.obs += str(obs)
 
 class Job():
     """Job"""
@@ -194,6 +188,62 @@ class Job():
         """Set is_created bool, validates the attributes."""
         self._is_created = True
 
+    def get_keys(self):
+        """Return the keys of the attributes to save to a json."""
+        return ["name", "longname", "info",
+                "tags",
+                "is_running", "is_paused",
+                "_entry", "entries"]
+
+    def from_json(self, d):
+        """Create the job from a dict (readed from json)."""
+        if self._is_created:
+            basic.perror("Job can't be loaded from json, is already created")
+
+        # Save the dict in the object
+        self.__dict__ = d
+
+        # HACK: "_entry" and "entries" hardcoded
+        # Load current entry
+        if "_entry" in d and not d["_entry"] is None:
+            _entry = Entry()
+            _entry.from_json(d["_entry"])
+            self._entry = _entry
+        else:
+            self._entry = None
+
+        # Load all entries
+        entries = []
+        for i in range(len(d["entries"])):
+            e = Entry()
+            e.from_json(d["entries"][i])
+            entries.append(e)
+        self.entries = entries
+
+        self._create()
+
+
+    def get_name(self):
+        """Return the name."""
+        # REVIEW: use properties?
+        return self.name
+
+    def can_dump(self):
+        """Boolean indicating if the job can be dump to a file."""
+        return self._is_created
+
+    def confirm_discard(self):
+        """Boolean indicating if a confirmation for discarding an entry when stopping should be done."""
+        # Valid input
+        if self.is_running and not self._entry is None:
+            etime = self._entry.effective_time
+            return etime > 30*60 # 30 minutes
+
+        return False
+
+
+
+    """Basic operations methods."""
     def create(self, name, longname, info, tags):
         """Create a Job from"""
         self.name = name
@@ -214,73 +264,6 @@ class Job():
         # Validates the rest of attributes
         self._create()
 
-    def get_keys(self):
-        """Return the keys of the attributes to save to a json."""
-        return ["name", "longname", "info",
-                "tags",
-                "is_running", "is_paused",
-                "_entry", "entries"]
-
-    def get_name(self):
-        """Return the name."""
-        # REVIEW: use properties?
-        return self.name
-
-    def can_dump(self):
-        """Boolean indicating if the job can be dump to a file."""
-        return self._is_created
-
-    def from_json(self, d):
-        """Create the job from a dict (readed from json)."""
-        if self._is_created:
-            basic.perror("Job can't be loaded from json, is already created")
-
-        # Save the dict in the object
-        self.__dict__ = d
-
-        # HACK: "_entry" and "entries" hardcoded
-        # Load current entry
-        if "_entry" in d:
-            _entry = Entry()
-            _entry.from_json(d["_entry"])
-            self._entry = _entry
-        else:
-            self._entry = None
-
-        # Load all entries
-        entries = []
-        for i in range(len(d["entries"])):
-            e = Entry()
-            e.from_json(d["entries"][i])
-            entries.append(e)
-        self.entries = entries
-
-        self._create()
-
-    def update(self):
-        """Update the Job given a change in the structure."""
-
-        ### ADD HERE YOUR UPDATES TO JOBS ###
-
-        # Update entries
-        self._entry.update()
-        for e in self.entries:
-            e.update()
-
-
-
-    def confirm_discard(self):
-        """Boolean indicating if a confirmation for discarding an entry when stopping should be done."""
-        # Valid input
-        if self.is_running and not self._entry is None:
-            etime = self._entry.effective_time
-            return etime > 30*60 # 30 minutes
-
-        return False
-
-
-
-    """Basic operations methods."""
     def start(self, t, obs=""):
         """Start an entry in a job."""
         if self.is_running:
@@ -335,74 +318,56 @@ class Job():
 
         return rs.PauseResult(was_paused=was_paused, pause_time=ptime)
 
-
-    """Printing methods"""
-    def _str_entries(self):
-        """Concatenate string of all entries."""
-        # Initial string
-        string = ""
-        def str_entry(s, e):
-            """Concatenate the string from the entry e"""
-            return s + "\t{}\n".format(e.pstr())
-
-        # All the entries
-        for s in self.entries:
-            string = str_entry(string, s)
-
-        # Current entry
-        if not self._entry is None:
-            string = str_entry(string, self._entry)
-
-        return string
-
-    def _str_status(self, t):
+    def show(self, t=None):
+        """Return a show object for a job."""
         if not self._is_created:
-            return "job not created"
-
-        if self.is_running:
-            if self.is_paused:
-                status = "paused ({} in pause)".format(self._entry.ctime_paused(t))
-            else:
-                status = "running (total: {}, effective: {})".format(
-                            self._entry.ctime_running(t),
-                            self._entry.ctime_effective(t))
-        else:
-            status = "stopped"
-
-        return status
-
-    def pprint(self, t=None, name_only=False, show_entries=False):
-        """Pretty print for a job."""
-        if not self._is_created:
-            basic.perror("Can't print an empty job")
+            basic.perror("can't show '{}', is empty".format(self.name))
 
         # Fix Nones
         lname = self.longname or "-"
         info = self.info or "-"
 
         # Status string
-        status = self._str_status(t)
-
-        # String to print
-        if name_only:
-            w = "{}".format(self.name)
-        else:
-            w = """{}
-            long name:  {}
-            info:       {}
-            tags:       {}
-            status:     {}
-            total runs: {}""".format(self.name, lname, info, self.tags, status, len(self.entries))
-
-        if show_entries:
-            w += "\n\tEntries: "
-            if len(self.entries) > 0:
-                w += "\n"
-                w += self._str_entries()
+        pause_time = 0
+        effective_time = 0
+        total_time = 0
+        if self.is_running:
+            if self.is_paused:
+                status = "paused"
+                pause_time = self._entry.get_pause_time(t)
             else:
-                w += "None\n"
+                status = "running"
+                total_time = self._entry.get_total_time(t)
+                effective_time = self._entry.get_effective_time(t)
+        else:
+            status = "stopped"
 
-        print(w)
+        total_runs = len(self.entries)
+
+        # Get entries
+        show_entries = []
+        for e in self.entries:
+            show_entries.append(e.show())
+
+        if not self._entry is None:
+            show_entries.append(self._entry.show())
+
+        return rs.ShowJob(self.name, lname, info, self.tags,
+                        status, total_time, effective_time, pause_time,
+                        total_runs, show_entries) #show_entries)
+
+    def update(self):
+        """Update the Job given a change in the structure."""
+
+        ### ADD HERE YOUR UPDATES TO JOBS ###
+
+        # Update entries
+        if not self._entry is None:
+            self._entry.update()
+        for e in self.entries:
+            e.update()
+
+
 
 
     """Edit methods""" # DEPRECATED

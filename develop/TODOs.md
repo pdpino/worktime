@@ -2,12 +2,15 @@
 
 ## TODOs
 
-* Create `ResultWrapper`
 * Deprecate `work-git`, because of branches
 * Finish `tests.txt` file
 
 ### Version 2.4: Application structure changes
 * Create `ConsoleApplication`, which inherits from `Application`.
+* Create `ResultWrapper` to wrap the behavior when using `Result`.
+  + has methods `subscribe_ERROR()`, where <ERROR> is one of the possible errors. Each of these methods receives a function that is called when that error is found. In the case of the `ConsoleApplication`, the functions should be a print to stdout.
+  + has a method `eval_result()`, which receives a function to call in case the result is OK, else use the functions saved previously.
+  + add a `bool` `exit_after`? to exit after `eval_result`.
 
 ### Version 2.5:
 * Create `filesys.AdminFileHandler` and `application.AdminData` to be able to load and save important data.

@@ -3,13 +3,13 @@
 ## Version 2
 
 ### 2.4: Application structure changes
-Release date: X, 2017
+Release date: Aug 13, 2017
 * Deprecate `edit` option (it will return soon)
 * Deprecate `--all` option in `work stop`.
 * Create `Results` class, which holds the result of an action made
   + Create `StopResult`, `PauseResult`, `ShowResult`.
-  + Now each action in `Job` returns a result, then the `Application` chooses what to do with it (e.g. print to stdout, print error, etc)
-* `Application` handles printing to stdout, not `jobs`
+  + Now each action in `Job` returns a result, then the `Application` chooses what to do with it
+* Create class `ConsoleApplication`, that inherits from `Application` and handles printing to stdout (`jobs` doesn't print anymore) and asking from stdin (`Application` does not use the console)
 
 ### 2.3: Backend structure changes
 Release date: Aug 10, 2017

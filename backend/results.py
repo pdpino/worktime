@@ -59,6 +59,20 @@ class PauseResult(Result):
         self.was_paused = was_paused
         self.pause_time = pause_time
 
+class DeleteResult(Result):
+    """Result object for the 'pause' action."""
+
+    def __init__(self, status=None, was_deleted=False):
+        """Constructor.
+
+        was_deleted -- Indicate if the job was correctly deleted"""
+
+        super().__init__(status)
+        self.was_deleted = was_deleted
+
+
+
+
 class ShowEntry(object):
     """Container for entry attributes to show."""
     def __init__(self, date, hour_init, hour_end, total_time, effective_time, pause_time, obs):
@@ -96,11 +110,11 @@ class ShowResult(Result):
 
     def add_job(self, var):
         """Add a job to the result."""
-        # if type(var) is Result: # hack
-        #     self.status = var.status
-        #     self.message = var.message
-
-        self.jobs.append(var)
+        if type(var) is Result:
+            self.status = var.status
+            self.message = var.message
+        elif type(var) is ShowJob:
+            self.jobs.append(var)
 
     def no_jobs(self):
         """Boolean indicating if no jobs to show"""

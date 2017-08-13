@@ -1,5 +1,5 @@
 """Module that provides a class to handle the application from the console."""
-from backend import application
+from backend import application, results as rs
 import basic
 
 class ConsoleApplication(application.Application):
@@ -11,16 +11,17 @@ class ConsoleApplication(application.Application):
 
     def _print_error(self, name, status):
         """Print an error to stdout."""
+        # TASK: create ResultHandler with a dict, so this is not needed
         if status == rs.ResultType.AlreadyRunning:
-            print_action(name, "is already running")
+            self._print_action(name, "is already running")
         elif status == rs.ResultType.NotRunning:
-            print_action(name, "is not running")
+            self._print_action(name, "is not running")
         elif status == rs.ResultType.AlreadyExist:
-            print_action(name, "already exist")
+            self._print_action(name, "already exist")
         elif status == rs.ResultType.NotExist:
-            print_action(name, "doesn't exist")
+            self._print_action(name, "doesn't exist")
         else:
-            print_action(name, status)
+            self._print_action(name, status)
 
     def _print_job(self, sjob, name_only=False, show_entries=False):
         """Pretty print for a job (ShowJob)."""
@@ -70,17 +71,15 @@ class ConsoleApplication(application.Application):
 
         print(w)
 
-
-
     def start_job(self, name, info):
         """Option to start a job."""
 
         result = super().start_job(name, info)
 
         if result.is_ok():
-            self.print_action(name, "started")
+            self._print_action(name, "started")
         else:
-            self.print_error(name, result.status)
+            self._print_error(name, result.status)
 
     def stop_job(self, name, info=None, discard=False, quiet=True):
         """Option to stop a job."""
@@ -95,7 +94,7 @@ class ConsoleApplication(application.Application):
             action = "stopped"
             if result.was_discard:
                 action += ", entry discarded"
-            self.print_action(name, action)
+            self._print_action(name, action)
 
             # Print times
             if not quiet:
@@ -104,33 +103,31 @@ class ConsoleApplication(application.Application):
                             basic.sec2hr(result.effective_time),
                             basic.sec2hr(result.pause_time)))
         else:
-            self.print_error(name, result.status)
+            self._print_error(name, result.status)
 
     def pause_job(self, name, wait=False):
-        """Option to pause a job."""
-        self._assert_time("pause a job")
+        """Option to pause a job.
 
-        def _pause_job(j, t):
-            result = j.pause(t)
+        wait -- if true, the console wait for an input and the toggles pause again"""
+
+        def _pause_job():
+            """Call the super to actually pause the job. Return a boolean indicating if is OK"""
+            result = super(ConsoleApplication, self).pause_job(name)
             if result.is_ok():
                 if result.was_paused:
-                    print_action(name, "paused")
+                    self._print_action(name, "paused")
                 else:
-                    print_action(name, "unpaused -- paused time: {}".format(basic.sec2hr(result.pause_time)))
+                    self._print_action(name, "unpaused -- paused time: {}".format(basic.sec2hr(result.pause_time)))
             else:
-                print_error(name, result.status)
+                self._print_error(name, result.status)
+                return False
 
-        j = self._load_job(name)
-        _pause_job(j, self.t)
+            return True
 
-        if wait: # Wait for input
+        if _pause_job() and wait:
             input("Press enter to unpause the job ")
             self._time_mark() # Take another mark
-            _pause_job(j, self.t)
-
-
-        # Save to json
-        self._save_job(j)
+            _pause_job()
 
     def create_job(self, name, lname, info, tags):
         """Option to create a job."""
@@ -140,99 +137,53 @@ class ConsoleApplication(application.Application):
         result = super().create_job(name, confirm, lname, info, tags)
 
         if result.is_ok():
-            self.print_action(name, "created")
+            self._print_action(name, "created")
         else:
-            self.print_error(name, result.status)
-
+            self._print_error(name, result.status)
 
     def edit_job(self, name, new_name=None, new_lname=None, new_info=None, info_mode=None, new_tags=None, tags_mode=None):
         """Option to edit a job."""
 
-        basic.perror("DEPRECATED: can't edit job")
-
-        j = self._load_job(name)
-
-        # Cambiar nombre
-        if not new_name is None:
-            # j.change_name(new_name)
-            basic.perror("Change name isnt implemented")
-
-        if not new_lname is None:
-            j.change_longname(new_lname)
-
-        if not new_info is None:
-            j.edit_info(new_info, info_mode)
-
-        if not new_tags is None:
-            j.edit_tags(new_tags, tags_mode)
-
-        self._save_job(j)
+        super().edit_job(name, new_name, new_lname, new_info, info_mode, new_tags, tags_mode)
 
     def delete_job(self, name, force=False):
         """Option to delete a job."""
 
-        if not self._job_exists(name):
-            print_error(name, rs.ResultType.NotExist)
-            return
+        confirm = lambda: basic.input_y_n(question="Are you sure you want to drop '{}'".format(name), default="n")
 
-        q = "Are you sure you want to drop '{}'".format(name)
-        if force or basic.input_y_n(question=q, default="n"):
-            j = self._load_job(name)
-            self.fh.remove_job(name)
+        result = super().delete_job(name, confirm, force)
+
+        if result.is_ok():
+            if result.was_deleted:
+                self._print_action(name, "deleted")
+            else:
+                self._print_action(name, "not deleted")
+        else:
+            self._print_error(name, result.status)
 
     def show_jobs(self, name, run_only=False, name_only=False, show_entries=False):
         """Option to show jobs."""
 
-        # REVIEW: dont create functions every time
-        def match_regex(k, m):
-            """Boolean matching k with m, using regex."""
-            return not search(m, k) is None
-
-        def is_running(j):
-            """Boolean, job is running."""
-            return j.is_running
-
-        def dont_match(dummy1=None, dummy2=None):
-            """Return true always, i.e don't match."""
-            return True
-
-        names = self._get_job_names()
-
-        if not name is None: # There is a name to filter
-            match = match_regex
-        else:
-            match = dont_match
-
-        if run_only: # Show only running jobs
-            filter_running = is_running
-        else:
-            filter_running = dont_match
-
-        results = rs.ShowResult()
-        for n in names:
-            j = self._load_job(n)
-            if match(n, name) and filter_running(j):
-                sjob = j.show(self.t)
-                results.add_job(sjob)
+        results = super().show_jobs(name, run_only, name_only, show_entries)
 
         if results.no_jobs():
             print("No jobs to show")
         else:
             for r in results:
-                print_job(r, name_only, show_entries)
+                self._print_job(r, name_only, show_entries)
 
     def backup_jobs(self):
         """Backup existing jobs."""
-        for name in self._get_job_names():
-            self.fh.backup_job(name)
+        result = super().backup_jobs()
+        if result.is_ok():
+            print("Jobs backed up")
+        else:
+            self._print_error(None, result.status)
 
-        print("Jobs backed up")
-
-    def update(self):
+    def update_jobs(self):
         """Make an update to the Job objects."""
-        for name in self._get_job_names():
-            j = self._load_job(name)
-            j.update()
-            self._save_job(j)
-
-        print("Jobs updated")
+        result = super().update_jobs()
+        if result.is_ok():
+            print("Jobs updated")
+        else:
+            self._print_error(None, result.status)

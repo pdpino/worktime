@@ -107,7 +107,7 @@ def parse_args():
 
 if __name__ == "__main__":
     # Create application object
-    app = backend.Application(sys.path[0])
+    app = backend.ConsoleApplication(sys.path[0])
 
     # Parsear argumentos
     args = parse_args()
@@ -135,4 +135,4 @@ if __name__ == "__main__":
     elif args.option == "backup":
         app.backup_jobs()
     elif args.option == "update":
-        app.update()
+        app.update_jobs()

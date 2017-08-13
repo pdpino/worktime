@@ -81,7 +81,7 @@ class Application():
         self._assert_time("stop a job")
 
         # Load job
-        j = self._load_job(n)
+        j = self._load_job(name)
 
         # Confirmation
         if j.confirm_discard(): # Confirmation needed
@@ -96,31 +96,16 @@ class Application():
 
         return result
 
-    def pause_job(self, name, wait=False):
+    def pause_job(self, name):
         """Option to pause a job."""
         self._assert_time("pause a job")
 
-        def _pause_job(j, t):
-            result = j.pause(t)
-            if result.is_ok():
-                if result.was_paused:
-                    print_action(name, "paused")
-                else:
-                    print_action(name, "unpaused -- paused time: {}".format(basic.sec2hr(result.pause_time)))
-            else:
-                print_error(name, result.status)
-
         j = self._load_job(name)
-        _pause_job(j, self.t)
+        result = j.pause(self.t)
+        if result.is_ok():
+            self._save_job(j)
 
-        if wait: # Wait for input
-            input("Press enter to unpause the job ")
-            self._time_mark() # Take another mark
-            _pause_job(j, self.t)
-
-
-        # Save to json
-        self._save_job(j)
+        return result
 
     def create_job(self, name, confirmation, lname=None, info=None, tags=None):
         """Option to create a job."""
@@ -146,7 +131,7 @@ class Application():
         # Cambiar nombre
         if not new_name is None:
             # j.change_name(new_name)
-            basic.perror("Change name isnt implemented")
+            pass # TODO
 
         if not new_lname is None:
             j.change_longname(new_lname)
@@ -159,22 +144,23 @@ class Application():
 
         self._save_job(j)
 
-    def delete_job(self, name, force=False):
+    def delete_job(self, name, confirmation, force=False):
         """Option to delete a job."""
 
         if not self._job_exists(name):
-            print_error(name, rs.ResultType.NotExist)
-            return
+            return rs.DeleteResult(rs.ResultType.NotExist)
 
-        q = "Are you sure you want to drop '{}'".format(name)
-        if force or basic.input_y_n(question=q, default="n"):
+        deleted = False
+        if force or confirmation():
             j = self._load_job(name)
             self.fh.remove_job(name)
+            deleted = True
+
+        return rs.DeleteResult(was_deleted=deleted)
 
     def show_jobs(self, name, run_only=False, name_only=False, show_entries=False):
         """Option to show jobs."""
 
-        # REVIEW: dont create functions every time
         def match_regex(k, m):
             """Boolean matching k with m, using regex."""
             return not search(m, k) is None
@@ -189,41 +175,31 @@ class Application():
 
         names = self._get_job_names()
 
-        if not name is None: # There is a name to filter
-            match = match_regex
-        else:
-            match = dont_match
-
-        if run_only: # Show only running jobs
-            filter_running = is_running
-        else:
-            filter_running = dont_match
+        # Functions to filter
+        match = dont_match if name is None else match_regex
+        filter_running = dont_match if not run_only else is_running
 
         results = rs.ShowResult()
         for n in names:
             j = self._load_job(n)
             if match(n, name) and filter_running(j):
-                sjob = j.show(self.t)
-                results.add_job(sjob)
+                result = j.show(self.t)
+                results.add_job(result)
 
-        if results.no_jobs():
-            print("No jobs to show")
-        else:
-            for r in results:
-                print_job(r, name_only, show_entries)
+        return results
 
     def backup_jobs(self):
         """Backup existing jobs."""
         for name in self._get_job_names():
             self.fh.backup_job(name)
 
-        print("Jobs backed up")
+        return rs.Result()
 
-    def update(self):
+    def update_jobs(self):
         """Make an update to the Job objects."""
         for name in self._get_job_names():
             j = self._load_job(name)
             j.update()
             self._save_job(j)
 
-        print("Jobs updated")
+        return rs.Result()

@@ -47,6 +47,7 @@
   + base function that receives start and end date.
 
 ### Other
+* Make a fix when time changes? like summer to winter time
 * Change `basic.perror` by raise? Cases with `force_continue=True` use logging module?
 * Change `obs` attribute in `Entry`: from string to list.
 * Review: instead of saving the entries as json, save them as csv (the format allows it). The basic info of the job may still be json, also the current entry?

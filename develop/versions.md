@@ -2,6 +2,9 @@
 
 ## Version 2
 
+### 2.5:
+Release date: X, 2017
+
 ### 2.4: Application structure changes
 Release date: Aug 13, 2017
 * Deprecate `edit` option (it will return soon)

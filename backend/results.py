@@ -33,7 +33,7 @@ class Result(object):
 class StopResult(Result):
     """Result object for the 'stop' action."""
 
-    def __init__(self, status=None, ttime=0, etime=0, ptime=0):
+    def __init__(self, status=None, was_discard=False, ttime=0, etime=0, ptime=0):
         """Constructor.
 
         ttime -- total time
@@ -42,6 +42,7 @@ class StopResult(Result):
 
         super().__init__(status)
 
+        self.was_discard = was_discard
         self.total_time = ttime
         self.effective_time = etime
         self.pause_time = ptime

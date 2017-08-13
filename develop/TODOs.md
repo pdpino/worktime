@@ -7,16 +7,18 @@
 
 ### Version 2.4: Application structure changes
 * Create `ConsoleApplication`, which inherits from `Application`.
-* Create `ResultWrapper` to wrap the behavior when using `Result`.
+
+### Version X:
+* Create `ResultHandler` to wrap the behavior when using `Result`.
   + has methods `subscribe_ERROR()`, where <ERROR> is one of the possible errors. Each of these methods receives a function that is called when that error is found. In the case of the `ConsoleApplication`, the functions should be a print to stdout.
   + has a method `eval_result()`, which receives a function to call in case the result is OK, else use the functions saved previously.
   + add a `bool` `exit_after`? to exit after `eval_result`.
 
-### Version 2.5:
+### Version X:
 * Create `filesys.AdminFileHandler` and `application.AdminData` to be able to load and save important data.
 
-
 ### Version 3: Status enums (not backwards compatible)
+* Move json files to another location (e.g. `home/.worktime`)
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
 * use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
 * reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)

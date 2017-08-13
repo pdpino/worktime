@@ -32,7 +32,6 @@ def parse_args():
         # Stop
         parser_stop = subparser.add_parser('stop', help="Stop a currently running work")
         parser_stop.add_argument('name', default=None, type=str, help="Name of the work to stop")
-        parser_stop.add_argument('-a', '--all', action="store_true", help="Stop all the running jobs")
         parser_stop.add_argument('-d', '--discard', action="store_true", help="Discard this run")
         parser_stop.add_argument('-q', '--quiet', action="store_true", help="Don't print the time when stopped")
         parser_stop.add_argument('-i', '--info', default=None, type=str, help="Info about this run of the job")
@@ -116,7 +115,7 @@ if __name__ == "__main__":
     if args.option == "start":
         app.start_job(args.name, args.info)
     elif args.option == "stop":
-        app.stop_job(args.name, info=args.info, stop_all=args.all, discard=args.discard, quiet=args.quiet)
+        app.stop_job(args.name, info=args.info, discard=args.discard, quiet=args.quiet)
     elif args.option == "pause":
         app.pause_job(args.name, args.wait)
     elif args.option == "create":

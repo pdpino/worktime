@@ -247,13 +247,10 @@ class Job():
     def create(self, name, longname, info, tags):
         """Create a Job from"""
         self.name = name
-        self.longname = longname
-        self.info = info
+        self.longname = longname or ""
+        self.info = info or ""
 
-        if tags is None:
-            self.tags = list()
-        else:
-            self.tags = list(tags)
+        self.tags = list() if tags is None else list(tags)
 
         self.entries = []
 
@@ -263,6 +260,8 @@ class Job():
 
         # Validates the rest of attributes
         self._create()
+
+        return rs.Result()
 
     def start(self, t, obs=""):
         """Start an entry in a job."""
@@ -298,7 +297,7 @@ class Job():
         self.is_running = False
         self.is_paused = False
 
-        return rs.StopResult(ttime=ttime, etime=etime, ptime=ptime)
+        return rs.StopResult(was_discard=discard, ttime=ttime, etime=etime, ptime=ptime)
 
     def pause(self, t):
         """Toggle pause in a job."""

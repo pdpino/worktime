@@ -4,71 +4,6 @@ from re import search
 from backend import jobs, results as rs, filesys as fs
 import basic
 
-def print_action(name, action):
-    """Temporary function."""
-    print("'{}' {}".format(name, action))
-
-def print_error(name, status):
-    """Temporary function. Should pass to ConsoleApplication"""
-    if status == rs.ResultType.AlreadyRunning:
-        print_action(name, "is already running")
-    elif status == rs.ResultType.NotRunning:
-        print_action(name, "is not running")
-    elif status == rs.ResultType.AlreadyExist:
-        print_action(name, "already exist")
-    elif status == rs.ResultType.NotExist:
-        print_action(name, "doesn't exist")
-    else:
-        print_action(name, status)
-
-def print_job(sjob, name_only=False, show_entries=False):
-    """Pretty print for a show job."""
-
-    def pstr(sentry):
-        """Pretty string for a show_entry"""
-        if sentry.obs != "":
-            obs = "\n\t\t{}".format(sentry.obs)
-        else:
-            obs = sentry.obs
-
-        ttime = basic.sec2hr(sentry.total_time)
-        etime = basic.sec2hr(sentry.effective_time)
-        ptime = basic.sec2hr(sentry.pause_time)
-
-        return "{} -- {} to {} -- total: {} -- effective: {} -- pause: {} {}".format(sentry.date,
-                    sentry.hour_init, sentry.hour_end,
-                    ttime, etime, ptime,
-                    obs)
-
-    # Get status string
-    status = sjob.status
-    if sjob.status == "paused": # HACK: "paused" and "running" hardcoded, use enum
-        status = "paused ({} in pause)".format(sjob.pause_time)
-    elif sjob.status == "running":
-        status = "running (total: {}, effective: {})".format(sjob.total_time, sjob.effective_time)
-
-    # String to print
-    if name_only:
-        w = "{}".format(sjob.name)
-    else:
-        w = """{}
-        long name:  {}
-        info:       {}
-        tags:       {}
-        status:     {}
-        total runs: {}""".format(sjob.name, sjob.longname, sjob.info, sjob.tags, status, sjob.total_runs)
-
-    if show_entries:
-        w += "\n\tEntries: "
-        if len(sjob.entries) > 0:
-            w += "\n"
-            for s in sjob.entries:
-                w += "\t{}\n".format(pstr(s))
-        else:
-            w += "None\n"
-
-    print(w)
-
 class Application():
     """Handle the application."""
 
@@ -133,55 +68,33 @@ class Application():
         j = self._load_job(name)
         result = j.start(self.t, info)
         if result.is_ok():
-            print_action(name, "started")
             self._save_job(j)
-        else:
-            print_error(name, result.status)
 
-    def stop_job(self, name, info=None, stop_all=False, discard=False, quiet=True):
-        """Option to stop a job."""
+        return result
+
+    def stop_job(self, name, confirmation, info=None, discard=False):
+        """Option to stop a job.
+
+        confirmation -- function to call if confirmation for discarding an entry is needed"""
 
         # Assert time
         self._assert_time("stop a job")
 
-        def _stop_job(n, discard):
-            """Stop a given job."""
-            # REVIEW: receive job it self, not names?
+        # Load job
+        j = self._load_job(n)
 
-            # Load job
-            j = self._load_job(n)
+        # Confirmation
+        if j.confirm_discard(): # Confirmation needed
+            if not confirmation(): # Ask for confirmation
+                discard = False
 
-            # Confirmation
-            if j.confirm_discard():
-                if not basic.input_y_n(question="Are you sure you want to discard an entry for '{}'".format(n)):
-                    discard = False
+        # Stop
+        result = j.stop(self.t, discard=discard, obs=info)
 
-            # Stop
-            result = j.stop(self.t, discard=discard, obs=info)
+        if result.is_ok():
+            self._save_job(j)
 
-            if result.is_ok():
-                self._save_job(j)
-                # Print action
-                action = "stopped"
-                if discard:
-                    action += ", entry discarded"
-                print_action(n, action)
-
-                # Print times
-                if not quiet:
-                    print("\t Runtime: total: {}, effective: {}, pause: {}".format(
-                                basic.sec2hr(result.total_time),
-                                basic.sec2hr(result.effective_time),
-                                basic.sec2hr(result.pause_time)))
-
-            else:
-                print_error(n, result.status)
-
-        if stop_all:
-            for nn in self._get_job_names():
-                _stop_job(nn, discard)
-        else:
-            _stop_job(name, discard)
+        return result
 
     def pause_job(self, name, wait=False):
         """Option to pause a job."""
@@ -209,16 +122,19 @@ class Application():
         # Save to json
         self._save_job(j)
 
-    def create_job(self, name, lname, info, tags):
+    def create_job(self, name, confirmation, lname=None, info=None, tags=None):
         """Option to create a job."""
         if self._job_exists(name):
-            q = "A previous work called '{}' exists. Do you want to override it".format(name)
-            if not basic.input_y_n(question=q):
+            if not confirmation():
                 return
 
         j = jobs.Job()
-        j.create(name, lname, info, tags)
-        self._save_job(j)
+        result = j.create(name, lname, info, tags)
+
+        if result.is_ok():
+            self._save_job(j)
+
+        return result
 
     def edit_job(self, name, new_name=None, new_lname=None, new_info=None, info_mode=None, new_tags=None, tags_mode=None):
         """Option to edit a job."""

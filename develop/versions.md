@@ -5,6 +5,7 @@
 ### 2.4: Application structure changes
 Release date: X, 2017
 * Deprecate `edit` option (it will return soon)
+* Deprecate `--all` option in `work stop`.
 * Create `Results` class, which holds the result of an action made
   + Create `StopResult`, `PauseResult`, `ShowResult`.
   + Now each action in `Job` returns a result, then the `Application` chooses what to do with it (e.g. print to stdout, print error, etc)

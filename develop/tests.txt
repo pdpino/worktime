@@ -1,11 +1,14 @@
 # After a change, run at least the following tests:
-# (in between of each command you may run 'work show')
+# (in between of each command you may run 'work show', 'work show -r' or just 'work')
 
 work create prueba
-
 work start prueba
-
 work pause prueba
 work pause prueba
-
-work pause prueba -w
+work pause prueba -w # + Enter
+work stop prueba
+work start prueba
+work stop prueba
+work delete prueba
+work backup
+work update

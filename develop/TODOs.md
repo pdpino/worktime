@@ -2,8 +2,7 @@
 
 ## TODOs
 
-* Deprecate `work-git`, because of branches
-* Finish `tests.txt` file
+* Fix `work-git`, because of branches
 
 ### Version 2.5:
 * Create `ResultHandler` to wrap the behavior when using `Result`.
@@ -11,7 +10,7 @@
   + has a method `eval_result()`, which receives a function to call in case the result is OK, else use the functions saved previously.
   + add a `bool` `exit_after`? to exit after `eval_result`.
 
-### Version X:
+### Version 2.6:
 * Create `filesys.AdminFileHandler` and `application.AdminData` to be able to load and save important data.
 
 ### Version 3: Status enums (not backwards compatible)
@@ -20,11 +19,14 @@
 * use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
 * reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)
 
-
-
 ### Script layer
 * Catch ctrl-c (ver `SignalCatcher` en muse project)
 * Pasar options (start, stop, etc) a callbacks (en vez de ifs)
+
+### ShowResults
+* Review: Change `ShowJob` and `EntryJob`, options:
+  + remove them, the `show()` just return a dictionary with the info
+  + leave them, but move them to `jobs`. `ShowJob` has as attribute a `Job`, exposes methods to get useful things. The API specifies those methods.
 
 ### Filesys module
 * move `get_dict()` to be a static method?
@@ -46,7 +48,7 @@
 
 ### Other
 * Change `basic.perror` by raise? Cases with `force_continue=True` use logging module?
-* Change obs attribute in Entry: from string to list.
+* Change `obs` attribute in `Entry`: from string to list.
 * Review: instead of saving the entries as json, save them as csv (the format allows it). The basic info of the job may still be json, also the current entry?
 
 

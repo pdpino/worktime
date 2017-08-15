@@ -4,6 +4,7 @@
 
 ### 2.5:
 Release date: X, 2017
+* Create submodule `application`
 
 ### 2.4: Application structure changes
 Release date: Aug 13, 2017

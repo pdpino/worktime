@@ -1,8 +1,9 @@
 """Module that provides a class to handle the application from the console."""
-from backend import application, results as rs
+from backend import results as rs
+from .application import Application
 import basic
 
-class ConsoleApplication(application.Application):
+class ConsoleApplication(Application):
     """Handle the application from the console."""
 
     def _print_action(self, name, action):

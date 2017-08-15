@@ -1,0 +1,1 @@
+from .consoleapplication import *

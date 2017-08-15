@@ -1,1 +1,1 @@
-from .consoleApplication import *
+from .application import *

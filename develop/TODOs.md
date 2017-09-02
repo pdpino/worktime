@@ -5,10 +5,6 @@
 * add keyboard shortcuts, to the aliases, e.g. `ctrl+alt+1` is `work pause`, `ctrl+alt+2` is `work stop`, etc.
 * add taskbar icon
 
-### Version 2.5:
-* Option 'select', to mark a job as the used one and just do `work start`
-
-
 ### Version 3: Status enums (not backwards compatible)
 * Move json files to another location (e.g. `home/.worktime`)
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
@@ -42,6 +38,13 @@
   + in a week
   + filtering by job
   + base function that receives start and end date.
+
+### Re-design
+* Whole architecture
+* `Results` module. Several results must be able to be returned
+  + like in `show`
+  + when calling `start` you want to automatically call `select`
+  + when deleting a job and its selected, you want to unselect it.
 
 ### Refactor
 * Fix `work-git`, because of branches

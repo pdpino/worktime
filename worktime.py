@@ -5,7 +5,7 @@ Measure the time that you work on different subjects."""
 
 __author__ = "pdpino"
 __program__ = "Worktime"
-__version__ = "2.5dev"
+__version__ = "2.5"
 
 import sys
 import argparse
@@ -26,18 +26,18 @@ def parse_args():
         # subparser.required = True
 
         parser_start = subparser.add_parser('start', help="Start to work on something")
-        parser_start.add_argument('name', default=None, type=str, help="Name of the work to start")
+        parser_start.add_argument('name', nargs='?', default=None, type=str, help="Name of the work to start")
         parser_start.add_argument('-i', '--info', default="", type=str, help="Optional observations")
 
         parser_stop = subparser.add_parser('stop', help="Stop a currently running work")
-        parser_stop.add_argument('name', default=None, type=str, help="Name of the work to stop")
+        parser_stop.add_argument('name', nargs='?', default=None, type=str, help="Name of the work to stop")
         parser_stop.add_argument('-d', '--discard', action="store_true", help="Discard this run")
         parser_stop.add_argument('-q', '--quiet', action="store_true", help="Don't print the time when stopped")
         parser_stop.add_argument('-i', '--info', default=None, type=str, help="Info about this run of the job")
 
         parser_pause = subparser.add_parser('pause', aliases=['unpause'],
                             help="Pause or unpause a running work. Useful when stopping for a short time")
-        parser_pause.add_argument('name', default=None, type=str, help="Name of the work to pause/unpause")
+        parser_pause.add_argument('name', nargs='?', default=None, type=str, help="Name of the work to pause/unpause")
         parser_pause.add_argument('-w', '--wait', action="store_true",
                             help="Wait for me. Put the job in pause until you press enter")
 

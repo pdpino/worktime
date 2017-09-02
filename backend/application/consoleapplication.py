@@ -86,7 +86,7 @@ class ConsoleApplication(Application):
         """Option to start a job."""
 
         result = super().start_job(name, info)
-
+        name = result.jobname
         if result.is_ok():
             self._print_action(name, "started")
         else:
@@ -100,7 +100,7 @@ class ConsoleApplication(Application):
 
         # Stop
         result = super().stop_job(name, confirm, info=info, discard=discard)
-
+        name = result.jobname
         if result.is_ok():
             action = "stopped"
             if result.was_discard:
@@ -126,11 +126,12 @@ class ConsoleApplication(Application):
             result = super(ConsoleApplication, self).pause_job(name)
             if result.is_ok():
                 if result.was_paused:
-                    self._print_action(name, "paused")
+                    self._print_action(result.jobname, "paused")
                 else:
-                    self._print_action(name, "unpaused -- paused time: {}".format(basic.sec2hr(result.pause_time)))
+                    self._print_action(result.jobname,
+                                    "unpaused -- paused time: {}".format(basic.sec2hr(result.pause_time)))
             else:
-                self._print_error(name, result.status)
+                self._print_error(result.jobname, result.status)
                 return False
 
             return True

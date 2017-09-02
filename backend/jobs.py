@@ -266,7 +266,7 @@ class Job():
     def start(self, t, obs=""):
         """Start an entry in a job."""
         if self.is_running:
-            return rs.Result(rs.ResultType.AlreadyRunning)
+            return rs.StartResult(rs.ResultType.AlreadyRunning, jobname=self.name)
 
         # Crear entrada de lista
         self._entry = Entry()
@@ -275,12 +275,12 @@ class Job():
         self.is_running = True
         self.is_paused = False
 
-        return rs.Result()
+        return rs.StartResult(jobname=self.name)
 
     def stop(self, t, discard=False, obs=None):
         """Stop a running job."""
         if not self.is_running:
-            return rs.StopResult(rs.ResultType.NotRunning)
+            return rs.StopResult(status=rs.ResultType.NotRunning, jobname=self.name)
 
         self._entry.add_obs(obs)
         self._entry.stop(t)
@@ -297,12 +297,12 @@ class Job():
         self.is_running = False
         self.is_paused = False
 
-        return rs.StopResult(was_discard=discard, ttime=ttime, etime=etime, ptime=ptime)
+        return rs.StopResult(jobname=self.name, was_discard=discard, ttime=ttime, etime=etime, ptime=ptime)
 
     def pause(self, t):
         """Toggle pause in a job."""
         if not self.is_running:
-            return rs.PauseResult(rs.ResultType.NotRunning)
+            return rs.PauseResult(rs.ResultType.NotRunning, jobname=self.name)
 
         # Toggle pause
         ptime = self._entry.pause(t)
@@ -315,7 +315,7 @@ class Job():
 
             was_paused = True # NOTE: see note above
 
-        return rs.PauseResult(was_paused=was_paused, pause_time=ptime)
+        return rs.PauseResult(jobname=self.name, was_paused=was_paused, pause_time=ptime)
 
     def show(self, t=None):
         """Return a show object for a job."""

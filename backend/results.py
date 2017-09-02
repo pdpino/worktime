@@ -33,32 +33,41 @@ class Result(object):
     def is_ok(self):
         return self.status == ResultType.OK
 
-class StopResult(Result):
+class StartResult(Result):
+    """Result object for the 'start' action."""
+
+    def __init__(self, status=None, jobname=None):
+        """Constructor."""
+        super().__init__(status)
+
+        self.jobname = jobname
+
+class StopResult(StartResult):
     """Result object for the 'stop' action."""
 
-    def __init__(self, status=None, was_discard=False, ttime=0, etime=0, ptime=0):
+    def __init__(self, status=None, jobname=None, was_discard=False, ttime=0, etime=0, ptime=0):
         """Constructor.
 
         ttime -- total time
         etime -- effective time
         ptime -- pause time"""
 
-        super().__init__(status)
+        super().__init__(status, jobname)
 
         self.was_discard = was_discard
         self.total_time = ttime
         self.effective_time = etime
         self.pause_time = ptime
 
-class PauseResult(Result):
+class PauseResult(StartResult):
     """Result object for the 'pause' action."""
 
-    def __init__(self, status=None, was_paused=False, pause_time=0):
+    def __init__(self, status=None, jobname=None, was_paused=False, pause_time=0):
         """Constructor.
 
         was_paused -- if true the job was paused, else the job was unpaused. Only works if status is OK"""
 
-        super().__init__(status)
+        super().__init__(status, jobname)
         self.was_paused = was_paused
         self.pause_time = pause_time
 

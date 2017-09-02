@@ -42,6 +42,10 @@ class Application():
         """Close the application."""
         self.admin_fh.save_admin(self.admin_data)
 
+    def _choose_name(self, name):
+        """If name is None, return the selected name in the admin data."""
+        return name or self.admin_data.get_selected_job()
+
     def _load_job(self, name):
         """Load a job given a name."""
         job = jobs.Job()
@@ -86,10 +90,18 @@ class Application():
         """Option to start a job."""
         self._assert_time("start a job")
 
-        j = self._load_job(name)
-        result = j.start(self.t, info)
+        # REFACTOR: this is copied in start/stop/pause methods, use decorators
+        name = self._choose_name(name)
+        if name is None:
+            return rs.StartResult(rs.ResultType.NotSelected)
+
+        if not self._exist_job(name):
+            return rs.StartResult(rs.ResultType.NotExist, jobname=name)
+
+        job = self._load_job(name)
+        result = job.start(self.t, info)
         if result.is_ok():
-            self._save_job(j)
+            self._save_job(job)
 
         return result
 
@@ -98,10 +110,15 @@ class Application():
 
         confirmation -- function to call if confirmation for discarding an entry is needed"""
 
-        # Assert time
         self._assert_time("stop a job")
 
-        # Load job
+        name = self._choose_name(name)
+        if name is None:
+            return rs.StopResult(rs.ResultType.NotSelected)
+
+        if not self._exist_job(name):
+            return rs.StopResult(rs.ResultType.NotExist, jobname=name)
+
         j = self._load_job(name)
 
         # Confirmation
@@ -109,7 +126,6 @@ class Application():
             if not confirmation(): # Ask for confirmation
                 discard = False
 
-        # Stop
         result = j.stop(self.t, discard=discard, obs=info)
 
         if result.is_ok():
@@ -120,6 +136,10 @@ class Application():
     def pause_job(self, name):
         """Option to pause a job."""
         self._assert_time("pause a job")
+
+        name = self._choose_name(name)
+        if name is None:
+            return rs.PauseResult(rs.ResultType.NotSelected)
 
         j = self._load_job(name)
         result = j.pause(self.t)

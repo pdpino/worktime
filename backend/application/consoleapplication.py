@@ -218,6 +218,7 @@ class ConsoleApplication(Application):
                 message += self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries)
                 message += "\n"
 
+        print(message)
         self._notify_action(action=message)
 
     def backup_jobs(self):

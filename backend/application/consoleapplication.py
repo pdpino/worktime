@@ -211,14 +211,14 @@ class ConsoleApplication(Application):
         results = super().show_jobs(name, run_only)
 
         if results.no_jobs():
-            print("No jobs to show")
+            message = "No jobs to show"
         else:
             message = ""
             for r in results:
                 message += self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries)
                 message += "\n"
 
-            self._notify_action(action=message)
+        self._notify_action(action=message)
 
     def backup_jobs(self):
         """Backup existing jobs."""

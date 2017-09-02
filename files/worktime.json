@@ -18,12 +18,12 @@
         "is_paused": false,
         "date": "2017/09/01",
         "hi": "21:43",
-        "n_pauses": 0,
+        "n_pauses": 1,
         "total_time": 0,
         "effective_time": 0,
-        "pause_time": 0,
+        "pause_time": 27.50508800148964,
         "_ti": 21073418.500051,
-        "_pi": 0
+        "_pi": 21075780.819728
     },
     "entries": [
         {

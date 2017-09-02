@@ -6,20 +6,20 @@
         "universidad",
         "ast"
     ],
-    "is_running": true,
-    "is_paused": true,
-    "_entry": {
-        "obs": "",
-        "finished": false,
-        "is_paused": true,
-        "date": "2017/09/02",
-        "hi": "11:28",
-        "n_pauses": 1,
-        "total_time": 0,
-        "effective_time": 0,
-        "pause_time": 0,
-        "_ti": 21122932.239455,
-        "_pi": 21123812.2753
-    },
-    "entries": []
+    "is_running": false,
+    "is_paused": false,
+    "_entry": null,
+    "entries": [
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/09/02",
+            "hi": "11:28",
+            "hf": "12:54",
+            "n_pauses": 4,
+            "total_time": 5134.52,
+            "effective_time": 3050.1,
+            "pause_time": 2084.42
+        }
+    ]
 }

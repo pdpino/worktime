@@ -109,14 +109,16 @@ class ConsoleApplication(Application):
             action = "stopped"
             if result.was_discard:
                 action += ", entry discarded"
-            self._print_action(result.jobname, action)
 
             # Print times
             if not quiet:
-                print("\t Runtime: total: {}, effective: {}, pause: {}".format(
+                action += "\n\t Runtime: total: {}, effective: {}, pause: {}".format(
                             basic.sec2hr(result.total_time),
                             basic.sec2hr(result.effective_time),
-                            basic.sec2hr(result.pause_time)))
+                            basic.sec2hr(result.pause_time))
+
+
+            self._print_action(result.jobname, action)
         else:
             self._print_error(result.jobname, result.status)
 

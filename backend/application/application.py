@@ -102,6 +102,17 @@ class Application():
             subprocess.run("notify-send --urgency=critical '{}' '{}'".format(title, message), shell=True)
             # NOTE: use return_value.returncode of run() to see the status of the called command
 
+    def _select_job_GUI(self):
+        """Prompt the user to select a job using zenity."""
+        column_title = 'Jobs' # TASK: move to config parameters
+        message = 'Select a Job'
+        jobs = ' '.join(self._get_job_names())
+        height = 300 # TODO: change this according to the amount of jobs # height=300 works fine for up to 8 or 9 jobs
+        command = "zenity --column='{}' --title='{}' --list {} --height={}".format(column_title, message, jobs, height)
+        result = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
+        selected = result.stdout.decode('utf-8').strip()
+        return selected or None
+
     """API methods"""
     def start_job(self, name, info):
         """Option to start a job."""
@@ -282,3 +293,34 @@ class Application():
             self._save_job(j)
 
         return rs.Result()
+
+    def display_help(self, shortcut=True):
+        """Display a help message."""
+        if not shortcut:
+            print("Nothing here")
+            return
+
+        # HACK: do this from configuration file
+        special_cmd = 'Shift+Alt'
+        commands = [
+            ['Up', 'Start the selected job'],
+            ['Down', 'Stop the selected job'],
+            ['P', 'Pause the selected job'],
+            ['S', 'Show the status of the running jobs'],
+            ['W', 'Select a job interactively'],
+            ['U', 'Unselect the currently selected job'],
+            ['A', 'Show the currently selected job'],
+            ['H', 'Display this help message'],
+            ]
+
+        full_message = "{} +:\n".format(special_cmd)
+        for i in range(len(commands)):
+            key = commands[i][0]
+            help_msg = commands[i][1]
+            full_message += "\t{} -- {}\n".format(key, help_msg)
+
+        # HACK: use _print_action()
+        # HACK: this should be in console application!!!
+        print(full_message)
+
+        subprocess.run("zenity --info --height=200 --text='{}'".format(full_message), shell=True, stdout=subprocess.PIPE)

@@ -8,7 +8,8 @@
     - `work --notify start`
     - `work --notify stop`
     - `work --notify pause`
-    - `work --notify show -r -s`
+    - `work --notify show -r -s` -- show running jobs, only status
+    - `work --notify select -s` -- show selected job
 
 ### Version 3: Json files to other folder
 * Move json files to another location (e.g. `home/.worktime`)
@@ -66,6 +67,7 @@
 * Add options saved in file:
   + when using `start` and `stop` also do `select` and `unselect`; or leave this manual
   + directory to save files, by default `$HOME/.worktime/files` (or `/jobs`) (move configuration file `config/admin.json` to that location)
+  + default behavior for `work select` (may be unselect or show), and for `work` (currently is `work show -r`)
 * Make a fix when time changes? like summer to winter time
 * Change `obs` attribute in `Entry`: from string to list.
 * Change time of the notification pop-up

@@ -17,8 +17,9 @@ class ConsoleApplication(Application):
         if status == rs.ResultType.Cancelled:
             self._print_action(name, "cancelled") # REFACTOR: add action to parameters, so 'action cancelled' can be printed
         elif status == rs.ResultType.NoneNotAccepted:
-            print("A name is needed")
-            self._notify_action(action="A name is needed") # TASK: better message
+            message = "A name is needed"
+            print(message)
+            self._notify_action(action=message) # TASK: better message
         elif status == rs.ResultType.AlreadyRunning:
             self._print_action(name, "is already running")
         elif status == rs.ResultType.NotRunning:
@@ -180,8 +181,11 @@ class ConsoleApplication(Application):
         else:
             self._print_error(name, result.status)
 
-    def select_job(self, name):
+    def select_job(self, name, interactive=False):
         """Select a job to use later without calling the name."""
+        if interactive:
+            name = self._select_job_GUI()
+
         result = super().select_job(name)
         if result.is_ok():
             self._print_action(name, "selected")
@@ -201,7 +205,10 @@ class ConsoleApplication(Application):
         # HACK: this method doesn't pass throw the application
         jobname = self.admin_data.get_selected_job()
         if not jobname is None:
-            print("Selected job: '{}'".format(jobname))
+            # HACK: use self._print_action()
+            message = "Selected job: '{}'".format(jobname)
+            print(message)
+            self._notify_action(None, message)
         else:
             self._print_error(None, rs.ResultType.NotSelected) # HACK
 
@@ -236,3 +243,7 @@ class ConsoleApplication(Application):
             print("Jobs updated")
         else:
             self._print_error(None, result.status)
+
+    def display_help(self, shortcut=True):
+        """Display a help message."""
+        super().display_help(shortcut)

@@ -67,6 +67,7 @@ def parse_args():
 
         parser_select = subparser.add_parser('select', help="Select a work")
         parser_select.add_argument('name', nargs='?', default=None, type=str, help="Name of the work to select")
+        parser_select.add_argument('-I', '--interactive', action="store_true", help="Select job interactively with a GUI")
         parser_select.add_argument('-s', action='store_true', help="Show selected job")
         parser_select.add_argument('-u', action='store_true', help="Unselect job")
 
@@ -86,10 +87,12 @@ def parse_args():
         # parser_show.set_defaults(func=foo)
         # args.func() # calling the callback, func must be defined in each subparser
 
-
         parser_backup = subparser.add_parser('backup', help="Backup existing works")
 
         parser_update = subparser.add_parser('update', help="Update existing Job objects")
+
+        parser_help = subparser.add_parser('help', help="Display a command help message")
+        parser_help.add_argument('--shortcut', action="store_true", help="Display shorcuts")
 
         return parser
 
@@ -137,10 +140,12 @@ if __name__ == "__main__":
         elif args.u:
             app.unselect_job()
         else:
-            app.select_job(args.name)
+            app.select_job(args.name, args.interactive)
     elif args.option == "backup":
         app.backup_jobs()
     elif args.option == "update":
         app.update_jobs()
+    elif args.option == "help":
+        app.display_help(args.shortcut)
 
     app.close()

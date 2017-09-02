@@ -20,6 +20,28 @@
             "total_time": 5134.52,
             "effective_time": 3050.1,
             "pause_time": 2084.42
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/09/02",
+            "hi": "13:37",
+            "hf": "14:19",
+            "n_pauses": 1,
+            "total_time": 2537.42,
+            "effective_time": 2236.93,
+            "pause_time": 300.49
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/09/02",
+            "hi": "17:15",
+            "hf": "17:42",
+            "n_pauses": 1,
+            "total_time": 1572.76,
+            "effective_time": 1124.42,
+            "pause_time": 448.34
         }
     ]
 }

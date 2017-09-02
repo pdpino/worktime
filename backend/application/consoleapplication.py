@@ -34,7 +34,7 @@ class ConsoleApplication(Application):
         else:
             self._print_action(name, status)
 
-    def _print_job(self, sjob, name_only=False, show_entries=False):
+    def _print_job(self, sjob, name_only=False, status_only=False, show_entries=False):
         """Pretty print for a job (ShowJob)."""
 
         def pstr(sentry):
@@ -63,6 +63,8 @@ class ConsoleApplication(Application):
         # String to print
         if name_only:
             w = "{}".format(sjob.name)
+        elif status_only:
+            w = "{} -- {}".format(sjob.name, status)
         else:
             w = """{}
             long name:  {}
@@ -71,16 +73,17 @@ class ConsoleApplication(Application):
             status:     {}
             total runs: {}""".format(sjob.name, sjob.longname, sjob.info, sjob.tags, status, sjob.total_runs)
 
-        if show_entries:
-            w += "\n\tEntries: "
-            if len(sjob.entries) > 0:
-                w += "\n"
-                for s in sjob.entries:
-                    w += "\t{}\n".format(pstr(s))
-            else:
-                w += "None\n"
+            if show_entries: # show_entries only works if not name_only and not status_only
+                w += "\n\tEntries: "
+                if len(sjob.entries) > 0:
+                    w += "\n"
+                    for s in sjob.entries:
+                        w += "\t{}\n".format(pstr(s))
+                else:
+                    w += "None\n"
 
         print(w)
+        return w
 
     def close(self):
         """Close the application."""
@@ -200,16 +203,20 @@ class ConsoleApplication(Application):
         else:
             self._print_error(None, rs.ResultType.NotSelected) # HACK
 
-    def show_jobs(self, name, run_only=False, name_only=False, show_entries=False):
+    def show_jobs(self, name, run_only=False, name_only=False, status_only=False, show_entries=False):
         """Option to show jobs."""
 
-        results = super().show_jobs(name, run_only, name_only, show_entries)
+        results = super().show_jobs(name, run_only)
 
         if results.no_jobs():
             print("No jobs to show")
         else:
+            message = ""
             for r in results:
-                self._print_job(r, name_only, show_entries)
+                message += self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries)
+                message += "\n"
+
+            self._notify_action(action=message)
 
     def backup_jobs(self):
         """Backup existing jobs."""

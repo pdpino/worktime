@@ -5,7 +5,7 @@ Measure the time that you work on different subjects."""
 
 __author__ = "pdpino"
 __program__ = "Worktime"
-__version__ = "2.6"
+__version__ = "2.7dev"
 
 import sys
 import argparse
@@ -77,6 +77,7 @@ def parse_args():
 
         parser_show_opts = parser_show.add_argument_group(title="Show options", description=None)
         parser_show_opts.add_argument('-n', '--names', action="store_true", help="Show only the names of the jobs")
+        parser_show_opts.add_argument('-s', '--status', action="store_true", help="Show only the status of the jobs")
         parser_show_opts.add_argument('-e', '--entries', action="store_true", help="Show the entries (may be a lot)")
 
         ## FUTURE: use as callback
@@ -125,7 +126,11 @@ if __name__ == "__main__":
     elif args.option == "delete":
         app.delete_job(args.name, args.y)
     elif args.option == "show":
-        app.show_jobs(args.name, run_only=args.running, name_only=args.names, show_entries=args.entries)
+        app.show_jobs(args.name,
+                    run_only=args.running,
+                    name_only=args.names,
+                    status_only=args.status,
+                    show_entries=args.entries)
     elif args.option == "select":
         if args.s:
             app.show_selected_job()

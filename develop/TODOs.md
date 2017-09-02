@@ -5,6 +5,10 @@
 * Add install script:
   + set alias or add to `PATH`
   + configure keyboard shortcuts (https://askubuntu.com/questions/597395/how-to-set-custom-keyboard-shortcuts-from-terminal)
+    - `work --notify start`
+    - `work --notify stop`
+    - `work --notify pause`
+    - `work --notify show -r -s`
 
 ### Version 3: Status enums (not backwards compatible)
 * Move json files to another location (e.g. `home/.worktime`)
@@ -46,6 +50,8 @@
   + like in `show`
   + when calling `start` you want to automatically call `select`
   + when deleting a job and its selected, you want to unselect it.
+* argparse
+  + show options, `name_only`, `status_only` and `show_entries` are all exclusive, use `choices` argument?
 
 ### Refactor
 * Fix `work-git`, because of branches
@@ -84,7 +90,6 @@
 
 ### Improve current tools
 #### show
-* option to show only the run status and its name. Review: change argparse by exclusive options (full, status, info, etc)
 * advanced search
 
 #### pause

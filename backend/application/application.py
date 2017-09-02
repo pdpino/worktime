@@ -235,7 +235,7 @@ class Application():
         else:
             return rs.UnselectResult(status=rs.ResultType.NotSelected)
 
-    def show_jobs(self, name, run_only=False, name_only=False, show_entries=False):
+    def show_jobs(self, name, run_only=False):
         """Option to show jobs."""
 
         def match_regex(k, m):

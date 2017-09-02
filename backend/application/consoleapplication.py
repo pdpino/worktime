@@ -6,10 +6,10 @@ import basic
 class ConsoleApplication(Application):
     """Handle the application from the console."""
 
-    def _print_action(self, name, action):
+    def _print_action(self, name, action, more_title=None):
         """Print an action made."""
         print("'{}' {}".format(name, action))
-        self._notify_action(name, action)
+        self._notify_action(name, action, more_title=more_title)
 
     def _print_error(self, name, status):
         """Print an error to stdout."""
@@ -95,7 +95,7 @@ class ConsoleApplication(Application):
 
         result = super().start_job(name, info)
         if result.is_ok():
-            self._print_action(result.jobname, "started")
+            self._print_action(result.jobname, "started", more_title="start")
         else:
             self._print_error(result.jobname, result.status)
 
@@ -119,7 +119,7 @@ class ConsoleApplication(Application):
                             basic.sec2hr(result.pause_time))
 
 
-            self._print_action(result.jobname, action)
+            self._print_action(result.jobname, action, more_title="stop")
         else:
             self._print_error(result.jobname, result.status)
 
@@ -133,10 +133,11 @@ class ConsoleApplication(Application):
             result = super(ConsoleApplication, self).pause_job(name)
             if result.is_ok():
                 if result.was_paused:
-                    self._print_action(result.jobname, "paused")
+                    self._print_action(result.jobname, "paused", more_title="pause")
                 else:
                     self._print_action(result.jobname,
-                                    "unpaused -- paused time: {}".format(basic.sec2hr(result.pause_time)))
+                                    "unpaused -- paused time: {}".format(basic.sec2hr(result.pause_time)),
+                                    more_title="pause")
             else:
                 self._print_error(result.jobname, result.status)
                 return False
@@ -157,7 +158,7 @@ class ConsoleApplication(Application):
         result = super().create_job(name, confirmation, lname, info, tags)
 
         if result.is_ok():
-            self._print_action(name, "created")
+            self._print_action(name, "created", more_title="create")
         else:
             self._print_error(name, result.status)
 
@@ -188,7 +189,7 @@ class ConsoleApplication(Application):
 
         result = super().select_job(name)
         if result.is_ok():
-            self._print_action(name, "selected")
+            self._print_action(name, "selected", more_title="select")
         else:
             self._print_error(name, result.status)
 
@@ -196,7 +197,7 @@ class ConsoleApplication(Application):
         """Unselect the currently selected job."""
         result = super().unselect_job()
         if result.is_ok():
-            self._print_action(result.jobname, "unselected")
+            self._print_action(result.jobname, "unselected", more_title="unselect")
         else:
             self._print_error(result.jobname, result.status)
 
@@ -208,7 +209,7 @@ class ConsoleApplication(Application):
             # HACK: use self._print_action()
             message = "Selected job: '{}'".format(jobname)
             print(message)
-            self._notify_action(None, message)
+            self._notify_action(None, message, more_title='show selected')
         else:
             self._print_error(None, rs.ResultType.NotSelected) # HACK
 
@@ -226,7 +227,7 @@ class ConsoleApplication(Application):
                 message += "\n"
 
         print(message)
-        self._notify_action(action=message)
+        self._notify_action(action=message, more_title='show')
 
     def backup_jobs(self):
         """Backup existing jobs."""

@@ -92,10 +92,12 @@ class Application():
         """Saves the current time."""
         self.t = datetime.now()
 
-    def _notify_action(self, jobname=None, action=None):
+    def _notify_action(self, jobname=None, action=None, more_title=None):
         """Notify an action to the screen."""
         if self.notify:
             title = "Worktime"
+            if not more_title is None:
+                title += " - {}".format(more_title)
             message = jobname or ""
             message += " "
             message += action or ""

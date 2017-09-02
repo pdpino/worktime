@@ -6,3 +6,6 @@ debug*
 
 # Data files # in the meantime save dats files in repo, to pass to other pc
 #*.dat
+
+# Config file
+config/admin.json

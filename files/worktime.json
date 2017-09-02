@@ -10,9 +10,21 @@
         "time",
         "work"
     ],
-    "is_running": false,
+    "is_running": true,
     "is_paused": false,
-    "_entry": null,
+    "_entry": {
+        "obs": "",
+        "finished": false,
+        "is_paused": false,
+        "date": "2017/09/01",
+        "hi": "21:43",
+        "n_pauses": 0,
+        "total_time": 0,
+        "effective_time": 0,
+        "pause_time": 0,
+        "_ti": 21073418.500051,
+        "_pi": 0
+    },
     "entries": [
         {
             "obs": "",

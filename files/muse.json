@@ -7,21 +7,9 @@
         "universidad",
         "denis"
     ],
-    "is_running": true,
+    "is_running": false,
     "is_paused": false,
-    "_entry": {
-        "obs": "",
-        "finished": false,
-        "is_paused": false,
-        "date": "2017/08/15",
-        "hi": "13:24",
-        "n_pauses": 0,
-        "total_time": 0,
-        "effective_time": 0,
-        "pause_time": 0,
-        "_ti": 19574695.842134,
-        "_pi": 0
-    },
+    "_entry": null,
     "entries": [
         {
             "obs": "",
@@ -484,6 +472,39 @@
             "total_time": 10082.32,
             "effective_time": 10037.78,
             "pause_time": 44.54
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/15",
+            "hi": "13:24",
+            "hf": "15:16",
+            "n_pauses": 7,
+            "total_time": 6672.82,
+            "effective_time": 5883.12,
+            "pause_time": 789.7
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/15",
+            "hi": "18:34",
+            "hf": "19:41",
+            "n_pauses": 0,
+            "total_time": 3986.86,
+            "effective_time": 3986.86,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/08/21",
+            "hi": "20:31",
+            "hf": "00:20",
+            "n_pauses": 3,
+            "total_time": 13726.62,
+            "effective_time": 10192.89,
+            "pause_time": 3533.73
         }
     ]
 }

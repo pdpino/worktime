@@ -56,6 +56,9 @@
 * Change `basic.perror` by raise? Cases with `force_continue=True` use logging module?
 
 ### Other
+* Add options saved in file:
+  + when using `start` and `stop` also do `select` and `unselect`; or leave this manual
+  + directory to save files, by default `$HOME/.worktime/files` (or `/jobs`) (move configuration file `config/admin.json` to that location)
 * Make a fix when time changes? like summer to winter time
 * Change `obs` attribute in `Entry`: from string to list.
 * Change time of the notification pop-up

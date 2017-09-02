@@ -111,7 +111,7 @@ class Application():
         """Option to create a job."""
         if self._job_exists(name):
             if not confirmation():
-                return
+                return rs.Result(rs.ResultType.Cancelled)
 
         j = jobs.Job()
         result = j.create(name, lname, info, tags)

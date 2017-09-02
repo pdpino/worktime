@@ -21,6 +21,8 @@ class ConsoleApplication(Application):
             self._print_action(name, "already exist")
         elif status == rs.ResultType.NotExist:
             self._print_action(name, "doesn't exist")
+        elif status == rs.ResultType.Cancelled:
+            self._print_action(name, "cancelled") # TASK: add action to parameters, so 'action cancelled' can be printed
         else:
             self._print_action(name, status)
 
@@ -133,9 +135,10 @@ class ConsoleApplication(Application):
     def create_job(self, name, lname, info, tags):
         """Option to create a job."""
 
-        confirm = lambda: basic.input_y_n(question="A previous work called '{}' exists. Do you want to override it".format(name))
+        confirm_question = "A previous work called '{}' exists. Do you want to override it"
+        confirmation = lambda: basic.input_y_n(question=confirm_question.format(name))
 
-        result = super().create_job(name, confirm, lname, info, tags)
+        result = super().create_job(name, confirmation, lname, info, tags)
 
         if result.is_ok():
             self._print_action(name, "created")

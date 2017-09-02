@@ -10,12 +10,13 @@
     - `work --notify pause`
     - `work --notify show -r -s`
 
-### Version 3: Status enums (not backwards compatible)
+### Version 3: Json files to other folder
 * Move json files to another location (e.g. `home/.worktime`)
+
+### Jobs module: re-design is needed
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`
 * use enum for entry status (running, stopped, paused) instead of bools. Merge with the 'life status'?
 * reverse order in entries, so newer entries are first and older ones are bottom. (when adding them use append_left)
-
 
 ### Script layer
 * Catch ctrl-c (ver `SignalCatcher` en muse project)

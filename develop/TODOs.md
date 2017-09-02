@@ -4,12 +4,7 @@
 
 * Add install script:
   + set alias or add to `PATH`
-  + configure keyboard shortcuts (https://askubuntu.com/questions/597395/how-to-set-custom-keyboard-shortcuts-from-terminal)
-    - `work --notify start`
-    - `work --notify stop`
-    - `work --notify pause`
-    - `work --notify show -r -s` -- show running jobs, only status
-    - `work --notify select -s` -- show selected job
+  + configure keyboard shortcuts (https://askubuntu.com/questions/597395/how-to-set-custom-keyboard-shortcuts-from-terminal). See `display_help()` for detail on the added shortcuts.
 
 ### Version 3: Json files to other folder
 * Move json files to another location (e.g. `home/.worktime`)

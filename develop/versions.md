@@ -2,9 +2,11 @@
 
 ## Version 2
 
-### 2.7:
-Release date: X, 2017
-* Add option in `show` to show only the name and the status of the jobs. A shorcut and a notification may be used with this.
+### 2.7: Interactive features
+Release date: 2, 2017
+* Add option in `show` to show only the name and the status of the jobs. A shortcut and a notification may be used with this.
+* Add `help` option to display the shortcuts.
+* Add a interactive way of selecting a job
 
 ### 2.6: Notification pop-up
 Release date: Sep 2, 2017

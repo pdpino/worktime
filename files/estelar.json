@@ -1,0 +1,25 @@
+{
+    "name": "estelar",
+    "longname": "astro estelar",
+    "info": "curso astrofisica estelar, 2017-2",
+    "tags": [
+        "universidad",
+        "ast"
+    ],
+    "is_running": true,
+    "is_paused": true,
+    "_entry": {
+        "obs": "",
+        "finished": false,
+        "is_paused": true,
+        "date": "2017/09/02",
+        "hi": "11:28",
+        "n_pauses": 1,
+        "total_time": 0,
+        "effective_time": 0,
+        "pause_time": 0,
+        "_ti": 21122932.239455,
+        "_pi": 21123812.2753
+    },
+    "entries": []
+}

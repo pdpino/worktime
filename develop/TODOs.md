@@ -58,6 +58,7 @@
 ### Other
 * Make a fix when time changes? like summer to winter time
 * Change `obs` attribute in `Entry`: from string to list.
+* Change time of the notification pop-up
 
 
 ## Wishlist
@@ -76,9 +77,6 @@
 * Separate pauses in short, medium, long.
 * Add categories. Could separate the json files in `files/`. Categories would be exclusive (one job has only one category), while tags could be inclusive (one job may have multiple tags with no restriction).
 * Option to sincronize (google drive? syncthing?)
-* agregar aliases de bash (al hacer work start) "start", "stop", etc; llamada por consola es mas rapida
-  + usar archivo bash_work aparte, agregar linea de "$ source .bash_work" en bash_aliases
-  + usar archivo json para guardar aliases, reescribir bash_work cada vez
 * connect readline to console, to use tab-completion
 
 ### Improve current tools

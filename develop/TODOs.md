@@ -7,7 +7,6 @@
 
 ### Version 2.5:
 * Option 'select', to mark a job as the used one and just do `work start`
-* Create `filesys.AdminFileHandler` and `application.AdminData` to be able to load and save important data.
 
 
 ### Version 3: Status enums (not backwards compatible)

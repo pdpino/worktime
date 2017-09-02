@@ -5,7 +5,7 @@ Measure the time that you work on different subjects."""
 
 __author__ = "pdpino"
 __program__ = "Worktime"
-__version__ = "2.4"
+__version__ = "2.5dev"
 
 import sys
 import argparse
@@ -136,3 +136,5 @@ if __name__ == "__main__":
         app.backup_jobs()
     elif args.option == "update":
         app.update_jobs()
+
+    app.close()

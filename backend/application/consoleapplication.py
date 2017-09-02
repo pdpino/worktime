@@ -74,6 +74,10 @@ class ConsoleApplication(Application):
 
         print(w)
 
+    def close(self):
+        """Close the application."""
+        super().close()
+
     def start_job(self, name, info):
         """Option to start a job."""
 

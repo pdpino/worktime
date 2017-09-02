@@ -5,29 +5,6 @@ from collections import OrderedDict
 import json
 import basic
 
-def get_dict(obj):
-    """Return the dict to dump as json.
-
-    Each class that is dumped should have a method: get_keys(),
-    which return a list of the attributes to dump in order.
-    If the class doesn't have a method, all the attributes will be dumped in any order"""
-    # REVIEW: move this method to basic ???
-
-    try: # REVIEW: use if, instead of try/except
-        # Try get keys of the class
-        keyorder = obj.get_keys()
-
-        if keyorder is None:
-            return None
-
-        # Obtain subset of keys
-        d = {k:obj.__dict__[k] for k in keyorder if k in obj.__dict__}
-
-        return OrderedDict(sorted(d.items(), key=lambda i:keyorder.index(i[0])))
-    except AttributeError as e:
-        basic.perror("Can't get keys from {} object, {}".format(type(obj), obj.__dict__), exception=e, force_continue=True)
-        return obj.__dict__
-
 class JsonFileHandler:
     """Provide basic functionality to handle files."""
 
@@ -96,43 +73,60 @@ class JsonFileHandler:
 
         shutil.copyfile(fname_original, fname_backup)
 
-class JobFileHandler(JsonFileHandler):
-    """Provides functionality to save files in json format."""
-
-    def save_job(self, j, name):
-        """Save a job to json."""
-
-        # Assure folder
+    def _save_file(self, obj, name):
+        """Save an object to a json file."""
         self._assure_folder()
-
-        # Get the filename
         fname = self._get_fname(name, backup=False)
 
-        # Save
         with open(fname, "w") as f:
-            json.dump(j, f, default=get_dict, sort_keys=False, indent=4)
+            json.dump(obj, f, default=self._get_dict, sort_keys=False, indent=4)
 
-        # Try to save
-        # try:
-        # except Exception as e:
-        #     basic.perror("Can't dump '{}' to json".format(fname), exception=e)
+    def _load_file(self, name):
+        """Load an object from json."""
+        self._assure_folder()
+        fname = self._get_fname(name)
+
+        with open(fname, "r") as f:
+            d = json.load(f)
+        return d
+
+    def _get_dict(self, obj):
+        """Return the dict to dump as json.
+
+        Each class that is dumped should have a method: get_keys(),
+        which return a list of the attributes to dump in order.
+        If the class doesn't have a method, all the attributes will be dumped in any order"""
+        # REVIEW: move this method to basic ???
+
+        try: # REVIEW: use if, instead of try/except
+            # Try get keys of the class
+            keyorder = obj.get_keys()
+
+            if keyorder is None:
+                return None
+
+            # Obtain subset of keys
+            d = {k:obj.__dict__[k] for k in keyorder if k in obj.__dict__}
+
+            return OrderedDict(sorted(d.items(), key=lambda i:keyorder.index(i[0])))
+        except AttributeError as e:
+            basic.perror("Can't get keys from {} object, {}".format(type(obj), obj.__dict__), exception=e, force_continue=True)
+            return obj.__dict__
+
+class JobFileHandler(JsonFileHandler):
+    """Wrapper for the JsonFileHandler, used for jobs."""
+
+    def save_job(self, job, name):
+        """Save a job to json."""
+        super()._save_file(job, name)
 
     def load_job(self, name):
         """Load a job from json."""
-        # Assure folder
-        self._assure_folder()
-
-        # Get filename
-        fname = self._get_fname(name)
-
         try:
-            # Load the json dict
-            with open(fname, "r") as f:
-                d = json.load(f)
+            json_obj = self._load_file(name)
+            return json_obj
         except FileNotFoundError:
             basic.perror("Can't find the job '{}', maybe you haven't created it?".format(name))
-
-        return d
 
     def backup_job(self, name):
         """Backup a job."""
@@ -145,3 +139,23 @@ class JobFileHandler(JsonFileHandler):
     def remove_job(self, name):
         """Remove a job."""
         self._remove_file(name)
+
+class AdminFileHandler(JsonFileHandler):
+    """Wrapper to use the JsonFileHandler, used for admin files."""
+
+    def __init__(self, root_path, files_path, fname):
+        """Constructor."""
+        self.fname = fname
+        super().__init__(root_path, files_path)
+
+    def save_admin(self, admin_data):
+        """Save admin data to json."""
+        super()._save_file(admin_data, self.fname)
+
+    def load_admin(self):
+        """Load the admin data from json."""
+        try:
+            json_obj = self._load_file(self.fname)
+            return json_obj
+        except FileNotFoundError:
+            return None

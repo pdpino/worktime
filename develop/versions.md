@@ -5,6 +5,7 @@
 ### 2.5:
 Release date: X, 2017
 * Create submodule `application`
+* Create classes `filesys.AdminFileHandler` and `application.AdminData`, that provide a way to load and save administrative and configuration data.
 
 ### 2.4: Application structure changes
 Release date: Aug 13, 2017

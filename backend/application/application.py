@@ -4,16 +4,36 @@ from re import search
 from backend import jobs, results as rs, filesys as fs
 import basic
 
+class AdminData():
+    """Handle administrative and configuration data."""
+
+    def __init__(self):
+        """Constructor."""
+        self.selected_job_name = None
+
+    def from_json(self, d):
+        """Load admin data from a dict (loaded from json)."""
+        if not d is None:
+            self.__dict__ = d
+
+    def get_keys(self):
+        """Return the attributes that will be saved to json."""
+        return ["selected_job_name"]
+
 class Application():
     """Handle the application."""
 
     def __init__(self, root_path):
         """Constructor."""
-        # File Handler
         self.fh = fs.JobFileHandler(root_path, "files") # HACK: "files" hardcoded
+        self._mark_time()
+        self.admin_fh = fs.AdminFileHandler(root_path, "config", "admin") # "config" and "admin" hardcoded
+        self.admin_data = AdminData()
+        self.admin_data.from_json(self.admin_fh.load_admin())
 
-        # Current time
-        self._time_mark()
+    def close(self):
+        """Close the application."""
+        self.admin_fh.save_admin(self.admin_data)
 
     def _load_job(self, name):
         """Load a job given a name"""
@@ -55,7 +75,7 @@ class Application():
         if self.t is None:
             basic.perror("Can't {} without a timestamp".format(action))
 
-    def _time_mark(self):
+    def _mark_time(self):
         """Saves the current time."""
         self.t = datetime.now()
 

@@ -28,6 +28,11 @@ class AdminData():
     def get_selected_job(self):
         return self.selected_job_name
 
+    def update(self):
+        """Update function."""
+
+        ### ADD YOUR UPDATES HERE ###
+
 class Application():
     """Handle the application."""
 
@@ -269,6 +274,8 @@ class Application():
 
     def update_jobs(self):
         """Make an update to the Job objects."""
+        self.admin_data.update()
+
         for name in self._get_job_names():
             j = self._load_job(name)
             j.update()

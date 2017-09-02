@@ -2,7 +2,11 @@
 
 ## Version 2
 
-### 2.5:
+### 2.6: Notification pop-up
+Release date: Sep 2, 2017
+* Add an option `--notify` that makes the application let you know when did something correctly. Now you can add keyboard shortcuts (manually) to use `start`, `stop` and `pause` options and get a notification in the screen.
+
+### 2.5: `Select` option
 Release date: Sep 1, 2017
 * Create submodule `application`
 * Create classes `filesys.AdminFileHandler` and `application.AdminData`, that provide a way to load and save administrative and configuration data.

@@ -2,8 +2,9 @@
 
 ## TODOs
 
-* add keyboard shortcuts, to the aliases, e.g. `ctrl+alt+1` is `work pause`, `ctrl+alt+2` is `work stop`, etc.
-* add taskbar icon
+* Add install script:
+  + set alias or add to `PATH`
+  + configure keyboard shortcuts (https://askubuntu.com/questions/597395/how-to-set-custom-keyboard-shortcuts-from-terminal)
 
 ### Version 3: Status enums (not backwards compatible)
 * Move json files to another location (e.g. `home/.worktime`)
@@ -70,6 +71,7 @@
 
 
 ### General
+* add taskbar icon
 * Add subjobs, for example tts has lexicon-expander and lexicon-comparator (and more); in one course a subjob could be one particular homework; etc. Useful to timing an specific task inside a job. REVIEW this depending on requirements
 * Separate pauses in short, medium, long.
 * Add categories. Could separate the json files in `files/`. Categories would be exclusive (one job has only one category), while tags could be inclusive (one job may have multiple tags with no restriction).

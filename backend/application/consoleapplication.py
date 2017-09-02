@@ -9,6 +9,7 @@ class ConsoleApplication(Application):
     def _print_action(self, name, action):
         """Print an action made."""
         print("'{}' {}".format(name, action))
+        self._notify_action(name, action)
 
     def _print_error(self, name, status):
         """Print an error to stdout."""
@@ -17,6 +18,7 @@ class ConsoleApplication(Application):
             self._print_action(name, "cancelled") # REFACTOR: add action to parameters, so 'action cancelled' can be printed
         elif status == rs.ResultType.NoneNotAccepted:
             print("A name is needed")
+            self._notify_action(action="A name is needed") # TASK: better message
         elif status == rs.ResultType.AlreadyRunning:
             self._print_action(name, "is already running")
         elif status == rs.ResultType.NotRunning:
@@ -26,7 +28,9 @@ class ConsoleApplication(Application):
         elif status == rs.ResultType.NotExist:
             self._print_action(name, "doesn't exist")
         elif status == rs.ResultType.NotSelected:
-            print("No job selected")
+            msg = "No job selected"
+            print(msg)
+            self._notify_action(action=msg)
         else:
             self._print_action(name, status)
 
@@ -86,11 +90,10 @@ class ConsoleApplication(Application):
         """Option to start a job."""
 
         result = super().start_job(name, info)
-        name = result.jobname
         if result.is_ok():
-            self._print_action(name, "started")
+            self._print_action(result.jobname, "started")
         else:
-            self._print_error(name, result.status)
+            self._print_error(result.jobname, result.status)
 
     def stop_job(self, name, info=None, discard=False, quiet=True):
         """Option to stop a job."""
@@ -98,14 +101,12 @@ class ConsoleApplication(Application):
         # Confirmation for discarding
         confirm = lambda: basic.input_y_n(question="Are you sure you want to discard an entry for '{}'".format(name))
 
-        # Stop
         result = super().stop_job(name, confirm, info=info, discard=discard)
-        name = result.jobname
         if result.is_ok():
             action = "stopped"
             if result.was_discard:
                 action += ", entry discarded"
-            self._print_action(name, action)
+            self._print_action(result.jobname, action)
 
             # Print times
             if not quiet:
@@ -114,7 +115,7 @@ class ConsoleApplication(Application):
                             basic.sec2hr(result.effective_time),
                             basic.sec2hr(result.pause_time)))
         else:
-            self._print_error(name, result.status)
+            self._print_error(result.jobname, result.status)
 
     def pause_job(self, name, wait=False):
         """Option to pause a job.
@@ -192,6 +193,7 @@ class ConsoleApplication(Application):
 
     def show_selected_job(self):
         """Show the selected job."""
+        # HACK: this method doesn't pass throw the application
         jobname = self.admin_data.get_selected_job()
         if not jobname is None:
             print("Selected job: '{}'".format(jobname))

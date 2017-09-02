@@ -5,7 +5,7 @@ Measure the time that you work on different subjects."""
 
 __author__ = "pdpino"
 __program__ = "Worktime"
-__version__ = "2.5"
+__version__ = "2.6"
 
 import sys
 import argparse
@@ -20,6 +20,7 @@ def parse_args():
                         description="{}, author: {}, version: {}".format(__program__, __author__, __version__))
 
         parser.add_argument('--version', action='version', version='%(prog)s {}'.format(__version__))
+        parser.add_argument('--notify', action='store_true', help="Notify the actions on the screen")
 
         # Subparsers
         subparser = parser.add_subparsers(dest='option')
@@ -101,11 +102,9 @@ def parse_args():
     return args
 
 if __name__ == "__main__":
-    # Create application object
     app = backend.ConsoleApplication(sys.path[0])
-
-    # Parsear argumentos
     args = parse_args()
+    app.notify = args.notify
 
     if args.option == "start":
         app.start_job(args.name, args.info)

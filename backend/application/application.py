@@ -1,5 +1,6 @@
 """Module that provides classes to handle the application."""
 from datetime import datetime
+import subprocess
 from re import search
 from backend import jobs, results as rs, filesys as fs
 import basic
@@ -30,13 +31,15 @@ class AdminData():
 class Application():
     """Handle the application."""
 
-    def __init__(self, root_path):
+    def __init__(self, root_path, notify=False):
         """Constructor."""
         self.fh = fs.JobFileHandler(root_path, "files") # HACK: "files" hardcoded
         self._mark_time()
         self.admin_fh = fs.AdminFileHandler(root_path, "config", "admin") # "config" and "admin" hardcoded
         self.admin_data = AdminData()
         self.admin_data.from_json(self.admin_fh.load_admin())
+
+        self.notify = notify
 
     def close(self):
         """Close the application."""
@@ -84,6 +87,15 @@ class Application():
         """Saves the current time."""
         self.t = datetime.now()
 
+    def _notify_action(self, jobname=None, action=None):
+        """Notify an action to the screen."""
+        if self.notify:
+            title = "Worktime"
+            message = jobname or ""
+            message += " "
+            message += action or ""
+            subprocess.run("notify-send --urgency=critical '{}' '{}'".format(title, message), shell=True)
+            # NOTE: use return_value.returncode of run() to see the status of the called command
 
     """API methods"""
     def start_job(self, name, info):

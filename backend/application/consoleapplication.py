@@ -12,8 +12,12 @@ class ConsoleApplication(Application):
 
     def _print_error(self, name, status):
         """Print an error to stdout."""
-        # TASK: create ResultHandler with a dict, so this is not needed
-        if status == rs.ResultType.AlreadyRunning:
+        # REFACTOR: create ResultHandler with a dict, so this is not needed
+        if status == rs.ResultType.Cancelled:
+            self._print_action(name, "cancelled") # REFACTOR: add action to parameters, so 'action cancelled' can be printed
+        elif status == rs.ResultType.NoneNotAccepted:
+            print("A name is needed")
+        elif status == rs.ResultType.AlreadyRunning:
             self._print_action(name, "is already running")
         elif status == rs.ResultType.NotRunning:
             self._print_action(name, "is not running")
@@ -21,8 +25,8 @@ class ConsoleApplication(Application):
             self._print_action(name, "already exist")
         elif status == rs.ResultType.NotExist:
             self._print_action(name, "doesn't exist")
-        elif status == rs.ResultType.Cancelled:
-            self._print_action(name, "cancelled") # TASK: add action to parameters, so 'action cancelled' can be printed
+        elif status == rs.ResultType.NotSelected:
+            print("No job selected")
         else:
             self._print_action(name, status)
 
@@ -133,7 +137,7 @@ class ConsoleApplication(Application):
 
         if _pause_job() and wait:
             input("Press enter to unpause the job ")
-            self._time_mark() # Take another mark
+            self._mark_time()
             _pause_job()
 
     def create_job(self, name, lname, info, tags):
@@ -168,6 +172,30 @@ class ConsoleApplication(Application):
                 self._print_action(name, "not deleted")
         else:
             self._print_error(name, result.status)
+
+    def select_job(self, name):
+        """Select a job to use later without calling the name."""
+        result = super().select_job(name)
+        if result.is_ok():
+            self._print_action(name, "selected")
+        else:
+            self._print_error(name, result.status)
+
+    def unselect_job(self):
+        """Unselect the currently selected job."""
+        result = super().unselect_job()
+        if result.is_ok():
+            self._print_action(result.jobname, "unselected")
+        else:
+            self._print_error(result.jobname, result.status)
+
+    def show_selected_job(self):
+        """Show the selected job."""
+        jobname = self.admin_data.get_selected_job()
+        if not jobname is None:
+            print("Selected job: '{}'".format(jobname))
+        else:
+            self._print_error(None, rs.ResultType.NotSelected) # HACK
 
     def show_jobs(self, name, run_only=False, name_only=False, show_entries=False):
         """Option to show jobs."""

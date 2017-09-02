@@ -8,12 +8,15 @@ class ResultType(Enum):
     OK = 0
     Cancelled = 1 # by user
     InternalError = 2
+    NoneNotAccepted = 3
 
     AlreadyExist = 10 # Job already exist
     NotExist = 11 # Job doesn't exist
 
     AlreadyRunning = 20 # Job already running
     NotRunning = 21 # Job isn't running
+
+    NotSelected = 30 # No job is selected
 
 class Result(object):
     """Generic result object."""
@@ -70,6 +73,14 @@ class DeleteResult(Result):
         super().__init__(status)
         self.was_deleted = was_deleted
 
+class UnselectResult(Result):
+    """Result object for the 'unselect' action."""
+
+    def __init__(self, status=None, jobname=None):
+        """Constructor."""
+
+        super().__init__(status)
+        self.jobname = jobname
 
 
 

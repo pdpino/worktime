@@ -20,6 +20,13 @@ class AdminData():
         """Return the attributes that will be saved to json."""
         return ["selected_job_name"]
 
+    def select_job(self, name):
+        # REFACTOR: use property
+        self.selected_job_name = name
+
+    def get_selected_job(self):
+        return self.selected_job_name
+
 class Application():
     """Handle the application."""
 
@@ -36,18 +43,12 @@ class Application():
         self.admin_fh.save_admin(self.admin_data)
 
     def _load_job(self, name):
-        """Load a job given a name"""
+        """Load a job given a name."""
+        job = jobs.Job()
+        json_dict = self.fh.load_job(name)
+        job.from_json(json_dict)
 
-        # Create empty job
-        j = jobs.Job()
-
-        # Load dict
-        d = self.fh.load_job(name)
-
-        # Load it into an object
-        j.from_json(d)
-
-        return j
+        return job
 
     def _save_job(self, j):
         """Given a job, dump it to a json file."""
@@ -66,9 +67,9 @@ class Application():
         """Get all the existing job names."""
         return self.fh.list_jobs()
 
-    def _job_exists(self, name):
+    def _exist_job(self, name):
         """Bool indicating if job exists"""
-        return name in self._get_job_names()
+        return self.fh.exist_job(name) #name in self._get_job_names()
 
     def _assert_time(self, action="action"):
         """Assert the time variable set."""
@@ -129,7 +130,7 @@ class Application():
 
     def create_job(self, name, confirmation, lname=None, info=None, tags=None):
         """Option to create a job."""
-        if self._job_exists(name):
+        if self._exist_job(name):
             if not confirmation():
                 return rs.Result(rs.ResultType.Cancelled)
 
@@ -167,7 +168,7 @@ class Application():
     def delete_job(self, name, confirmation, force=False):
         """Option to delete a job."""
 
-        if not self._job_exists(name):
+        if not self._exist_job(name):
             return rs.DeleteResult(rs.ResultType.NotExist)
 
         deleted = False
@@ -177,6 +178,25 @@ class Application():
             deleted = True
 
         return rs.DeleteResult(was_deleted=deleted)
+
+    def select_job(self, name):
+        """Select a job to use later without calling the name."""
+        if name is None:
+            return rs.Result(rs.ResultType.NoneNotAccepted)
+        elif self._exist_job(name):
+            self.admin_data.select_job(name)
+            return rs.Result()
+        else:
+            return rs.Result(rs.ResultType.NotExist)
+
+    def unselect_job(self):
+        """Unselect a job."""
+        prev_jobname = self.admin_data.get_selected_job()
+        if not prev_jobname is None:
+            self.admin_data.select_job(None)
+            return rs.UnselectResult(jobname=prev_jobname)
+        else:
+            return rs.UnselectResult(status=rs.ResultType.NotSelected)
 
     def show_jobs(self, name, run_only=False, name_only=False, show_entries=False):
         """Option to show jobs."""

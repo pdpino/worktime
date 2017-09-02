@@ -113,6 +113,11 @@ class JsonFileHandler:
             basic.perror("Can't get keys from {} object, {}".format(type(obj), obj.__dict__), exception=e, force_continue=True)
             return obj.__dict__
 
+    def _exist_file(self, name):
+        """Boolean indicating if a job exists."""
+        fname = self._get_fname(name, backup=False)
+        return os.path.isfile(fname)
+
 class JobFileHandler(JsonFileHandler):
     """Wrapper for the JsonFileHandler, used for jobs."""
 
@@ -139,6 +144,9 @@ class JobFileHandler(JsonFileHandler):
     def remove_job(self, name):
         """Remove a job."""
         self._remove_file(name)
+
+    def exist_job(self, name):
+        return self._exist_file(name)
 
 class AdminFileHandler(JsonFileHandler):
     """Wrapper to use the JsonFileHandler, used for admin files."""

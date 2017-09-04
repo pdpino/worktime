@@ -220,6 +220,7 @@ class ConsoleApplication(Application):
 
         if results.no_jobs():
             message = "No jobs to show"
+            print(message) # HACK
         else:
             message = ""
             for r in results:

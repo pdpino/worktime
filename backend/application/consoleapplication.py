@@ -83,7 +83,7 @@ class ConsoleApplication(Application):
                 else:
                     w += "None\n"
 
-        print(w)
+        # print(w)
         return w
 
     def close(self):
@@ -220,7 +220,6 @@ class ConsoleApplication(Application):
 
         if results.no_jobs():
             message = "No jobs to show"
-            # return
         else:
             message = ""
             for r in results:

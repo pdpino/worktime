@@ -1,0 +1,79 @@
+{
+    "name": "web",
+    "longname": "",
+    "info": "ramo web iic2513",
+    "tags": [
+        "universidad"
+    ],
+    "is_running": false,
+    "is_paused": false,
+    "_entry": null,
+    "entries": [
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/09/11",
+            "hi": "21:09",
+            "hf": "01:36",
+            "n_pauses": 2,
+            "total_time": 16071.37,
+            "effective_time": 15492.86,
+            "pause_time": 578.51
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/09/13",
+            "hi": "18:37",
+            "hf": "22:54",
+            "n_pauses": 0,
+            "total_time": 15394.49,
+            "effective_time": 15394.49,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/09/14",
+            "hi": "20:58",
+            "hf": "00:43",
+            "n_pauses": 1,
+            "total_time": 13488.37,
+            "effective_time": 7722.39,
+            "pause_time": 5765.97
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/09/15",
+            "hi": "14:42",
+            "hf": "22:12",
+            "n_pauses": 3,
+            "total_time": 26976.48,
+            "effective_time": 24104.09,
+            "pause_time": 2872.39
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/09/15",
+            "hi": "23:05",
+            "hf": "01:46",
+            "n_pauses": 1,
+            "total_time": 9634.83,
+            "effective_time": 9574.67,
+            "pause_time": 60.16
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/09/20",
+            "hi": "17:14",
+            "hf": "18:16",
+            "n_pauses": 1,
+            "total_time": 3759.91,
+            "effective_time": 3674.83,
+            "pause_time": 85.08
+        }
+    ]
+}

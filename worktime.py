@@ -100,8 +100,8 @@ def parse_args():
     args = parser.parse_args()
 
     if args.option is None: # No option selected
-        # DEFAULT: use 'work show -r' (show running jobs)
-        args = parser.parse_args(['show', '-r'])
+        # DEFAULT: use 'work show -rs' (show status of running jobs)
+        args = parser.parse_args(['show', '-rs'])
 
     return args
 

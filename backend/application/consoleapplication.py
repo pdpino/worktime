@@ -83,7 +83,7 @@ class ConsoleApplication(Application):
                 else:
                     w += "None\n"
 
-        print(w)
+        # print(w)
         return w
 
     def close(self):
@@ -220,15 +220,14 @@ class ConsoleApplication(Application):
 
         if results.no_jobs():
             message = "No jobs to show"
-            print(message) # HACK
         else:
             message = ""
             for r in results:
                 message += self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries)
                 message += "\n"
 
-        # print(message)
-        self._notify_action(action=message, more_title='show')
+        print(message)
+        # self._notify_action(action=message, more_title='show')
 
     def backup_jobs(self):
         """Backup existing jobs."""

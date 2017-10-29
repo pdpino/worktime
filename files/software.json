@@ -1,0 +1,88 @@
+{
+    "name": "software",
+    "longname": "",
+    "info": "",
+    "tags": [],
+    "is_running": false,
+    "is_paused": false,
+    "_entry": null,
+    "entries": [
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/25",
+            "hi": "16:00",
+            "hf": "17:53",
+            "n_pauses": 1,
+            "total_time": 6740.98,
+            "effective_time": 6107.14,
+            "pause_time": 633.84
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/25",
+            "hi": "20:33",
+            "hf": "02:19",
+            "n_pauses": 11,
+            "total_time": 20727.61,
+            "effective_time": 18960.8,
+            "pause_time": 1766.81
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/26",
+            "hi": "16:41",
+            "hf": "18:56",
+            "n_pauses": 3,
+            "total_time": 8087.21,
+            "effective_time": 7275.78,
+            "pause_time": 811.44
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/26",
+            "hi": "18:58",
+            "hf": "19:15",
+            "n_pauses": 0,
+            "total_time": 1027.85,
+            "effective_time": 1027.85,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/26",
+            "hi": "19:43",
+            "hf": "22:15",
+            "n_pauses": 1,
+            "total_time": 9116.6,
+            "effective_time": 9029.38,
+            "pause_time": 87.22
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/26",
+            "hi": "22:44",
+            "hf": "04:14",
+            "n_pauses": 1,
+            "total_time": 19794.23,
+            "effective_time": 19345.64,
+            "pause_time": 448.59
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/27",
+            "hi": "04:18",
+            "hf": "04:44",
+            "n_pauses": 0,
+            "total_time": 1570.98,
+            "effective_time": 1570.98,
+            "pause_time": 0.0
+        }
+    ]
+}

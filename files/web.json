@@ -74,6 +74,61 @@
             "total_time": 3759.91,
             "effective_time": 3674.83,
             "pause_time": 85.08
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/19",
+            "hi": "17:33",
+            "hf": "20:24",
+            "n_pauses": 6,
+            "total_time": 10220.4,
+            "effective_time": 7535.59,
+            "pause_time": 2684.81
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/20",
+            "hi": "21:08",
+            "hf": "01:41",
+            "n_pauses": 3,
+            "total_time": 16329.93,
+            "effective_time": 15251.45,
+            "pause_time": 1078.49
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/21",
+            "hi": "22:39",
+            "hf": "03:47",
+            "n_pauses": 1,
+            "total_time": 18428.54,
+            "effective_time": 18204.53,
+            "pause_time": 224.01
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/22",
+            "hi": "11:13",
+            "hf": "16:42",
+            "n_pauses": 0,
+            "total_time": 19750.73,
+            "effective_time": 19750.73,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/10/22",
+            "hi": "17:12",
+            "hf": "22:24",
+            "n_pauses": 3,
+            "total_time": 18721.19,
+            "effective_time": 12440.18,
+            "pause_time": 6281.02
         }
     ]
 }

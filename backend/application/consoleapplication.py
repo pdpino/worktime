@@ -216,6 +216,8 @@ class ConsoleApplication(Application):
     def show_jobs(self, name, run_only=False, name_only=False, status_only=False, show_entries=False):
         """Option to show jobs."""
 
+        self.show_selected_job()
+
         results = super().show_jobs(name, run_only)
 
         if results.no_jobs():

@@ -1,0 +1,77 @@
+{
+    "name": "enf",
+    "longname": "",
+    "info": "",
+    "tags": [],
+    "is_running": false,
+    "is_paused": false,
+    "_entry": null,
+    "entries": [
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/11/11",
+            "hi": "15:21",
+            "hf": "18:57",
+            "n_pauses": 7,
+            "total_time": 12910.88,
+            "effective_time": 10012.82,
+            "pause_time": 2898.05
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/11/11",
+            "hi": "19:32",
+            "hf": "20:08",
+            "n_pauses": 0,
+            "total_time": 2181.5,
+            "effective_time": 2181.5,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/11/11",
+            "hi": "20:14",
+            "hf": "20:31",
+            "n_pauses": 0,
+            "total_time": 1010.35,
+            "effective_time": 1010.35,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/11/12",
+            "hi": "13:47",
+            "hf": "14:58",
+            "n_pauses": 1,
+            "total_time": 4218.87,
+            "effective_time": 4057.74,
+            "pause_time": 161.13
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/11/27",
+            "hi": "00:58",
+            "hf": "03:21",
+            "n_pauses": 1,
+            "total_time": 8615.94,
+            "effective_time": 8228.97,
+            "pause_time": 386.97
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/12/03",
+            "hi": "12:23",
+            "hf": "14:23",
+            "n_pauses": 4,
+            "total_time": 7182.97,
+            "effective_time": 6683.82,
+            "pause_time": 499.15
+        }
+    ]
+}

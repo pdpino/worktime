@@ -1,0 +1,22 @@
+{
+    "name": "docs",
+    "longname": "doc search",
+    "info": "",
+    "tags": [],
+    "is_running": false,
+    "is_paused": false,
+    "_entry": null,
+    "entries": [
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/12/17",
+            "hi": "14:12",
+            "hf": "15:13",
+            "n_pauses": 0,
+            "total_time": 3640.74,
+            "effective_time": 3640.74,
+            "pause_time": 0.0
+        }
+    ]
+}

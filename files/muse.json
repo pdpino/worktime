@@ -593,6 +593,39 @@
             "total_time": 15906.09,
             "effective_time": 12867.58,
             "pause_time": 3038.51
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/11/12",
+            "hi": "18:18",
+            "hf": "19:43",
+            "n_pauses": 0,
+            "total_time": 5061.61,
+            "effective_time": 5061.61,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/11/22",
+            "hi": "15:33",
+            "hf": "16:12",
+            "n_pauses": 0,
+            "total_time": 2329.32,
+            "effective_time": 2329.32,
+            "pause_time": 0.0
+        },
+        {
+            "obs": "",
+            "finished": true,
+            "date": "2017/11/22",
+            "hi": "18:38",
+            "hf": "21:47",
+            "n_pauses": 2,
+            "total_time": 11364.38,
+            "effective_time": 6540.85,
+            "pause_time": 4823.53
         }
     ]
 }

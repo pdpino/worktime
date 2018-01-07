@@ -2,6 +2,19 @@
 from backend import results as rs
 from .application import Application
 import basic
+import subprocess
+
+def send_indicator_message(message):
+    subprocess.run("echo \"{}\" > /tmp/worktime".format(message), shell=True, timeout=2)
+
+def start_indicator():
+    send_indicator_message("start")
+
+def stop_indicator():
+    send_indicator_message("stop")
+
+def pause_indicator():
+    send_indicator_message("pause")
 
 class ConsoleApplication(Application):
     """Handle the application from the console."""
@@ -96,6 +109,7 @@ class ConsoleApplication(Application):
         result = super().start_job(name, info)
         if result.is_ok():
             self._print_action(result.jobname, "started", more_title="start")
+            start_indicator()
         else:
             self._print_error(result.jobname, result.status)
 
@@ -120,6 +134,7 @@ class ConsoleApplication(Application):
 
 
             self._print_action(result.jobname, action, more_title="stop")
+            stop_indicator()
         else:
             self._print_error(result.jobname, result.status)
 
@@ -134,10 +149,12 @@ class ConsoleApplication(Application):
             if result.is_ok():
                 if result.was_paused:
                     self._print_action(result.jobname, "paused", more_title="pause")
+                    pause_indicator()
                 else:
                     self._print_action(result.jobname,
                                     "unpaused -- paused time: {}".format(basic.sec2hr(result.pause_time)),
                                     more_title="pause")
+                    start_indicator()
             else:
                 self._print_error(result.jobname, result.status)
                 return False

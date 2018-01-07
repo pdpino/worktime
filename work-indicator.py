@@ -8,6 +8,7 @@ from gi.repository import AppIndicator3 as appindicator
 
 APPINDICATOR_ID = 'myappindicator'
 PIPE_PATH = "/tmp/worktime"
+keep_running = True
 
 def open_pipe(handle_message):
     if not os.path.exists(PIPE_PATH):
@@ -17,7 +18,7 @@ def open_pipe(handle_message):
     pipe_fd = os.open(PIPE_PATH, os.O_RDONLY | os.O_NONBLOCK)
 
     with os.fdopen(pipe_fd) as pipe:
-        while True:
+        while keep_running:
             message = pipe.read()
             if message:
                 handle_message(message)
@@ -69,7 +70,9 @@ def build_menu():
 
 def quit(source):
     """Respond to quit event button"""
+    global keep_running
     gtk.main_quit()
+    keep_running = False
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal.SIG_DFL)

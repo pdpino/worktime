@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
-import os, time
+import os
+import sys
+import time
 import signal
 import json
 import threading
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('AppIndicator3', '0.1')
+
 from gi.repository import Gtk as gtk
 from gi.repository import AppIndicator3 as appindicator
 
 APPINDICATOR_ID = 'myappindicator'
 PIPE_PATH = "/tmp/worktime"
 keep_running = True
+
+def get_icon_path(icon):
+    return "{}/assets/img/{}.svg".format(sys.path[0], icon)
 
 def open_pipe(handle_message):
     if not os.path.exists(PIPE_PATH):
@@ -28,18 +37,18 @@ def open_pipe(handle_message):
 
 def main():
     """Start indicator process."""
-    indicator = appindicator.Indicator.new(APPINDICATOR_ID, os.path.abspath("./assets/img/time-icon.svg"), appindicator.IndicatorCategory.SYSTEM_SERVICES)
+    indicator = appindicator.Indicator.new(APPINDICATOR_ID, os.path.abspath(get_icon_path("time-icon")), appindicator.IndicatorCategory.SYSTEM_SERVICES)
     indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
     indicator.set_menu(build_menu())
 
     def handle_message(message):
         message = message.strip()
         if message == "start":
-            indicator.set_icon(os.path.abspath("./assets/img/start-icon.svg"))
+            indicator.set_icon(os.path.abspath(get_icon_path("start-icon")))
         elif message == "stop":
-            indicator.set_icon(os.path.abspath("./assets/img/stop-icon.svg"))
+            indicator.set_icon(os.path.abspath(get_icon_path("stop-icon")))
         elif message == "pause":
-            indicator.set_icon(os.path.abspath("./assets/img/pause-icon.svg"))
+            indicator.set_icon(os.path.abspath(get_icon_path("pause-icon")))
         else:
             print("Message not understood")
 

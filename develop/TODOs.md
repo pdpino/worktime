@@ -3,7 +3,7 @@
 ## TODOs
 
 * Add install script:
-  + set alias or add to `PATH`
+  + set alias, add folder to `PATH` or create symlink
   + configure keyboard shortcuts (https://askubuntu.com/questions/597395/how-to-set-custom-keyboard-shortcuts-from-terminal). See `display_help()` for detail on the added shortcuts.
 
 ### Version 3: Json files to other folder

@@ -5,6 +5,7 @@ import time
 import signal
 import json
 import threading
+import subprocess
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
@@ -15,6 +16,9 @@ from gi.repository import AppIndicator3 as appindicator
 APPINDICATOR_ID = 'myappindicator'
 PIPE_PATH = "/tmp/worktime"
 keep_running = True
+
+def run_command(cmd):
+    subprocess.run(cmd, shell=True)
 
 def get_icon_path(icon):
     return "{}/assets/img/{}.svg".format(sys.path[0], icon)
@@ -63,19 +67,33 @@ def build_menu():
     """Build a menu with some items."""
     menu = gtk.Menu()
 
-    # Add joke button
-    # item_joke = gtk.MenuItem('Joke')
-    # item_joke.connect('activate', joke)
-    # menu.append(item_joke)
+    def add_menu_button(name, callback):
+        button_item = gtk.MenuItem(name)
+        button_item.connect('activate', callback)
+        menu.append(button_item)
 
-    # Add quit button
-    item_quit = gtk.MenuItem('Cerrar')
-    item_quit.connect('activate', quit)
-    menu.append(item_quit)
+    # Add buttons
+    add_menu_button("Empezar", work_start)
+    add_menu_button("Detener", work_stop)
+    add_menu_button("Pausar", work_pause)
+    add_menu_button("Seleccionar trabajo", work_select)
+    add_menu_button("Cerrar", quit)
 
     # Put buttons in the menu
     menu.show_all()
     return menu
+
+def work_start(_):
+    run_command("work --notify start")
+
+def work_stop(_):
+    run_command("work --notify stop")
+
+def work_pause(_):
+    run_command("work --notify pause")
+
+def work_select(_):
+    run_command("work --notify select -I")
 
 def quit(source):
     """Respond to quit event button"""

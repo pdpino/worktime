@@ -35,6 +35,7 @@ def parse_args():
         parser_stop.add_argument('-d', '--discard', action="store_true", help="Discard this run")
         parser_stop.add_argument('-q', '--quiet', action="store_true", help="Don't print the time when stopped")
         parser_stop.add_argument('-i', '--info', default=None, type=str, help="Info about this run of the job")
+        parser_stop.add_argument('-f', '--force', default=None, type=float, help="Input an amount of seconds to force the effective and total time to that")
 
         parser_pause = subparser.add_parser('pause', aliases=['unpause'],
                             help="Pause or unpause a running work. Useful when stopping for a short time")
@@ -113,7 +114,7 @@ if __name__ == "__main__":
     if args.option == "start":
         app.start_job(args.name, args.info)
     elif args.option == "stop":
-        app.stop_job(args.name, info=args.info, discard=args.discard, quiet=args.quiet)
+        app.stop_job(args.name, info=args.info, discard=args.discard, quiet=args.quiet, force_seconds=args.force)
     elif args.option == "pause":
         app.pause_job(args.name, args.wait)
     elif args.option == "create":

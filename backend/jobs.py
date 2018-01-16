@@ -94,7 +94,7 @@ class Entry():
         # Validate
         self._create()
 
-    def stop(self, t):
+    def stop(self, t, force_seconds=None):
         """Stop working."""
         if self.finished:
             basic.perror("Can't stop a finished entry")
@@ -109,6 +109,12 @@ class Entry():
         # calcular tiempos
         self.total_time = tf - self._ti
         self.effective_time = self.total_time - self.pause_time
+
+        # Force seconds
+        if not force_seconds is None:
+            self.total_time = force_seconds
+            self.effective_time = force_seconds
+            self.pause_time = 0
 
         # Close the entry
         self._close()
@@ -277,13 +283,13 @@ class Job():
 
         return rs.StartResult(jobname=self.name)
 
-    def stop(self, t, discard=False, obs=None):
+    def stop(self, t, discard=False, obs=None, force_seconds=None):
         """Stop a running job."""
         if not self.is_running:
             return rs.StopResult(status=rs.ResultType.NotRunning, jobname=self.name)
 
         self._entry.add_obs(obs)
-        self._entry.stop(t)
+        self._entry.stop(t, force_seconds=force_seconds)
         ttime = self._entry.total_time
         etime = self._entry.effective_time
         ptime = self._entry.pause_time

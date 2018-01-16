@@ -135,7 +135,7 @@ class Application():
 
         return result
 
-    def stop_job(self, name, confirmation, info=None, discard=False):
+    def stop_job(self, name, confirmation, info=None, discard=False, force_seconds=None):
         """Option to stop a job.
 
         confirmation -- function to call if confirmation for discarding an entry is needed"""
@@ -156,7 +156,7 @@ class Application():
             if not confirmation(): # Ask for confirmation
                 discard = False
 
-        result = j.stop(self.t, discard=discard, obs=info)
+        result = j.stop(self.t, discard=discard, obs=info, force_seconds=force_seconds)
 
         if result.is_ok():
             self._save_job(j)

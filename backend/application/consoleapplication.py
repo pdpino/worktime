@@ -125,13 +125,13 @@ class ConsoleApplication(Application):
         else:
             self._print_error(result.jobname, result.status)
 
-    def stop_job(self, name, info=None, discard=False, quiet=True):
+    def stop_job(self, name, info=None, discard=False, quiet=True, force_seconds=None):
         """Option to stop a job."""
 
         # Confirmation for discarding
         confirm = lambda: basic.input_y_n(question="Are you sure you want to discard an entry for '{}'".format(name))
 
-        result = super().stop_job(name, confirm, info=info, discard=discard)
+        result = super().stop_job(name, confirm, info=info, discard=discard, force_seconds=force_seconds)
         if result.is_ok():
             action = "stopped"
             if result.was_discard:

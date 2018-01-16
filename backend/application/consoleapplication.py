@@ -3,9 +3,21 @@ from backend import results as rs
 from .application import Application
 import basic
 import subprocess
+import sys
+import threading
+
+def send_indicator_message_thread(message):
+    try:
+        subprocess.run("echo \"{}\" > /tmp/worktime".format(message), shell=True, timeout=2)
+    except subprocess.TimeoutExpired:
+        # work-indicator must not be up
+        pass
 
 def send_indicator_message(message):
-    subprocess.run("echo \"{}\" > /tmp/worktime".format(message), shell=True, timeout=2)
+    # Send it in a thread so it doesn't hang if work-indicator is not up
+    t = threading.Thread(target=send_indicator_message_thread, args=(message,), daemon=True)
+    t.start()
+
 
 def start_indicator():
     send_indicator_message("start")

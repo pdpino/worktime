@@ -3,11 +3,11 @@
 ## TODOs
 
 * Add install script:
-  + set alias, add folder to `PATH` or create symlink
-  + configure keyboard shortcuts (https://askubuntu.com/questions/597395/how-to-set-custom-keyboard-shortcuts-from-terminal). See `display_help()` for detail on the added shortcuts.
-
-### Version 3: Json files to other folder
-* Move json files to another location (e.g. `home/.worktime`)
+  - set alias, add folder to `PATH` or create symlink
+  - add alias or symlink to `work-indicator`
+  - run `work-indicator` on boot
+  - create `$HOME/.worktime` location (or other suitable one)
+  - configure keyboard shortcuts (https://askubuntu.com/questions/597395/how-to-set-custom-keyboard-shortcuts-from-terminal). See `display_help()` for detail on the added shortcuts.
 
 ### Jobs module: re-design is needed
 * use enum for entry life status (non created, created, finished) instead of bools `_is_created` and `is_finished`

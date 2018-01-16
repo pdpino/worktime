@@ -144,7 +144,8 @@ if __name__ == "__main__":
         else:
             app.select_job(args.name, args.interactive)
     elif args.option == "backup":
-        app.backup_jobs()
+        print("Backup option is being fixed :grimacing:")
+        # app.backup_jobs()
     elif args.option == "update":
         app.update_jobs()
     elif args.option == "help":

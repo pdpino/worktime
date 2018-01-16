@@ -73,9 +73,10 @@ def build_menu():
         menu.append(button_item)
 
     # Add buttons
+    add_menu_button("Show", work_show)
     add_menu_button("Empezar", work_start)
     add_menu_button("Detener", work_stop)
-    add_menu_button("Pausar", work_pause)
+    add_menu_button("Pausar/quitar pausa", work_pause)
     add_menu_button("Seleccionar trabajo", work_select)
     add_menu_button("Cerrar", quit)
 
@@ -91,6 +92,9 @@ def work_stop(_):
 
 def work_pause(_):
     run_command("work --notify pause")
+
+def work_show(_):
+    run_command("work --notify show -sr")
 
 def work_select(_):
     run_command("work --notify select -I")

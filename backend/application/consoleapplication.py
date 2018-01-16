@@ -233,8 +233,6 @@ class ConsoleApplication(Application):
     def show_jobs(self, name, run_only=False, name_only=False, status_only=False, show_entries=False):
         """Option to show jobs."""
 
-        self.show_selected_job()
-
         results = super().show_jobs(name, run_only)
 
         if results.no_jobs():
@@ -245,8 +243,12 @@ class ConsoleApplication(Application):
                 message += self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries)
                 message += "\n"
 
-        print(message)
-        # self._notify_action(action=message, more_title='show')
+        if self.notify: # HACK!!!
+            self._notify_action(action=message, more_title='show')
+        else:
+            print(message)
+            self.show_selected_job()
+
 
     def backup_jobs(self):
         """Backup existing jobs."""

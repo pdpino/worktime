@@ -2,8 +2,14 @@
 
 ## Version 2
 
+### 2.8: Misc fixes
+Release date: Jan 15, 2018
+* Add `work-indicator`, menu with buttons in the ubuntu nav-bar; icon changes to events start, pause and stop-
+* Add option to force the value worked when stopping `work stop --force <seconds>`
+* Move files outside the repo `($HOME/.worktime)`
+
 ### 2.7: Interactive features
-Release date: 2, 2017
+Release date: Sep 2, 2017
 * Add option in `show` to show only the name and the status of the jobs. A shortcut and a notification may be used with this.
 * Add `help` option to display the shortcuts.
 * Add a interactive way of selecting a job

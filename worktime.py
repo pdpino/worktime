@@ -8,6 +8,7 @@ __program__ = "Worktime"
 __version__ = "2.7"
 
 import sys
+import os
 import argparse
 import basic
 import backend
@@ -107,7 +108,7 @@ def parse_args():
     return args
 
 if __name__ == "__main__":
-    app = backend.ConsoleApplication(sys.path[0])
+    app = backend.ConsoleApplication(os.path.join(os.environ["HOME"], ".worktime"))
     args = parse_args()
     app.notify = args.notify
 

@@ -91,7 +91,7 @@ def parse_args():
 
         parser_backup = subparser.add_parser('backup', help="Backup existing works")
 
-        parser_update = subparser.add_parser('update', help="Update existing Job objects")
+        parser_update = subparser.add_parser('update', help="Update existing work objects from older versions. Use only when there is a non-backward compatible change and update() methods are ready")
 
         parser_help = subparser.add_parser('help', help="Display a command help message")
         parser_help.add_argument('--shortcut', action="store_true", help="Display shorcuts")

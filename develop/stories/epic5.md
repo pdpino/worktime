@@ -1,7 +1,28 @@
-# Epic 5: Monitoring
+# Epic 5: Networking
 
-* Enable/disable tracking mode:
-  - Track how much have you worked in some time (custom), notify the user in that period of time
-* Add goals in time
-  - on specific subjects, tasks, general, etc
-* Recommend the user how much should he/she work
+## Use of different platforms
+1. Use from computer:
+  - commands in terminal
+  - shortcuts
+  - desktop icons
+  - indicator
+  - app
+  - receive notifications
+
+2. Use from cellphone:
+  - app
+  - widgets (buttons on the screen as shortcuts)
+  - notifications
+
+3. Online platforms
+  - sync your personal content (subjects/tasks/sessions) between your platforms
+
+## Sharing with others
+1. Change login in your computer
+
+2. Add/remove friends/followers
+
+3. Share subjects/tasks/categories with friends
+  - people can see, edit, use
+4. Create a group of work with my friends
+  - can create a subject/task/category that automatically gets shared between the team

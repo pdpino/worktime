@@ -2,20 +2,25 @@
 from backend import results as rs
 from .application import Application
 import basic
-import subprocess
-import sys
+import os
 import threading
 
+PIPE_PATH = "/tmp/worktime" # HACK: copied from work-indicator.py
+
 def send_indicator_message_thread(message):
-    try:
-        subprocess.run("echo \"{}\" > /tmp/worktime".format(message), shell=True, timeout=2)
-    except subprocess.TimeoutExpired:
-        # work-indicator must not be up
-        pass
+    if not os.path.exists(PIPE_PATH):
+        # indicator not up
+        return
+
+    pipe_fd = os.open(PIPE_PATH, os.O_WRONLY)
+
+    with os.fdopen(pipe_fd, "w") as pipe:
+        pipe.write(message)
+
 
 def send_indicator_message(message):
     # Send it in a thread so it doesn't hang if work-indicator is not up
-    t = threading.Thread(target=send_indicator_message_thread, args=(message,), daemon=True)
+    t = threading.Thread(target=send_indicator_message_thread, args=(message,))
     t.start()
 
 

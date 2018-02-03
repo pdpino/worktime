@@ -3,7 +3,6 @@ import os
 import sys
 import time
 import signal
-import json
 import threading
 import subprocess
 import gi
@@ -38,6 +37,8 @@ def open_pipe(handle_message):
                 # print("Received: '{}'".format(message))
             # print("Doing other stuff")
             time.sleep(0.5)
+
+    os.remove(PIPE_PATH)
 
 def main():
     """Start indicator process."""

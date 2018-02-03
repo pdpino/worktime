@@ -2,13 +2,19 @@
 
 ## TODOs
 
-### Full redesign
+### URGENT: Full redesign
+* Design concerns
+  - model handles work-actions. Start by creating model that handles basic CRUD and session actions
+  - controller handles calls from console, calls model and show results to view
+  - include indicator and notifications
+  - include OSEvents
+
 * ORM to handle database. sqlite? psql?
 * somewhat MVC pattern
 * Command pattern for actions!!
   - export option (for later!)
 
-### install script (pending!)
+### install script (pending!) (use setuptools!!)
   - set alias, add folder to `PATH` or create symlink
   - add alias or symlink to `work-indicator`
   - run `work-indicator` on boot

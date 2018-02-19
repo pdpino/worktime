@@ -2,6 +2,11 @@
 
 ## Version 2
 
+### 2.9: Misc addings
+Release date: X
+* When showing jobs with entries the effective time gets added and displayed
+* Add option to filter entries by date, and add shortcut to show only today's entries
+
 ### 2.8: Misc fixes
 Release date: Jan 15, 2018
 * Add `work-indicator`, menu with buttons in the ubuntu nav-bar; icon changes to events start, pause and stop-

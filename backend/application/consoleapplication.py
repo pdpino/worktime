@@ -4,8 +4,10 @@ from .application import Application
 import basic
 import os
 import threading
+import time
 
 PIPE_PATH = "/tmp/worktime" # HACK: copied from work-indicator.py
+DATE_FORMAT = "%Y/%m/%d"
 
 def send_indicator_message_thread(message):
     if not os.path.exists(PIPE_PATH):
@@ -32,6 +34,16 @@ def stop_indicator():
 
 def pause_indicator():
     send_indicator_message("pause")
+
+def validate_date_format(date, date_format):
+    if date is None:
+        return None
+    try:
+        time.strptime(date, date_format)
+        return date
+    except:
+        print("The date '{}' should be in format year/month/day".format(date))
+        return None
 
 class ConsoleApplication(Application):
     """Handle the application from the console."""
@@ -65,8 +77,20 @@ class ConsoleApplication(Application):
         else:
             self._print_action(name, status)
 
-    def _print_job(self, sjob, name_only=False, status_only=False, show_entries=False):
+    def _print_job(self, sjob, name_only=False, status_only=False, show_entries=False, from_date=None, until_date=None):
         """Pretty print for a job (ShowJob)."""
+
+        if from_date is not None:
+            from_date = time.strptime(from_date, DATE_FORMAT)
+            filter_from_date = lambda date: from_date <= time.strptime(date, DATE_FORMAT)
+        else:
+            filter_from_date = lambda date: True
+
+        if until_date is not None:
+            until_date = time.strptime(until_date, DATE_FORMAT)
+            filter_until_date = lambda date: until_date >= time.strptime(date, DATE_FORMAT)
+        else:
+            filter_until_date = lambda date: True
 
         def get_entry_detail(sentry):
             """Pretty string and effective time for a ShowEntry"""
@@ -79,12 +103,18 @@ class ConsoleApplication(Application):
             etime = basic.sec2hr(sentry.effective_time)
             ptime = basic.sec2hr(sentry.pause_time)
 
-            details = "{} -- {} to {} -- total: {} -- effective: {} -- pause: {} {}".format(sentry.date,
+
+            if filter_from_date(sentry.date) and filter_until_date(sentry.date):
+                details = "{} -- {} to {} -- total: {} -- effective: {} -- pause: {} {}".format(sentry.date,
                         sentry.hour_init, sentry.hour_end,
                         ttime, etime, ptime,
                         obs)
+                effective_time = float(sentry.effective_time)
+            else:
+                details = ""
+                effective_time = 0
 
-            return details, float(sentry.effective_time)
+            return details, effective_time
 
         # Get status string
         status = sjob.status
@@ -113,7 +143,8 @@ class ConsoleApplication(Application):
                     w += "\n"
                     for s in sjob.entries:
                         detail, eff_time = get_entry_detail(s)
-                        w += "\t{}\n".format(detail)
+                        if detail != "":
+                            w += "\t{}\n".format(detail)
                         total_time += eff_time
 
                     w += "\t------------------\n\tTotal time: {}".format(basic.sec2hr(total_time))
@@ -254,7 +285,7 @@ class ConsoleApplication(Application):
         else:
             self._print_error(None, rs.ResultType.NotSelected) # HACK
 
-    def show_jobs(self, name, run_only=False, name_only=False, status_only=False, show_entries=False):
+    def show_jobs(self, name, run_only=False, name_only=False, status_only=False, show_entries=False, from_date=None, until_date=None):
         """Option to show jobs."""
 
         results = super().show_jobs(name, run_only)
@@ -262,12 +293,16 @@ class ConsoleApplication(Application):
         if results.no_jobs():
             message = "No jobs to show"
         else:
+            from_date = validate_date_format(from_date, DATE_FORMAT)
+            until_date = validate_date_format(until_date, DATE_FORMAT)
+
             message = ""
             total_time = 0
             for r in results:
-                job_message, job_time = self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries)
+                job_message, job_time = self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries, from_date=from_date, until_date=until_date)
                 message += job_message
-                message += "\n"
+                if job_message != "":
+                    message += "\n"
 
                 total_time += job_time
 

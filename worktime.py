@@ -12,6 +12,7 @@ import os
 import argparse
 import basic
 import backend
+import datetime
 
 def parse_args():
     """Create a parser, parse args, format them and return them."""
@@ -82,6 +83,9 @@ def parse_args():
         parser_show_opts.add_argument('-n', '--names', action="store_true", help="Show only the names of the jobs")
         parser_show_opts.add_argument('-s', '--status', action="store_true", help="Show only the status of the jobs")
         parser_show_opts.add_argument('-e', '--entries', action="store_true", help="Show the entries (may be a lot)")
+        parser_show_opts.add_argument('--today', action="store_true", help="Consider only entries from today")
+        parser_show_opts.add_argument('--from-date', type=str, help="Filter entries from date (inclusive, format: 2017/07/18)")
+        parser_show_opts.add_argument('--until-date', type=str, help="Filter entries until date (inclusive, format: 2017/07/18)")
 
         ## FUTURE: use as callback
         # def foo():
@@ -104,6 +108,10 @@ def parse_args():
     if args.option is None: # No option selected
         # DEFAULT: use 'work show -rs' (show status of running jobs)
         args = parser.parse_args(['show', '-rs'])
+    elif args.option == "show":
+        if args.from_date is not None or args.until_date is not None or args.today:
+            # If filtering by dates, use entries
+            args.entries = True
 
     return args
 
@@ -131,11 +139,17 @@ if __name__ == "__main__":
     elif args.option == "delete":
         app.delete_job(args.name, args.y)
     elif args.option == "show":
+        if args.today:
+            args.entries = True
+            args.from_date = datetime.date.today().strftime("%Y/%m/%d")
+            # HACK: date format copied from consoleapp
         app.show_jobs(args.name,
                     run_only=args.running,
                     name_only=args.names,
                     status_only=args.status,
-                    show_entries=args.entries)
+                    show_entries=args.entries,
+                    from_date=args.from_date,
+                    until_date=args.until_date)
     elif args.option == "select":
         if args.s:
             app.show_selected_job()

@@ -68,8 +68,8 @@ class ConsoleApplication(Application):
     def _print_job(self, sjob, name_only=False, status_only=False, show_entries=False):
         """Pretty print for a job (ShowJob)."""
 
-        def pstr(sentry):
-            """Pretty string for a show_entry"""
+        def get_entry_detail(sentry):
+            """Pretty string and effective time for a ShowEntry"""
             if sentry.obs != "":
                 obs = "\n\t\t{}".format(sentry.obs)
             else:
@@ -79,10 +79,12 @@ class ConsoleApplication(Application):
             etime = basic.sec2hr(sentry.effective_time)
             ptime = basic.sec2hr(sentry.pause_time)
 
-            return "{} -- {} to {} -- total: {} -- effective: {} -- pause: {} {}".format(sentry.date,
+            details = "{} -- {} to {} -- total: {} -- effective: {} -- pause: {} {}".format(sentry.date,
                         sentry.hour_init, sentry.hour_end,
                         ttime, etime, ptime,
                         obs)
+
+            return details, float(sentry.effective_time)
 
         # Get status string
         status = sjob.status
@@ -92,6 +94,7 @@ class ConsoleApplication(Application):
             status = "running (total: {}, effective: {})".format(sjob.total_time, sjob.effective_time)
 
         # String to print
+        total_time = 0
         if name_only:
             w = "{}".format(sjob.name)
         elif status_only:
@@ -109,12 +112,16 @@ class ConsoleApplication(Application):
                 if len(sjob.entries) > 0:
                     w += "\n"
                     for s in sjob.entries:
-                        w += "\t{}\n".format(pstr(s))
+                        detail, eff_time = get_entry_detail(s)
+                        w += "\t{}\n".format(detail)
+                        total_time += eff_time
+
+                    w += "\t------------------\n\tTotal time: {}".format(basic.sec2hr(total_time))
                 else:
                     w += "None\n"
 
         # print(w)
-        return w
+        return w, total_time
 
     def close(self):
         """Close the application."""
@@ -256,9 +263,16 @@ class ConsoleApplication(Application):
             message = "No jobs to show"
         else:
             message = ""
+            total_time = 0
             for r in results:
-                message += self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries)
+                job_message, job_time = self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries)
+                message += job_message
                 message += "\n"
+
+                total_time += job_time
+
+            if total_time > 0:
+                message += "\nTotal time: {}".format(basic.sec2hr(total_time))
 
         if self.notify: # HACK!!!
             self._notify_action(action=message, more_title='show')

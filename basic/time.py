@@ -14,12 +14,16 @@ def seconds(t):
     """Return the seconds between the 01/01/2017 and the time t"""
     return (t - datetime(2017,1,1)).total_seconds()
 
-def sec2hr(t):
+def sec2hr(t, use_days=True):
     """Transform the seconds in H:M
     Adapted from: http://stackoverflow.com/a/33504562"""
     m, s = divmod(t, 60) # obtener minutos, segundos
     h, m = divmod(m, 60) # obtener horas, minutos
     d, h = divmod(h, 24) # obtener dias, horas
+
+    if not use_days:
+        h += 24*d
+        d = 0
 
     # patterns:
     patt_sec = "{:.1f}s"

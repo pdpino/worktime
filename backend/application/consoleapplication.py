@@ -92,6 +92,8 @@ class ConsoleApplication(Application):
         else:
             filter_until_date = lambda date: True
 
+        different_days = dict()
+
         def get_entry_detail(sentry):
             """Pretty string and effective time for a ShowEntry"""
             if sentry.obs != "":
@@ -103,8 +105,9 @@ class ConsoleApplication(Application):
             etime = basic.sec2hr(sentry.effective_time)
             ptime = basic.sec2hr(sentry.pause_time)
 
-
             if filter_from_date(sentry.date) and filter_until_date(sentry.date):
+                # Mark a different day
+                different_days[sentry.date] = True
                 details = "{} -- {} to {} -- total: {} -- effective: {} -- pause: {} {}".format(sentry.date,
                         sentry.hour_init, sentry.hour_end,
                         ttime, etime, ptime,
@@ -141,29 +144,30 @@ class ConsoleApplication(Application):
 
         # Filter entries
         entries_string = "\n"
-        for s in sjob.entries:
-            detail, all_time, eff_time = get_entry_detail(s)
+        for entry in sjob.entries:
+            detail, all_time, eff_time = get_entry_detail(entry)
             if detail != "":
                 entries_string += "\t    {}\n".format(detail)
             total_eff_time += eff_time
             total_time += all_time
 
-        if total_time > 0:
-            effectiveness = total_eff_time*100/total_time
-        else:
-            effectiveness = 0
+        # Calculate time statistics
+        n_diff_days = len(different_days)
+        effectiveness = total_eff_time*100/total_time if total_time > 0 else 0
+        avg_by_day = total_eff_time / n_diff_days if n_diff_days != 0 else 0
 
-        # If no entries were found
+        # No entries were found
         if total_time == 0:
-            entries_string += "\t\tNone\n"
+            entries_string += "\t    None\n"
 
         # Add separator
         entries_string += "\t----------------------\n"
 
         if show_time:
             entries_string += "\tTime:\n"
-            entries_string += "\t    effective: \t {} ({:.1f}%)\n".format(basic.sec2hr(total_eff_time), effectiveness)
-            entries_string += "\t    total: \t {}".format(basic.sec2hr(total_time))
+            entries_string += "\t    daily average:\t{}\n".format(basic.sec2hr(avg_by_day, use_days=False))
+            entries_string += "\t    effective:\t\t{} ({:.1f}%)\n".format(basic.sec2hr(total_eff_time, use_days=False), effectiveness)
+            entries_string += "\t    total:\t\t{}".format(basic.sec2hr(total_time, use_days=False))
 
         if show_entries:
             full_string += "\n\tEntries: "
@@ -306,6 +310,8 @@ class ConsoleApplication(Application):
     def show_jobs(self, name, run_only=False, show_info=False, show_entries=False, show_time=False, from_date=None, until_date=None):
         """Option to show jobs."""
 
+        is_filtering_by_date = from_date is not None or until_date is not None
+
         results = super().show_jobs(name, run_only)
 
         if results.no_jobs():
@@ -318,6 +324,12 @@ class ConsoleApplication(Application):
             total_time = 0
             for r in results:
                 job_message, job_time = self._print_job(r, show_info=show_info, show_entries=show_entries, show_time=show_time, from_date=from_date, until_date=until_date)
+
+                if is_filtering_by_date and name is None and job_time == 0:
+                    # Is filtering by date, not searching by name and the job didn't have time
+                    # Don't print it
+                    continue
+
                 message += job_message
                 if job_message != "":
                     message += "\n"
@@ -325,7 +337,7 @@ class ConsoleApplication(Application):
                 total_time += job_time
 
             if show_time: # REVIEW: Should this be checked? total_time > 0:
-                message += "\nTotal effective time: {}".format(basic.sec2hr(total_time))
+                message += "\nTotal effective time: {}".format(basic.sec2hr(total_time, use_days=False))
 
         if self.notify: # HACK!!!
             self._notify_action(action=message, more_title='show')

@@ -5,7 +5,7 @@
 ### 2.9: Misc addings
 Release date: X
 * When showing jobs with entries the effective time gets added and displayed
-* Add option to filter entries by date, and add shortcut to show only today's entries
+* Add options to filter entries by date, and add shortcuts to show only entries from today, yesterday, or N days ago.
 
 ### 2.8: Misc fixes
 Release date: Jan 15, 2018

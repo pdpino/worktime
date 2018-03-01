@@ -75,23 +75,20 @@ def parse_args():
         parser_select.add_argument('-u', action='store_true', help="Unselect job")
 
         parser_show = subparser.add_parser('show', help="Show existing works")
-        parser_show_filter = parser_show.add_argument_group(title="Filter options", description=None)
+        parser_show_filter = parser_show.add_argument_group(title="Filter options", description="Options to filter the results.\nThe dates must be in the format: 2017/07/18")
         parser_show_filter.add_argument('name', nargs='?', type=str, help="Name to lookup")
         parser_show_filter.add_argument('-r', '--running', action="store_true", help="Show only the running jobs")
+        parser_show_filter.add_argument('--today', action="store_true", help="Consider only entries from today")
+        parser_show_filter.add_argument('--yesterday', action="store_true", help="Consider only entries from yesterday")
+        parser_show_filter.add_argument('--day', type=str, help="Consider only entries from a specific day")
+        parser_show_filter.add_argument('--days-ago', type=int, help="Consider only entries from N days ago")
+        parser_show_filter.add_argument('--from-date', type=str, help="Filter entries from date (inclusive)")
+        parser_show_filter.add_argument('--until-date', type=str, help="Filter entries until date (inclusive)")
 
         parser_show_opts = parser_show.add_argument_group(title="Show options", description=None)
-        parser_show_opts.add_argument('-n', '--names', action="store_true", help="Show only the names of the jobs")
-        parser_show_opts.add_argument('-s', '--status', action="store_true", help="Show only the status of the jobs")
+        parser_show_opts.add_argument('--info', action="store_true", help="Show the info of each job")
         parser_show_opts.add_argument('-e', '--entries', action="store_true", help="Show the entries (may be a lot)")
-        parser_show_opts.add_argument('--today', action="store_true", help="Consider only entries from today")
-        parser_show_opts.add_argument('--from-date', type=str, help="Filter entries from date (inclusive, format: 2017/07/18)")
-        parser_show_opts.add_argument('--until-date', type=str, help="Filter entries until date (inclusive, format: 2017/07/18)")
-
-        ## FUTURE: use as callback
-        # def foo():
-        #     print("args function")
-        # parser_show.set_defaults(func=foo)
-        # args.func() # calling the callback, func must be defined in each subparser
+        parser_show_opts.add_argument('--time', action="store_true", help="Show the time added between entries")
 
         parser_backup = subparser.add_parser('backup', help="Backup existing works")
 
@@ -106,12 +103,8 @@ def parse_args():
     args = parser.parse_args()
 
     if args.option is None: # No option selected
-        # DEFAULT: use 'work show -rs' (show status of running jobs)
-        args = parser.parse_args(['show', '-rs'])
-    elif args.option == "show":
-        if args.from_date is not None or args.until_date is not None or args.today:
-            # If filtering by dates, use entries
-            args.entries = True
+        # DEFAULT: use 'work show -r' (show status of running jobs)
+        args = parser.parse_args(['show', '-r'])
 
     return args
 
@@ -139,15 +132,35 @@ if __name__ == "__main__":
     elif args.option == "delete":
         app.delete_job(args.name, args.y)
     elif args.option == "show":
-        if args.today:
+        if args.from_date is not None or args.until_date is not None or args.today or args.yesterday or args.day is not None or args.days_ago is not None:
+            # If filtering by dates, use entries
             args.entries = True
-            args.from_date = datetime.date.today().strftime("%Y/%m/%d")
+
+        if args.entries: # If show entries, also show added time
+            args.time = True
+
+        # Select today or yesterday
+        if args.today:
+            args.day = datetime.date.today().strftime("%Y/%m/%d")
             # HACK: date format copied from consoleapp
+        elif args.yesterday:
+            args.days_ago = 1
+
+        # Select days ago, only if --day is not selected
+        if args.days_ago and args.day is None:
+            day = datetime.date.today() - datetime.timedelta(days=args.days_ago)
+            args.day = day.strftime("%Y/%m/%d")
+
+        # Select day
+        if args.day is not None:
+            args.from_date = args.day
+            args.until_date = args.day
+
         app.show_jobs(args.name,
                     run_only=args.running,
-                    name_only=args.names,
-                    status_only=args.status,
+                    show_info=args.info,
                     show_entries=args.entries,
+                    show_time=args.time,
                     from_date=args.from_date,
                     until_date=args.until_date)
     elif args.option == "select":

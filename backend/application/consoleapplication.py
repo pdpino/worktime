@@ -77,7 +77,7 @@ class ConsoleApplication(Application):
         else:
             self._print_action(name, status)
 
-    def _print_job(self, sjob, name_only=False, status_only=False, show_entries=False, from_date=None, until_date=None):
+    def _print_job(self, sjob, show_info=False, show_entries=False, show_time=False, from_date=None, until_date=None):
         """Pretty print for a job (ShowJob)."""
 
         if from_date is not None:
@@ -110,11 +110,13 @@ class ConsoleApplication(Application):
                         ttime, etime, ptime,
                         obs)
                 effective_time = float(sentry.effective_time)
+                total_time = float(sentry.total_time)
             else:
                 details = ""
                 effective_time = 0
+                total_time = 0
 
-            return details, effective_time
+            return details, total_time, effective_time
 
         # Get status string
         status = sjob.status
@@ -123,36 +125,52 @@ class ConsoleApplication(Application):
         elif sjob.status == "running":
             status = "running (total: {}, effective: {})".format(sjob.total_time, sjob.effective_time)
 
-        # String to print
+        # To add times from entries
+        total_eff_time = 0
         total_time = 0
-        if name_only:
-            w = "{}".format(sjob.name)
-        elif status_only:
-            w = "{} -- {}".format(sjob.name, status)
-        else:
-            w = """{}
+
+        # String to print
+        full_string = "{} -- {}".format(sjob.name, status)
+
+        if show_info:
+            full_string += """
             long name:  {}
             info:       {}
             tags:       {}
-            status:     {}
-            total runs: {}""".format(sjob.name, sjob.longname, sjob.info, sjob.tags, status, sjob.total_runs)
+            total runs: {}""".format(sjob.longname, sjob.info, sjob.tags, sjob.total_runs)
 
-            if show_entries: # show_entries only works if not name_only and not status_only
-                w += "\n\tEntries: "
-                if len(sjob.entries) > 0:
-                    w += "\n"
-                    for s in sjob.entries:
-                        detail, eff_time = get_entry_detail(s)
-                        if detail != "":
-                            w += "\t{}\n".format(detail)
-                        total_time += eff_time
+        # Filter entries
+        entries_string = "\n"
+        for s in sjob.entries:
+            detail, all_time, eff_time = get_entry_detail(s)
+            if detail != "":
+                entries_string += "\t    {}\n".format(detail)
+            total_eff_time += eff_time
+            total_time += all_time
 
-                    w += "\t------------------\n\tTotal time: {}".format(basic.sec2hr(total_time))
-                else:
-                    w += "None\n"
+        if total_time > 0:
+            effectiveness = total_eff_time*100/total_time
+        else:
+            effectiveness = 0
 
-        # print(w)
-        return w, total_time
+        # If no entries were found
+        if total_time == 0:
+            entries_string += "\t\tNone\n"
+
+        # Add separator
+        entries_string += "\t----------------------\n"
+
+        if show_time:
+            entries_string += "\tTime:\n"
+            entries_string += "\t    effective: \t {} ({:.1f}%)\n".format(basic.sec2hr(total_eff_time), effectiveness)
+            entries_string += "\t    total: \t {}".format(basic.sec2hr(total_time))
+
+        if show_entries:
+            full_string += "\n\tEntries: "
+            full_string += entries_string
+
+        # print(full_string)
+        return full_string, total_eff_time
 
     def close(self):
         """Close the application."""
@@ -285,7 +303,7 @@ class ConsoleApplication(Application):
         else:
             self._print_error(None, rs.ResultType.NotSelected) # HACK
 
-    def show_jobs(self, name, run_only=False, name_only=False, status_only=False, show_entries=False, from_date=None, until_date=None):
+    def show_jobs(self, name, run_only=False, show_info=False, show_entries=False, show_time=False, from_date=None, until_date=None):
         """Option to show jobs."""
 
         results = super().show_jobs(name, run_only)
@@ -299,15 +317,15 @@ class ConsoleApplication(Application):
             message = ""
             total_time = 0
             for r in results:
-                job_message, job_time = self._print_job(r, name_only=name_only, status_only=status_only, show_entries=show_entries, from_date=from_date, until_date=until_date)
+                job_message, job_time = self._print_job(r, show_info=show_info, show_entries=show_entries, show_time=show_time, from_date=from_date, until_date=until_date)
                 message += job_message
                 if job_message != "":
                     message += "\n"
 
                 total_time += job_time
 
-            if total_time > 0:
-                message += "\nTotal time: {}".format(basic.sec2hr(total_time))
+            if show_time: # REVIEW: Should this be checked? total_time > 0:
+                message += "\nTotal effective time: {}".format(basic.sec2hr(total_time))
 
         if self.notify: # HACK!!!
             self._notify_action(action=message, more_title='show')

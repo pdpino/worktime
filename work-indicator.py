@@ -75,11 +75,11 @@ def build_menu():
 
     # Add buttons
     add_menu_button("Show", work_show)
-    add_menu_button("Empezar", work_start)
-    add_menu_button("Detener", work_stop)
-    add_menu_button("Pausar/quitar pausa", work_pause)
-    add_menu_button("Seleccionar trabajo", work_select)
-    add_menu_button("Cerrar", quit)
+    add_menu_button("Start", work_start)
+    add_menu_button("Stop", work_stop)
+    add_menu_button("Pause/unpause", work_pause)
+    add_menu_button("Select job", work_select)
+    add_menu_button("Close indicator", quit)
 
     # Put buttons in the menu
     menu.show_all()

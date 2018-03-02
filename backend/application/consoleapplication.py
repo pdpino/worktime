@@ -152,9 +152,9 @@ class ConsoleApplication(Application):
             total_time += all_time
 
         # Calculate time statistics
-        n_diff_days = len(different_days)
+        n_days = len(different_days)
         effectiveness = total_eff_time*100/total_time if total_time > 0 else 0
-        avg_by_day = total_eff_time / n_diff_days if n_diff_days != 0 else 0
+        avg_by_day = total_eff_time / n_days if n_days != 0 else 0
 
         # No entries were found
         if total_time == 0:
@@ -165,7 +165,7 @@ class ConsoleApplication(Application):
 
         if show_time:
             entries_string += "\tTime:\n"
-            entries_string += "\t    daily average:\t{}\n".format(basic.sec2hr(avg_by_day, use_days=False))
+            entries_string += "\t    daily average:\t{} ({} days)\n".format(basic.sec2hr(avg_by_day, use_days=False), n_days)
             entries_string += "\t    effective:\t\t{} ({:.1f}%)\n".format(basic.sec2hr(total_eff_time, use_days=False), effectiveness)
             entries_string += "\t    total:\t\t{}".format(basic.sec2hr(total_time, use_days=False))
 

@@ -144,17 +144,20 @@ class ConsoleApplication(Application):
 
         # Filter entries
         entries_string = "\n"
+        n_entries = 0
         for entry in sjob.entries:
             detail, all_time, eff_time = get_entry_detail(entry)
             if detail != "":
                 entries_string += "\t    {}\n".format(detail)
+                n_entries += 1
             total_eff_time += eff_time
             total_time += all_time
 
-        # Calculate time statistics
+        # Calculate statistics
         n_days = len(different_days)
         effectiveness = total_eff_time*100/total_time if total_time > 0 else 0
-        avg_by_day = total_eff_time / n_days if n_days != 0 else 0
+        time_avg = total_eff_time / n_days if n_days > 0 else 0
+        entries_avg = n_entries / n_days if n_days > 0 else 0
 
         # No entries were found
         if total_time == 0:
@@ -163,9 +166,13 @@ class ConsoleApplication(Application):
         # Add separator
         entries_string += "\t----------------------\n"
 
+        # Show statistics of entries
+        entries_string += "\t{} days, {} entries (average {:.1f} by day)\n".format(n_days, n_entries, entries_avg)
+
+        # Show time statistics
         if show_time:
             entries_string += "\tTime:\n"
-            entries_string += "\t    daily average:\t{} ({} days)\n".format(basic.sec2hr(avg_by_day, use_days=False), n_days)
+            entries_string += "\t    daily average:\t{}\n".format(basic.sec2hr(time_avg, use_days=False))
             entries_string += "\t    effective:\t\t{} ({:.1f}%)\n".format(basic.sec2hr(total_eff_time, use_days=False), effectiveness)
             entries_string += "\t    total:\t\t{}".format(basic.sec2hr(total_time, use_days=False))
 

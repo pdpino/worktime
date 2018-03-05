@@ -95,7 +95,7 @@ def work_pause(_):
     run_command("work --notify pause")
 
 def work_show(_):
-    run_command("work --notify show -sr")
+    run_command("work --notify show -r")
 
 def work_select(_):
     run_command("work --notify select -I")

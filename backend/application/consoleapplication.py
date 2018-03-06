@@ -167,7 +167,7 @@ class ConsoleApplication(Application):
         entries_string += "\t----------------------\n"
 
         # Show statistics of entries
-        entries_string += "\t{} days, {} entries (average {:.1f} by day)\n".format(n_days, n_entries, entries_avg)
+        entries_string += "\t{} days, {} entries (average {:.1f} entries by day)\n".format(n_days, n_entries, entries_avg)
 
         # Show time statistics
         if show_time:

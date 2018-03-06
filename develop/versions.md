@@ -6,6 +6,7 @@
 Release date: X
 * When showing jobs with entries the effective time gets added and displayed
 * Add options to filter entries by date, and add shortcuts to show only entries from today, yesterday, or N days ago.
+* Add option to archive (and unarchive) jobs, useful to hide old jobs.
 
 ### 2.8: Misc fixes
 Release date: Jan 15, 2018

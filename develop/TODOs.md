@@ -41,7 +41,6 @@
 ## Wishlist
 
 ### New options
-* Archive jobs (don't want to see them around anymore)
 * Backup jobs (save them somewhere safe!)
 * Export actions (or jobs?) to send/sync to other devices
   - sync to google drive?, syncthing?, optional!

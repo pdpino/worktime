@@ -75,6 +75,7 @@ def build_menu():
 
     # Add buttons
     add_menu_button("Show", work_show)
+    add_menu_button("Show selected", work_show_selected)
     add_menu_button("Start", work_start)
     add_menu_button("Stop", work_stop)
     add_menu_button("Pause/unpause", work_pause)
@@ -99,6 +100,9 @@ def work_show(_):
 
 def work_select(_):
     run_command("work --notify select -I")
+
+def work_show_selected(_):
+    run_command("work --notify select -s")
 
 def quit(source):
     """Respond to quit event button"""

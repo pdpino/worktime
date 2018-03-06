@@ -92,6 +92,10 @@ def parse_args():
 
         parser_backup = subparser.add_parser('backup', help="Backup existing works")
 
+        parser_archive = subparser.add_parser('archive', help="Archive a job")
+        parser_archive.add_argument('name', type=str, help="Name of the job to archive")
+        parser_archive.add_argument('-u', '--unarchive', action="store_true", help="Unarchive the job")
+
         parser_update = subparser.add_parser('update', help="Update existing work objects from older versions. Use only when there is a non-backward compatible change and update() methods are ready")
 
         parser_help = subparser.add_parser('help', help="Display a command help message")
@@ -173,6 +177,8 @@ if __name__ == "__main__":
     elif args.option == "backup":
         print("Backup option is being fixed :grimacing:")
         # app.backup_jobs()
+    elif args.option == "archive":
+        app.archive_job(args.name, args.unarchive)
     elif args.option == "update":
         app.update_jobs()
     elif args.option == "help":

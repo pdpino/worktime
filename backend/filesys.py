@@ -14,6 +14,7 @@ class JsonFileHandler:
         self._root = root_path + "/"
         self._files = files_path + "/"
         self._backup = backup_path + "/"
+        self._archive = "archive/" # hardcoded
 
         # Absolute folder
         self.files_folder = self._root + self._files
@@ -21,10 +22,11 @@ class JsonFileHandler:
         # Absolute folder strings to fullfil
         self._str_files = self.files_folder + "{}.json"
         self._str_backup = self.files_folder + self._backup + "{}.json"
+        self._str_archive = self.files_folder + self._archive + "{}.json"
 
-    def _assure_folder(self):
-        """Assure the existence of the needed folders."""
-        folder = self.files_folder
+    def _assure_folder(self, folder=None):
+        """Assure the existence of folder."""
+        folder = folder or self.files_folder
         if not os.path.exists(folder):
             try:
                 os.mkdir(folder)
@@ -48,13 +50,15 @@ class JsonFileHandler:
 
         return names
 
-    def _get_fname(self, name=None, backup=False):
+    def _get_fname(self, name=None, backup=False, archive=False):
         """Given a name, return the filename for the json file."""
 
-        if not backup:
-            string = self._str_files
-        else:
+        if backup:
             string = self._str_backup
+        elif archive:
+            string = self._str_archive
+        else:
+            string = self._str_files
 
         if not name is None:
             string = string.format(name)
@@ -67,11 +71,22 @@ class JsonFileHandler:
         os.remove(fname)
 
     def _backup_file(self, name):
-        """Copy a file from name1 to name2."""
+        """Copy a file in the backup folder."""
+        self._assure_folder()
         fname_original = self._get_fname(name, backup=False)
         fname_backup = self._get_fname(name, backup=True)
 
         shutil.copyfile(fname_original, fname_backup)
+
+    def _archive_file(self, name, unarchive=False):
+        """Move file between archived/unarchived folders."""
+        # Assuring archive folder
+        self._assure_folder(self.files_folder + self._archive)
+
+        fname_original = self._get_fname(name, archive=unarchive)
+        fname_dest = self._get_fname(name, archive=(not unarchive))
+
+        os.rename(fname_original, fname_dest)
 
     def _save_file(self, obj, name):
         """Save an object to a json file."""
@@ -113,9 +128,9 @@ class JsonFileHandler:
             basic.perror("Can't get keys from {} object, {}".format(type(obj), obj.__dict__), exception=e, force_continue=True)
             return obj.__dict__
 
-    def _exist_file(self, name):
+    def _exist_file(self, name, archive=False):
         """Boolean indicating if a job exists."""
-        fname = self._get_fname(name, backup=False)
+        fname = self._get_fname(name, backup=False, archive=archive)
         return os.path.isfile(fname)
 
 class JobFileHandler(JsonFileHandler):
@@ -137,6 +152,14 @@ class JobFileHandler(JsonFileHandler):
         """Backup a job."""
         self._backup_file(name)
 
+    def archive_job(self, name):
+        """Archive a job."""
+        self._archive_file(name, unarchive=False)
+
+    def unarchive_job(self, name):
+        """Unarchive a job."""
+        self._archive_file(name, unarchive=True)
+
     def list_jobs(self):
         """List the jobs."""
         return self._list_files()
@@ -145,8 +168,8 @@ class JobFileHandler(JsonFileHandler):
         """Remove a job."""
         self._remove_file(name)
 
-    def exist_job(self, name):
-        return self._exist_file(name)
+    def exist_job(self, name, archive=False):
+        return self._exist_file(name, archive=archive)
 
 class AdminFileHandler(JsonFileHandler):
     """Wrapper to use the JsonFileHandler, used for admin files."""

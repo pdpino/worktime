@@ -79,9 +79,9 @@ class Application():
         """Get all the existing job names."""
         return self.fh.list_jobs()
 
-    def _exist_job(self, name):
+    def _exist_job(self, name, archive=False):
         """Bool indicating if job exists"""
-        return self.fh.exist_job(name) #name in self._get_job_names()
+        return self.fh.exist_job(name, archive=archive)
 
     def _assert_time(self, action="action"):
         """Assert the time variable set."""
@@ -284,6 +284,22 @@ class Application():
             self.fh.backup_job(name)
 
         return rs.Result()
+
+    def archive_job(self, name, unarchive=False):
+        """Archive a job."""
+        if not self._exist_job(name, archive=unarchive):
+            # NOTE:
+            # unarchive == False --> archiving, need to check non-archive folder
+            # unarchive == True --> unarchiving, need to check archive folder
+            # HACK: there is no ArchiveResult type, so use StartResult
+            return rs.StartResult(rs.ResultType.NotExist, jobname=name)
+
+        if unarchive:
+            self.fh.unarchive_job(name)
+        else:
+            self.fh.archive_job(name)
+
+        return rs.Result() # everything ok
 
     def update_jobs(self):
         """Make an update to the Job objects."""

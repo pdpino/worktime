@@ -361,6 +361,14 @@ class ConsoleApplication(Application):
         else:
             self._print_error(None, result.status)
 
+    def archive_job(self, name, unarchive=False):
+        """Backup existing jobs."""
+        result = super().archive_job(name, unarchive)
+        if result.is_ok():
+            self._print_action(name, "archived" if not unarchive else "unarchived")
+        else:
+            self._print_error(name, result.status)
+
     def update_jobs(self):
         """Make an update to the Job objects."""
         result = super().update_jobs()

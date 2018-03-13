@@ -8,6 +8,7 @@ Release date: X
 * Add options to filter entries by date, and add shortcuts to show only entries from today, yesterday, or N days ago.
 * Add option to archive (and unarchive) jobs, useful to hide old jobs.
 * Add option to indicator to show selected job
+* After starting a job, select it if it isn't selected already
 
 ### 2.8: Misc fixes
 Release date: Jan 15, 2018

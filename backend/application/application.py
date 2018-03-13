@@ -133,6 +133,10 @@ class Application():
         if result.is_ok():
             self._save_job(job)
 
+        if name != self.admin_data.get_selected_job():
+            # Not selected, select it
+            self.select_job(name)
+
         return result
 
     def stop_job(self, name, confirmation, info=None, discard=False, force_seconds=None):

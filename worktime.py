@@ -5,7 +5,7 @@ Measure the time that you work on different subjects."""
 
 __author__ = "pdpino"
 __program__ = "Worktime"
-__version__ = "2.8"
+__version__ = "2.9dev"
 
 import sys
 import os
@@ -80,6 +80,8 @@ def parse_args():
         parser_show_filter.add_argument('-r', '--running', action="store_true", help="Show only the running jobs")
         parser_show_filter.add_argument('--today', action="store_true", help="Consider only entries from today")
         parser_show_filter.add_argument('--yesterday', action="store_true", help="Consider only entries from yesterday")
+        parser_show_filter.add_argument('--week', action="store_true", help="Consider only entries from this week")
+        parser_show_filter.add_argument('--month', action="store_true", help="Consider only entries from this month")
         parser_show_filter.add_argument('--day', type=str, help="Consider only entries from a specific day")
         parser_show_filter.add_argument('--days-ago', type=int, help="Consider only entries from N days ago")
         parser_show_filter.add_argument('--from-date', type=str, help="Filter entries from date (inclusive)")
@@ -136,12 +138,24 @@ if __name__ == "__main__":
     elif args.option == "delete":
         app.delete_job(args.name, args.y)
     elif args.option == "show":
-        if args.from_date is not None or args.until_date is not None or args.today or args.yesterday or args.day is not None or args.days_ago is not None:
+        if args.from_date is not None or args.until_date is not None or args.today or args.yesterday or args.week or args.month or args.day is not None or args.days_ago is not None:
             # If filtering by dates, use entries
             args.entries = True
 
         if args.entries: # If show entries, also show added time
             args.time = True
+
+        # Select month
+        if args.month:
+            today = datetime.date.today()
+            first_day = today.replace(day=1)
+            args.from_date = first_day.strftime("%Y/%m/%d")
+
+        # Select week
+        if args.week:
+            today = datetime.date.today()
+            last_monday = today + datetime.timedelta(days=-today.weekday())
+            args.from_date = last_monday.strftime("%Y/%m/%d")
 
         # Select today or yesterday
         if args.today:

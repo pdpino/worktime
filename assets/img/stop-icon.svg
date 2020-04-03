@@ -1,18 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
-	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 302.6 302.6"
-	 style="enable-background:new 0 0 302.6 302.6;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:none;stroke:#fa2f2f;stroke-width:30;stroke-miterlimit:10;}
-	.st1{fill:#fa2f2f;stroke:#fa2f2f;stroke-width:20;stroke-linejoin:round;stroke-miterlimit:10;}
-</style>
-	<g i:extraneous="self">
-		<g id="Circle">
-			<circle class="st0" cx="151.3" cy="151.3" r="144.4"/>
-		</g>
-		<g id="Square">
-			<rect x="87.5" y="87.5" class="st1" width="127.6" height="127.6"/>
-		</g>
-	</g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16pt" height="16pt" viewBox="0 0 16 16" version="1.1">
+<g id="surface1">
+<path style="fill:none;stroke-width:30;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(98.039216%,18.431373%,18.431373%);stroke-opacity:1;stroke-miterlimit:10;" d="M 295.729443 151.3 C 295.729443 231.013232 231.013232 295.729443 151.3 295.729443 C 71.586768 295.729443 6.870557 231.013232 6.870557 151.3 C 6.870557 71.586768 71.586768 6.870557 151.3 6.870557 C 231.013232 6.870557 295.729443 71.586768 295.729443 151.3 Z M 295.729443 151.3 " transform="matrix(0.0528751,0,0,0.0528751,0,0)"/>
+<path style="fill-rule:nonzero;fill:rgb(98.039216%,18.431373%,18.431373%);fill-opacity:1;stroke-width:20;stroke-linecap:butt;stroke-linejoin:round;stroke:rgb(98.039216%,18.431373%,18.431373%);stroke-opacity:1;stroke-miterlimit:10;" d="M 87.470313 87.470313 L 215.129688 87.470313 L 215.129688 215.129688 L 87.470313 215.129688 Z M 87.470313 87.470313 " transform="matrix(0.0528751,0,0,0.0528751,0,0)"/>
+</g>
 </svg>

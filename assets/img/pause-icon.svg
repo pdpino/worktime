@@ -1,42 +1,6 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="510px" height="510px" viewBox="0 0 510 510" style="enable-background:new 0 0 510 510;" xml:space="preserve">
-<g>
-	<g id="pause-circle-outline">
-		<path fill="orange" d="M178.5,357h51V153h-51V357z M255,0C114.75,0,0,114.75,0,255s114.75,255,255,255s255-114.75,255-255S395.25,0,255,0z
-			 M255,459c-112.2,0-204-91.8-204-204S142.8,51,255,51s204,91.8,204,204S367.2,459,255,459z M280.5,357h51V153h-51V357z"/>
-	</g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16pt" height="16pt" viewBox="0 0 16 16" version="1.1">
+<g id="surface1">
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,64.705882%,0%);fill-opacity:1;" d="M 5.601562 11.199219 L 7.199219 11.199219 L 7.199219 4.800781 L 5.601562 4.800781 Z M 8 0 C 3.601562 0 0 3.601562 0 8 C 0 12.398438 3.601562 16 8 16 C 12.398438 16 16 12.398438 16 8 C 16 3.601562 12.398438 0 8 0 Z M 8 14.398438 C 4.480469 14.398438 1.601562 11.519531 1.601562 8 C 1.601562 4.480469 4.480469 1.601562 8 1.601562 C 11.519531 1.601562 14.398438 4.480469 14.398438 8 C 14.398438 11.519531 11.519531 14.398438 8 14.398438 Z M 8.800781 11.199219 L 10.398438 11.199219 L 10.398438 4.800781 L 8.800781 4.800781 Z M 8.800781 11.199219 "/>
 </g>
 </svg>

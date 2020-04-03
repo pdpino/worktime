@@ -11,6 +11,9 @@ gi.require_version('AppIndicator3', '0.1')
 
 from gi.repository import Gtk as gtk
 from gi.repository import AppIndicator3 as appindicator
+# NOTE: to resize icons use:
+# size=16; imgs=("start" "pause" "time" "stop"); for img in ${imgs[@]}; do rsvg-convert ${img}-icon-big.svg -w $size -h $size -f svg -o ${img}-icon.svg; done
+
 
 APPINDICATOR_ID = 'myappindicator'
 PIPE_PATH = "/tmp/worktime"

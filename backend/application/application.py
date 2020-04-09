@@ -54,10 +54,10 @@ class Application():
         """If name is None, return the selected name in the admin data."""
         return name or self.admin_data.get_selected_job()
 
-    def _load_job(self, name):
+    def _load_job(self, name, archive=False):
         """Load a job given a name."""
         job = jobs.Job()
-        json_dict = self.fh.load_job(name)
+        json_dict = self.fh.load_job(name, archive=archive)
         job.from_json(json_dict)
 
         return job
@@ -75,9 +75,9 @@ class Application():
         # Assure folder
         self.fh.save_job(j, name)
 
-    def _get_job_names(self):
+    def _get_job_names(self, archive=False):
         """Get all the existing job names."""
-        return self.fh.list_jobs()
+        return self.fh.list_jobs(archive=archive)
 
     def _exist_job(self, name, archive=False):
         """Bool indicating if job exists"""
@@ -252,7 +252,7 @@ class Application():
         else:
             return rs.UnselectResult(status=rs.ResultType.NotSelected)
 
-    def show_jobs(self, name, run_only=False):
+    def show_jobs(self, name, run_only=False, archive=False):
         """Option to show jobs."""
 
         def match_regex(k, m):
@@ -267,7 +267,7 @@ class Application():
             """Return true always, i.e don't match."""
             return True
 
-        names = self._get_job_names()
+        names = self._get_job_names(archive=archive)
 
         # Functions to filter
         match = dont_match if name is None else match_regex
@@ -275,7 +275,7 @@ class Application():
 
         results = rs.ShowResult()
         for n in names:
-            j = self._load_job(n)
+            j = self._load_job(n, archive=archive)
             if match(n, name) and filter_running(j):
                 result = j.show(self.t)
                 results.add_job(result)
@@ -315,6 +315,9 @@ class Application():
             self._save_job(j)
 
         return rs.Result()
+
+    def export_jobs(self):
+        pass
 
     def display_help(self, shortcut=True):
         """Display a help message."""

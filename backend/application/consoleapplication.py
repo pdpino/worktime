@@ -5,6 +5,8 @@ import basic
 import os
 import threading
 import time
+from datetime import datetime
+import json
 
 PIPE_PATH = "/tmp/worktime" # HACK: copied from work-indicator.py
 DATE_FORMAT = "%Y/%m/%d"
@@ -44,6 +46,16 @@ def validate_date_format(date, date_format):
     except:
         print("The date '{}' should be in format year/month/day".format(date))
         return None
+
+
+def get_tz_offset():
+    """Return timezone offset in seconds.
+
+    Taken from: https://stackoverflow.com/a/10854983/9951939
+    """
+    offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
+    return offset
+
 
 class ConsoleApplication(Application):
     """Handle the application from the console."""
@@ -314,12 +326,20 @@ class ConsoleApplication(Application):
         else:
             self._print_error(None, rs.ResultType.NotSelected) # HACK
 
-    def show_jobs(self, name, run_only=False, show_info=False, show_entries=False, show_time=False, from_date=None, until_date=None):
+    def show_jobs(self,
+                  name,
+                  run_only=False,
+                  show_info=False,
+                  show_entries=False,
+                  show_time=False,
+                  from_date=None,
+                  until_date=None,
+                  archive=False):
         """Option to show jobs."""
 
         is_filtering_by_date = from_date is not None or until_date is not None
 
-        results = super().show_jobs(name, run_only)
+        results = super().show_jobs(name, run_only, archive=archive)
 
         if results.no_jobs():
             message = "No jobs to show"
@@ -376,6 +396,87 @@ class ConsoleApplication(Application):
             print("Jobs updated")
         else:
             self._print_error(None, result.status)
+
+    def _export_job(self, name, device, archive=False):
+        job = self._load_job(name, archive=archive)
+
+        work_sessions = []
+        for entry in job.entries:
+            if not entry.finished:
+                continue
+
+            date_obj = datetime.strptime(entry.date, '%Y/%m/%d')
+
+            try:
+                hi_obj = datetime.strptime(entry.hi, "%H:%M").time()
+                hf_obj = datetime.strptime(entry.hf, "%H:%M").time()
+            except:
+                print("Couldn't parse time for the job: ", name)
+                continue
+
+            timestamp_start = time.mktime(datetime.combine(date_obj, hi_obj).timetuple())
+            timestamp_end = time.mktime(datetime.combine(date_obj, hf_obj).timetuple())
+
+            tz_offset = get_tz_offset()
+
+            work_session_dict = {
+                "date": date_obj.strftime('%m/%d/%Y'), # DEPRECATED in v1.10.0
+                "device": device,
+                "timestampStart": timestamp_start,
+                "timestampEnd": timestamp_end,
+                "tzOffset": tz_offset,
+                "timeTotal": entry.total_time,
+                "timeEffective": entry.effective_time,
+                "nPauses": entry.n_pauses,
+                "status": "stopped",
+                "sprints": [],
+            }
+
+            work_sessions.append(work_session_dict)
+
+        subject_dict = {
+            "name": job.longname or job.name,
+            "description": job.info,
+            "archived": archive,
+            "workSessions": work_sessions,
+        }
+
+        return subject_dict
+
+    def export_jobs(self, folder="./", include_archive=False):
+        """Export jobs to a json file."""
+        names = self._get_job_names()
+
+        device = "laptop"
+        timestamp = datetime.fromtimestamp(time.time()).strftime('%Y/%m/%d-%H:%M:%S')
+
+        result = {
+            "device": device,
+            "timestamp": timestamp,
+        }
+
+        subjects = []
+
+        for name in names:
+            subject_dict = self._export_job(name, device, archive=False)
+            subjects.append(subject_dict)
+
+        if include_archive:
+            for name in self._get_job_names(archive=True):
+                subject_dict = self._export_job(name, device, archive=True)
+                subjects.append(subject_dict)
+
+        result["subjects"] = subjects
+
+        as_string = json.dumps(result, sort_keys=False, indent=2)
+
+        fname = "worktime-{}.json".format(device)
+        fname = os.path.join(folder, fname)
+        os.makedirs(folder, exist_ok=True)
+
+        with open(fname, "w") as f:
+            f.write(as_string)
+
 
     def display_help(self, shortcut=True):
         """Display a help message."""

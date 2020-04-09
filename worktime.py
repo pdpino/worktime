@@ -78,6 +78,7 @@ def parse_args():
         parser_show_filter = parser_show.add_argument_group(title="Filter options", description="Options to filter the results.\nThe dates must be in the format: 2017/07/18")
         parser_show_filter.add_argument('name', nargs='?', type=str, help="Name to lookup")
         parser_show_filter.add_argument('-r', '--running', action="store_true", help="Show only the running jobs")
+        parser_show_filter.add_argument('--archive', action="store_true", help="Show archived jobs")
         parser_show_filter.add_argument('--today', action="store_true", help="Consider only entries from today")
         parser_show_filter.add_argument('--yesterday', action="store_true", help="Consider only entries from yesterday")
         parser_show_filter.add_argument('--week', action="store_true", help="Consider only entries from this week")
@@ -99,6 +100,14 @@ def parse_args():
         parser_archive.add_argument('-u', '--unarchive', action="store_true", help="Unarchive the job")
 
         parser_update = subparser.add_parser('update', help="Update existing work objects from older versions. Use only when there is a non-backward compatible change and update() methods are ready")
+
+        parser_export = subparser.add_parser('export',
+                                             help="Export data")
+        parser_export.add_argument('--archive',
+                                   action="store_true",
+                                   help="Include archive jobs")
+        parser_export.add_argument('--folder', type=str, default="./",
+                                   help="Folder to save the exported file")
 
         parser_help = subparser.add_parser('help', help="Display a command help message")
         parser_help.add_argument('--shortcut', action="store_true", help="Display shorcuts")
@@ -175,12 +184,13 @@ if __name__ == "__main__":
             args.until_date = args.day
 
         app.show_jobs(args.name,
-                    run_only=args.running,
-                    show_info=args.info,
-                    show_entries=args.entries,
-                    show_time=args.time,
-                    from_date=args.from_date,
-                    until_date=args.until_date)
+                      run_only=args.running,
+                      show_info=args.info,
+                      show_entries=args.entries,
+                      show_time=args.time,
+                      from_date=args.from_date,
+                      until_date=args.until_date,
+                      archive=args.archive)
     elif args.option == "select":
         if args.s:
             app.show_selected_job()
@@ -195,6 +205,8 @@ if __name__ == "__main__":
         app.archive_job(args.name, args.unarchive)
     elif args.option == "update":
         app.update_jobs()
+    elif args.option == "export":
+        app.export_jobs(folder=args.folder, include_archive=args.archive)
     elif args.option == "help":
         app.display_help(args.shortcut)
 

@@ -33,11 +33,15 @@ class JsonFileHandler:
             except:
                 basic.perror("Can't create folder: {}".format(folder), exception=e)
 
-    def _list_files(self):
+    def _list_files(self, archive=False):
         """List the files of a folder."""
 
         extension = ".json"
         folder = self.files_folder # folder to lookup
+
+        if archive:
+            folder += self._archive
+
         names = []
         n = len(extension)
 
@@ -96,10 +100,10 @@ class JsonFileHandler:
         with open(fname, "w") as f:
             json.dump(obj, f, default=self._get_dict, sort_keys=False, indent=4)
 
-    def _load_file(self, name):
+    def _load_file(self, name, archive=False):
         """Load an object from json."""
         self._assure_folder()
-        fname = self._get_fname(name)
+        fname = self._get_fname(name, archive=archive)
 
         with open(fname, "r") as f:
             d = json.load(f)
@@ -140,10 +144,10 @@ class JobFileHandler(JsonFileHandler):
         """Save a job to json."""
         super()._save_file(job, name)
 
-    def load_job(self, name):
+    def load_job(self, name, archive=False):
         """Load a job from json."""
         try:
-            json_obj = self._load_file(name)
+            json_obj = self._load_file(name, archive=archive)
             return json_obj
         except FileNotFoundError:
             basic.perror("Can't find the job '{}', maybe you haven't created it?".format(name))
@@ -160,9 +164,9 @@ class JobFileHandler(JsonFileHandler):
         """Unarchive a job."""
         self._archive_file(name, unarchive=True)
 
-    def list_jobs(self):
+    def list_jobs(self, archive=False):
         """List the jobs."""
-        return self._list_files()
+        return self._list_files(archive=archive)
 
     def remove_job(self, name):
         """Remove a job."""

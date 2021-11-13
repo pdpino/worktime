@@ -396,8 +396,11 @@ class ConsoleApplication(Application):
         else:
             self._print_error(None, result.status)
 
-    def _export_job(self, name, device, archive=False):
+    def _export_job(self, name, device, archive=False, from_date=None):
         job = self._load_job(name, archive=archive)
+
+        if from_date is not None:
+            from_date = datetime.strptime(from_date, DATE_FORMAT)
 
         work_sessions = []
         for entry in job.entries:
@@ -405,6 +408,9 @@ class ConsoleApplication(Application):
                 continue
 
             date_obj = datetime.strptime(entry.date, '%Y/%m/%d')
+
+            if from_date is not None and date_obj < from_date:
+                continue
 
             try:
                 hi_obj = datetime.strptime(entry.hi, "%H:%M").time()
@@ -449,9 +455,12 @@ class ConsoleApplication(Application):
 
         return subject_dict
 
-    def export_jobs(self, folder="./", include_archive=False):
+    def export_jobs(self, folder="./", include_archive=False, from_date=None,
+                    include_empty_subjects=False):
         """Export jobs to a json file."""
         names = self._get_job_names()
+        if include_archive:
+            names += self._get_job_names(archive=True)
 
         device = "laptop"
         timestamp = datetime.fromtimestamp(time.time()).strftime('%Y/%m/%d-%H:%M:%S')
@@ -464,12 +473,9 @@ class ConsoleApplication(Application):
         subjects = []
 
         for name in names:
-            subject_dict = self._export_job(name, device, archive=False)
-            subjects.append(subject_dict)
-
-        if include_archive:
-            for name in self._get_job_names(archive=True):
-                subject_dict = self._export_job(name, device, archive=True)
+            subject_dict = self._export_job(name, device, archive=False,
+                                            from_date=from_date)
+            if include_empty_subjects or len(subject_dict["workSessions"]) != 0:
                 subjects.append(subject_dict)
 
         result["subjects"] = subjects
@@ -482,6 +488,10 @@ class ConsoleApplication(Application):
 
         with open(fname, "w") as f:
             f.write(as_string)
+
+        pretty_date = datetime.strptime(from_date, DATE_FORMAT)
+        pretty_date = pretty_date.strftime("%d %b %Y")
+        print("Exported jobs from date: {}".format(pretty_date))
 
 
     def update_indicator(self):

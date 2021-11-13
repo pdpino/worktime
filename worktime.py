@@ -110,6 +110,10 @@ def parse_args():
                                    help="Include archive jobs")
         parser_export.add_argument('--folder', type=str, default="./",
                                    help="Folder to save the exported file")
+        parser_export.add_argument('--from-date', type=str,
+                                   help="Export only from date (inclusive)")
+        parser_export.add_argument('--last-days', type=int, default=14,
+                                   help="Consider entries from last N days")
 
         parser_help = subparser.add_parser('help', help="Display a command help message")
         parser_help.add_argument('--shortcut', action="store_true", help="Display shorcuts")
@@ -210,7 +214,15 @@ if __name__ == "__main__":
     elif args.option == "update-indicator":
         app.update_indicator()
     elif args.option == "export":
-        app.export_jobs(folder=args.folder, include_archive=args.archive)
+        if args.last_days is None or args.last_days < 0:
+            args.from_date = None
+        else:
+            day = datetime.date.today() - datetime.timedelta(days=args.last_days)
+            args.from_date = day.strftime("%Y/%m/%d")
+
+        app.export_jobs(folder=args.folder,
+                        include_archive=args.archive,
+                        from_date=args.from_date)
     elif args.option == "help":
         app.display_help(args.shortcut)
 

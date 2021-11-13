@@ -79,7 +79,7 @@ def parse_args():
         parser_show_filter.add_argument('name', nargs='?', type=str, help="Name to lookup")
         parser_show_filter.add_argument('-r', '--running', action="store_true", help="Show only the running jobs")
         parser_show_filter.add_argument('--archive', action="store_true", help="Show archived jobs")
-        parser_show_filter.add_argument('--today', action="store_true", help="Consider only entries from today")
+        parser_show_filter.add_argument('-t', '--today', action="store_true", help="Consider only entries from today")
         parser_show_filter.add_argument('--yesterday', action="store_true", help="Consider only entries from yesterday")
         parser_show_filter.add_argument('--week', action="store_true", help="Consider only entries from this week")
         parser_show_filter.add_argument('--month', action="store_true", help="Consider only entries from this month")
@@ -100,6 +100,8 @@ def parse_args():
         parser_archive.add_argument('-u', '--unarchive', action="store_true", help="Unarchive the job")
 
         parser_update = subparser.add_parser('update', help="Update existing work objects from older versions. Use only when there is a non-backward compatible change and update() methods are ready")
+
+        parser_update_indicator = subparser.add_parser('update-indicator', help="Force updating indicator")
 
         parser_export = subparser.add_parser('export',
                                              help="Export data")
@@ -205,6 +207,8 @@ if __name__ == "__main__":
         app.archive_job(args.name, args.unarchive)
     elif args.option == "update":
         app.update_jobs()
+    elif args.option == "update-indicator":
+        app.update_indicator()
     elif args.option == "export":
         app.export_jobs(folder=args.folder, include_archive=args.archive)
     elif args.option == "help":

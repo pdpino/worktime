@@ -316,6 +316,9 @@ class Application():
 
         return rs.Result()
 
+    def update_indicator(self):
+        pass
+
     def export_jobs(self):
         pass
 

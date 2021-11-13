@@ -372,7 +372,6 @@ class ConsoleApplication(Application):
             print(message)
             self.show_selected_job()
 
-
     def backup_jobs(self):
         """Backup existing jobs."""
         result = super().backup_jobs()
@@ -417,6 +416,12 @@ class ConsoleApplication(Application):
             timestamp_start = time.mktime(datetime.combine(date_obj, hi_obj).timetuple())
             timestamp_end = time.mktime(datetime.combine(date_obj, hf_obj).timetuple())
 
+            # HACK: fixes not saving end date properly
+            if timestamp_end < timestamp_start:
+                timestamp_end += 24 * 3600
+
+            # HACK: tz_offset is not saved in disk (as it should be)
+            # If the jobs are exported weekly it should be fine
             tz_offset = get_tz_offset()
 
             work_session_dict = {
@@ -425,6 +430,7 @@ class ConsoleApplication(Application):
                 "timestampStart": timestamp_start,
                 "timestampEnd": timestamp_end,
                 "tzOffset": tz_offset,
+                "tzName": "America/Santiago", # HACK: hardcoded!!!
                 "timeTotal": entry.total_time,
                 "timeEffective": entry.effective_time,
                 "nPauses": entry.n_pauses,
@@ -476,6 +482,22 @@ class ConsoleApplication(Application):
 
         with open(fname, "w") as f:
             f.write(as_string)
+
+
+    def update_indicator(self):
+        name = self._choose_name(None)
+
+        if name is None:
+            stop_indicator()
+            return
+
+        job = self._load_job(name)
+        if job.is_running and job.is_paused:
+            pause_indicator()
+        elif job.is_running and not job.is_paused:
+            start_indicator()
+        elif not job.is_running:
+            stop_indicator()
 
 
     def display_help(self, shortcut=True):

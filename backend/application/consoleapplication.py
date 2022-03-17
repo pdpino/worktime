@@ -7,6 +7,7 @@ import threading
 import time
 from datetime import datetime
 import json
+from .. import tz
 
 PIPE_PATH = "/tmp/worktime" # HACK: copied from work-indicator.py
 DATE_FORMAT = "%Y/%m/%d"
@@ -46,15 +47,6 @@ def validate_date_format(date, date_format):
     except:
         print("The date '{}' should be in format year/month/day".format(date))
         return None
-
-
-def get_tz_offset():
-    """Return timezone offset in seconds.
-
-    Taken from: https://stackoverflow.com/a/10854983/9951939
-    """
-    offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
-    return offset
 
 
 class ConsoleApplication(Application):
@@ -428,7 +420,8 @@ class ConsoleApplication(Application):
 
             # HACK: tz_offset is not saved in disk (as it should be)
             # If the jobs are exported weekly it should be fine
-            tz_offset = get_tz_offset()
+            tz_offset = tz.get_tz_offset()
+            tz_name = tz.get_tz_name()
 
             work_session_dict = {
                 "date": date_obj.strftime('%m/%d/%Y'), # DEPRECATED in v1.10.0
@@ -436,7 +429,7 @@ class ConsoleApplication(Application):
                 "timestampStart": timestamp_start,
                 "timestampEnd": timestamp_end,
                 "tzOffset": tz_offset,
-                "tzName": "America/Santiago", # HACK: hardcoded!!!
+                "tzName": tz_name,
                 "timeTotal": entry.total_time,
                 "timeEffective": entry.effective_time,
                 "nPauses": entry.n_pauses,
